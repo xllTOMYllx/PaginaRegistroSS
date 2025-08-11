@@ -1,37 +1,21 @@
 const express = require('express');
-const { Pool } = require('pg');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const cors = require('cors');
+const port = process.env.PORT || 5000;
+
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 5432,
+const usersRoutes = require('./routes/users');
+app.use('/api/users', usersRoutes);
+
+app.get('/', (req, res) => {
+  res.send('¡Servidor backend en funcionamiento!');
 });
 
-// GET all personal records
-app.get('/api/personal', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM personal');
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No records found' });
-    }
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error fetching data:', error.stack);
-    res.status(500).json({ error: 'Error fetching data', details: error.message });
-  }
+app.listen(port, () => {
+  console.log(`Servidor escuchando en http://localhost:${port}`);
 });
-
-// Update and delete routes will be handled in users.js
-const userRoutes = require('./src/routes/users');
-app.use('/api', userRoutes);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
