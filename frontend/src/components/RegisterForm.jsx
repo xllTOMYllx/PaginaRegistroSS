@@ -38,18 +38,6 @@ function RegisterForm() {
       });
     } catch (error) {
       setMensaje('');
-      if (error.response && error.response.data && error.response.data.error) {
-        const errMsg = error.response.data.error.toLowerCase();
-        if (errMsg.includes('usuario')) {
-          setError('El usuario ya existe. Por favor, elige otro nombre de usuario.');
-        } else if (errMsg.includes('contraseña') || errMsg.includes('contrasena')) {
-          setError('La contraseña no concuerda con el usuario.');
-        } else {
-          setError(error.response.data.error);
-        }
-      } else {
-        setError('Fallo en el registro. Intenta de nuevo.');
-      }
     }
   };
 
