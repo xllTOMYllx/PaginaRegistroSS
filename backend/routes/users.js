@@ -120,6 +120,8 @@ router.post('/login', async (req, res) => {
       usuario: {
         id_personal: user.id_personal,
         nombre: user.nombre,
+        apellido_paterno: user.apellido_paterno,
+        apellido_materno: user.apellido_materno,
         usuario: user.usuario,
         correo: user.correo,
         curp: user.curp,

@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
 
 function Home() {
-  const [usuario] = useState({
-    name: "Juan",
-    apellidoPaterno: "Pérez",
-    apellidoMaterno: "García",
-    curp: "PEGA900101HDFRRL01",
-    rfc: "PEGA900101XXX", // <-- RFC agregado
-    email: "juan.perez@email.com"
-  });
-
+  const location = useLocation();
+  const [usuario, setUsuario] = useState(null);
   const [academico, setAcademico] = useState(null);
   const [certificado, setCertificado] = useState(null);
+
+  useEffect(() => {
+    // Si se navega desde sesion.jsx, los datos del usuario pueden venir en location.state
+    if (location.state && location.state.user) {
+      setUsuario(location.state.user);
+    }
+  }, [location.state]);
 
   return (
     <div className="container mt-5" style={{ maxWidth: 700 }}>
@@ -38,34 +39,38 @@ function Home() {
           </button>
         </div>
         <div className="card-body">
-          <table className="table table-borderless align-middle mb-0">
-            <tbody>
-              <tr>
-                <th>Nombre</th>
-                <td>{usuario.name}</td>
-              </tr>
-              <tr>
-                <th>Apellido Paterno</th>
-                <td>{usuario.apellidoPaterno}</td>
-              </tr>
-              <tr>
-                <th>Apellido Materno</th>
-                <td>{usuario.apellidoMaterno}</td>
-              </tr>
-              <tr>
-                <th>CURP</th>
-                <td>{usuario.curp}</td>
-              </tr>
-              <tr>
-                <th>RFC</th>
-                <td>{usuario.rfc}</td>
-              </tr>
-              <tr>
-                <th>Correo Electrónico</th>
-                <td>{usuario.email}</td>
-              </tr>
-            </tbody>
-          </table>
+          {usuario ? (
+            <table className="table table-borderless align-middle mb-0">
+              <tbody>
+                <tr>
+                  <th>Nombre</th>
+                  <td>{usuario.nombre}</td>
+                </tr>
+                <tr>
+                  <th>Apellido Paterno</th>
+                  <td>{usuario.apellido_paterno}</td>
+                </tr>
+                <tr>
+                  <th>Apellido Materno</th>
+                  <td>{usuario.apellido_materno}</td>
+                </tr>
+                <tr>
+                  <th>CURP</th>
+                  <td>{usuario.curp}</td>
+                </tr>
+                <tr>
+                  <th>RFC</th>
+                  <td>{usuario.rfc}</td>
+                </tr>
+                <tr>
+                  <th>Correo Electrónico</th>
+                  <td>{usuario.correo}</td>
+                </tr>
+              </tbody>
+            </table>
+          ) : (
+            <div className="text-center text-muted">No hay datos de usuario. Inicia sesión para ver tu información.</div>
+          )}
         </div>
       </div>
 
