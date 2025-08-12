@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from 'react-router-dom';
+ import { useNavigate } from "react-router-dom";
+
 
 function Home() {
+  const navigate = useNavigate(); 
   const location = useLocation();
   const [usuario, setUsuario] = useState(null);
   const [academico, setAcademico] = useState(null);
@@ -23,6 +26,8 @@ function Home() {
             Datos del Usuario
           </h4>
           <button
+          onClick={() => navigate('/editarUsuario', { state: { user: usuario } })}
+
             style={{
               backgroundColor: "#7A1737",
               color: "#fff",

@@ -126,6 +126,49 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Actualizar datos personales
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const {
+    nombre,
+    apellido_paterno,
+    apellido_materno,
+    curp,
+    rfc,
+    correo
+  } = req.body;
+ console.log('Datos recibidos para actualizar:', req.body);
+  try {
+    const updateQuery = `
+      UPDATE personal
+      SET nombre = $1,
+          apellido_paterno = $2,
+          apellido_materno = $3,
+          correo = $4,
+          curp = $5,
+          rfc = $6
+      WHERE id_personal = $7
+      RETURNING id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc
+    `;
+    const result = await pool.query(updateQuery, [
+      nombre,
+      apellido_paterno,
+      apellido_materno,
+      correo,
+      curp,
+      rfc,
+      id
+    ]);
+
+    res.json({ user: result.rows[0] });
+  } catch (error) {
+    console.error('Error al actualizar usuario:', error);
+    res.status(500).json({ error: 'Error al actualizar los datos.' });
+  }
+});
+
+
+
 // Login usuario
 router.post('/login', async (req, res) => {
   let { USUARIO, CONTRASENA } = req.body;
