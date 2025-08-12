@@ -44,27 +44,27 @@ function Home() {
               <tbody>
                 <tr>
                   <th>Nombre</th>
-                  <td>{usuario.nombre}</td>
+                  <td>{usuario.nombre || 'No disponible'}</td>
                 </tr>
                 <tr>
                   <th>Apellido Paterno</th>
-                  <td>{usuario.apellido_paterno}</td>
+                  <td>{usuario.apellido_paterno || 'No disponible'}</td>
                 </tr>
                 <tr>
                   <th>Apellido Materno</th>
-                  <td>{usuario.apellido_materno}</td>
+                  <td>{usuario.apellido_materno || 'No disponible'}</td>
                 </tr>
                 <tr>
                   <th>CURP</th>
-                  <td>{usuario.curp}</td>
+                  <td>{usuario.curp || 'No disponible'}</td>
                 </tr>
                 <tr>
                   <th>RFC</th>
-                  <td>{usuario.rfc}</td>
+                  <td>{usuario.rfc || 'No disponible'}</td>
                 </tr>
                 <tr>
                   <th>Correo Electrónico</th>
-                  <td>{usuario.correo}</td>
+                  <td>{usuario.correo || 'No disponible'}</td>
                 </tr>
               </tbody>
             </table>
