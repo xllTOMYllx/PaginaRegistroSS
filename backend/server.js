@@ -14,6 +14,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const helmet = require('helmet');
+app.use(helmet());
+
 const usersRoutes = require('./routes/users');
 app.use('/api/users', usersRoutes);
 

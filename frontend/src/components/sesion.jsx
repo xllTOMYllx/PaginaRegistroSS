@@ -12,14 +12,20 @@ function Sesion() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Limpia errores previos
     try {
-      // Cambia la URL si tu backend es diferente
-  const response = await axios.post('http://localhost:5000/api/users/login', formData);
-      console.log('sesion iniciada:', response.data);
-  navigate('/home', { state: { user: response.data.usuario } });
-      setError('');
+      const response = await axios.post('http://localhost:5000/api/users/login', formData);
+      console.log('Sesión iniciada:', response.data);
+     
+      navigate('/home', { state: { user: response.data.usuario } });
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
+      if (error.response) {
+        // Captura el mensaje de error del backend
+        setError(error.response.data.error || 'Error al iniciar sesión. Intenta de nuevo.');
+      } else {
+        setError('Error de conexión. Verifica el servidor.');
+      }
     }
   };
 
