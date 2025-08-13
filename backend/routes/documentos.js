@@ -39,7 +39,18 @@ const storage = multer.diskStorage({
     cb(null, `${req.user.id_personal}-${uniqueSuffix}${path.extname(file.originalname)}`);
   }
 });
-const upload = multer({ storage });
+
+// Solo PDF
+const upload = multer({ 
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype !== "application/pdf") {
+      return cb(new Error("Solo se permiten archivos PDF"), false);
+    }
+    cb(null, true);
+  }
+});
+
 
 // 📌 Ruta para subir documento académico
 router.post('/subir-academico', authenticateToken, upload.single('archivo'), async (req, res) => {

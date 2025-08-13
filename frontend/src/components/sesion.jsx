@@ -17,6 +17,14 @@ function Sesion() {
       const response = await axios.post('http://localhost:5000/api/users/login', formData);
       console.log('Sesión iniciada:', response.data);
      
+      const { token, usuario } = response.data;
+
+     // Guardar en localStorage
+     localStorage.setItem('token', token);
+     localStorage.setItem('usuario', JSON.stringify(usuario));
+
+
+
       navigate('/home', { state: { user: response.data.usuario } });
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
