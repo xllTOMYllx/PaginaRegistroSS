@@ -23,7 +23,7 @@ function Home() {
         <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
           <h4 className="mb-0" style={{ color: "#7A1737" }}>
             <i className="bi bi-person-circle me-2"></i>
-            Datos del Usuario
+            Datos del Usuario: {usuario ? usuario.usuario : 'Desconocido'}
           </h4>
           <button
           onClick={() => navigate('/editarUsuario', { state: { user: usuario } })}
