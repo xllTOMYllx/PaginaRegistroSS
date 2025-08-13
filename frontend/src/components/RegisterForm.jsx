@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import zxcvbn from 'zxcvbn';
 
 function RegisterForm() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ function RegisterForm() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
+
   const validateForm = () => {
   const newErrors = {};
   const upperCaseData = {
@@ -62,13 +65,17 @@ function RegisterForm() {
   };
 
   const handleChange = (e) => {
-  const { name, value } = e.target;
-  setFormData(prev => ({
-    ...prev,
-    [name]: (name === 'CORREO' || name === 'CONTRASENA') ? value : value.toUpperCase() // Excluir CORREO y CONTRASENA
-  }));
-  setError({ ...error, [name]: '' });
-};
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: (name === 'CORREO' || name === 'CONTRASENA') ? value : value.toUpperCase()
+    }));
+    if (name === 'CONTRASENA') {
+      const result = zxcvbn(value); // Evalúa la fuerza
+      setPasswordStrength(result.score); // 0 (débil) a 4 (fuerte)
+    }
+    setError({ ...error, [name]: '' });
+  };
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -114,6 +121,17 @@ const handleSubmit = async (e) => {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const getStrengthColor = (score) => {
+    switch (score) {
+      case 0: return 'bg-danger';
+      case 1: return 'bg-warning';
+      case 2: return 'bg-info';
+      case 3: return 'bg-primary';
+      case 4: return 'bg-success';
+      default: return 'bg-secondary';
+    }
   };
 
 
@@ -220,7 +238,7 @@ const handleSubmit = async (e) => {
           </div>
 
           <div className="mb-4 position-relative">
-            <label className="form-label">CONTRASEÑA</label>
+            <label className="form-label">CONTRASENA</label>
             <input
               type={showPassword ? 'text' : 'password'}
               name="CONTRASENA"
@@ -232,11 +250,26 @@ const handleSubmit = async (e) => {
             />
             <span
               onClick={togglePasswordVisibility}
-              style={{ position: 'absolute', right: '10px', top: '71%', transform: 'translateY(-50%)', cursor: 'pointer' }}
+              style={{ position: 'absolute', right: '10px', top: '47%', transform: 'translateY(-50%)', cursor: 'pointer' }}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
             {error.CONTRASENA && <div className="text-danger small mt-1">{error.CONTRASENA}</div>}
+            <div className="mt-2">
+              <div className="progress" style={{ height: '8px' }}>
+                <div
+                  className={`progress-bar ${getStrengthColor(passwordStrength)}`}
+                  style={{ width: `${(passwordStrength / 4) * 100}%` }}
+                  role="progressbar"
+                  aria-valuenow={passwordStrength}
+                  aria-valuemin="0"
+                  aria-valuemax="4"
+                ></div>
+              </div>
+              <small className="text-muted">
+                Fuerza de la contraseña: {['Muy débil', 'Débil', 'Regular', 'Buena', 'Fuerte'][passwordStrength]}
+              </small>
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary w-100 rounded-3" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737' }}>
