@@ -1,16 +1,17 @@
+
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Home() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const location = useLocation();
   const [usuario, setUsuario] = useState(null);
 
-  // Estados para archivos académicos
   const [secundaria, setSecundaria] = useState(null);
   const [bachillerato, setBachillerato] = useState(null);
   const [universidad, setUniversidad] = useState(null);
+  const [documentos, setDocumentos] = useState([]);
 
   useEffect(() => {
     if (location.state && location.state.user) {
@@ -18,50 +19,76 @@ function Home() {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    const fetchDocumentos = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const res = await axios.get("http://localhost:5000/api/documentos/mis-documentos", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setDocumentos(res.data);
+      } catch (error) {
+        console.error("Error al obtener documentos:", error);
+      }
+    };
+
+    fetchDocumentos();
+  }, []);
+
   const subirArchivo = async (archivo, tipo) => {
-    if (!archivo) {
-      alert("Selecciona un archivo primero");
+    if (!archivo || archivo.type !== "application/pdf") {
+      ////alert("Selecciona un archivo PDF válido");
       return;
     }
 
-    // Verificar que sea PDF
-    if (archivo.type !== "application/pdf") {
-      alert("Solo se permiten archivos en formato PDF");
-      return;
-    }
-
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")?.trim();
     if (!token) {
       alert("No hay sesión activa");
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("archivo", archivo);
-      formData.append("tipo", tipo);
+    const formData = new FormData();
+    formData.append("archivo", archivo);
+    formData.append("tipo", tipo);
 
+    try {
       await axios.post("http://localhost:5000/api/documentos/subir-academico", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${token.trim()}`
+          "Authorization": `Bearer ${token}`
         }
       });
 
-      alert(`Archivo de ${tipo} subido correctamente`);
+      //alert(`Archivo de ${tipo} subido correctamente`);
+      window.location.reload();
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.error) {
-        alert(error.response.data.error);
-      } else {
-        console.error(`Error al subir archivo de ${tipo}:`, error);
-        alert("Error al subir el archivo");
-      }
+      console.error("Error al subir archivo:", error);
+      //alert(error.response?.data?.error || "Error al subir el archivo");
+    }
+  };
+
+  const eliminarDocumento = async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    //if (!window.confirm("¿Estás seguro de que deseas eliminar este documento?")) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/documentos/eliminar/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDocumentos(prev => prev.filter(doc => doc.id !== id));
+      //alert("Documento eliminado correctamente");
+    } catch (error) {
+      console.error("Error al eliminar documento:", error);
+      //alert("No se pudo eliminar el documento");
     }
   };
 
   return (
     <div className="container mt-5" style={{ maxWidth: 700 }}>
-      {/* Datos del Usuario */}
       <div className="card shadow mb-4">
         <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
           <h4 className="mb-0" style={{ color: "#7A1737" }}>
@@ -103,10 +130,12 @@ function Home() {
         </div>
       </div>
 
-      {/* Archivos académicos */}
       {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
         const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
         const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
+        const tipo = nivel.toLowerCase();
+        const documentoExistente = documentos.find(doc => doc.tipo === tipo);
+
         return (
           <div key={nivel} className="card shadow-sm mb-4">
             <div className="card-body d-flex align-items-center">
@@ -114,31 +143,62 @@ function Home() {
               <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>
                 {nivel}
               </label>
-              <input
-                type="file"
-                accept=".pdf"
-                className="form-control rounded-3 me-2"
-                style={{ flex: 1 }}
-                onChange={e => setMap[idx](e.target.files[0])}
-              />
-              <button
-                type="button"
-                className="btn"
-                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-                onClick={() => subirArchivo(stateMap[idx], nivel.toLowerCase())}
-              >
-                <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-                Subir
-              </button>
-              {stateMap[idx] && (
-                <span className="ms-2 small text-muted">{stateMap[idx].name}</span>
+
+              {!documentoExistente ? (
+                <>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    className="form-control rounded-3 me-2"
+                    style={{ flex: 1 }}
+                    onChange={e => setMap[idx](e.target.files[0])}
+                  />
+                  <button
+                    type="button"
+                    className="btn"
+                    style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                    onClick={() => subirArchivo(stateMap[idx], tipo)}
+                  >
+                    <i className="bi bi-cloud-arrow-up-fill me-1"></i>
+                    Subir
+                  </button>
+                  {stateMap[idx] && (
+                    <span className="ms-2 small text-muted">{stateMap[idx].name}</span>
+                  )}
+                </>
+              ) : (
+                <div className="ms-auto d-flex align-items-center">
+                  <a
+                    href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm me-2"
+                    style={{
+                      backgroundColor: "#7A1737",
+                      color: "#fff",
+                      border: "none"
+                    }}
+                  >
+                    Ver documento
+                  </a>
+                  <button
+                    className="btn btn-sm"
+                    style={{
+                      backgroundColor: "#dc3545",
+                      color: "#fff",
+                      border: "none"
+                    }}
+                    onClick={() => eliminarDocumento(documentoExistente.id)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               )}
             </div>
           </div>
         );
       })}
 
-      {/* Certificados */}
       <div className="card shadow-sm mb-4">
         <div className="card-body d-flex align-items-center">
           <i className="bi bi-award-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
