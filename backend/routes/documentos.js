@@ -30,13 +30,23 @@ function authenticateToken(req, res, next) {
 }
 
 // Configuración Multer
+const fs = require('fs');
+
+// Configuración Multer con carpeta por usuario
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/academico/');
+    const userFolder = path.join(__dirname, '../uploads/academico', `${req.user.id_personal}`);
+
+    // Verifica si la carpeta existe, si no, la crea
+    if (!fs.existsSync(userFolder)) {
+      fs.mkdirSync(userFolder, { recursive: true });
+    }
+
+    cb(null, userFolder);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `${req.user.id_personal}-${uniqueSuffix}${path.extname(file.originalname)}`);
+    cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
   }
 });
 
@@ -96,5 +106,39 @@ router.get('/mis-documentos', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+//Eliminar documento
+
+router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT archivo FROM documentos_academicos WHERE id = $1 AND id_personal = $2`,
+      [id, req.user.id_personal]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    const archivo = result.rows[0].archivo;
+    const filePath = path.join(__dirname, '../uploads/academico', `${req.user.id_personal}`, archivo);
+
+    // Eliminar archivo físico
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    // Eliminar de la base de datos
+    await pool.query(`DELETE FROM documentos_academicos WHERE id = $1`, [id]);
+
+    res.json({ message: 'Documento eliminado correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar documento:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 
 module.exports = router;
