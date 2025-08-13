@@ -31,59 +31,66 @@ router.post('/register', async (req, res) => {
   } = req.body;
 
   // Sanitización básica
-  NOMBRE = typeof NOMBRE === 'string' ? NOMBRE.trim() : '';
-  APELLIDO_PATERNO = typeof APELLIDO_PATERNO === 'string' ? APELLIDO_PATERNO.trim() : '';
-  APELLIDO_MATERNO = typeof APELLIDO_MATERNO === 'string' ? APELLIDO_MATERNO.trim() : '';
-  USUARIO = typeof USUARIO === 'string' ? USUARIO.trim() : '';
+  NOMBRE = typeof NOMBRE === 'string' ? NOMBRE.trim().toUpperCase() : '';
+  APELLIDO_PATERNO = typeof APELLIDO_PATERNO === 'string' ? APELLIDO_PATERNO.trim().toUpperCase() : '';
+  APELLIDO_MATERNO = typeof APELLIDO_MATERNO === 'string' ? APELLIDO_MATERNO.trim().toUpperCase() : '';
+  USUARIO = typeof USUARIO === 'string' ? USUARIO.trim().toUpperCase() : '';
   CONTRASENA = typeof CONTRASENA === 'string' ? CONTRASENA : '';
   CORREO = typeof CORREO === 'string' ? CORREO.trim() : '';
   CURP = typeof CURP === 'string' ? CURP.trim().toUpperCase() : '';
   RFC = typeof RFC === 'string' ? RFC.trim().toUpperCase() : '';
 
   // Validación de campos obligatorios
-  if (
-    !NOMBRE ||
-    !APELLIDO_PATERNO ||
-    !USUARIO ||
-    !CONTRASENA ||
-    !CORREO ||
-    !CURP ||
-    !RFC
-  ) {
-    return res.status(400).json({ error: 'Por favor completa todos los campos obligatorios.' });
+  const missingFields = [];
+  if (!NOMBRE) missingFields.push('Nombre');
+  if (!APELLIDO_PATERNO) missingFields.push('Apellido Paterno');
+  if (!USUARIO) missingFields.push('Usuario');
+  if (!CONTRASENA) missingFields.push('Contraseña');
+  if (!CORREO) missingFields.push('Correo');
+  if (!CURP) missingFields.push('CURP');
+  if (!RFC) missingFields.push('RFC');
+  if (missingFields.length > 0) {
+  return res.status(400).json({ error: `Por favor completa los siguientes campos: ${missingFields.join(', ')}.` });
   }
 
   // Validar longitud y formato de los campos
-  if (NOMBRE.length > 50 || APELLIDO_PATERNO.length > 50 || (APELLIDO_MATERNO && APELLIDO_MATERNO.length > 50)) {
-    return res.status(400).json({ error: 'Nombre o apellidos demasiado largos.' });
+const longFields = [];
+  if (NOMBRE.length > 50) longFields.push('Nombre');
+  if (APELLIDO_PATERNO.length > 50) longFields.push('Apellido Paterno');
+  if (APELLIDO_MATERNO && APELLIDO_MATERNO.length > 50) longFields.push('Apellido Materno');
+  if (longFields.length > 0) {
+  return res.status(400).json({ error: `${longFields.join(', ')} demasiado largos. Máximo 50 caracteres.` });
   }
-  if (!/^[a-zA-ZÁÉÍÓÚÑáéíóúñ\s]+$/.test(NOMBRE) || !/^[a-zA-ZÁÉÍÓÚÑáéíóúñ\s]+$/.test(APELLIDO_PATERNO)) {
-    return res.status(400).json({ error: 'Nombre y apellido paterno solo deben contener letras.' });
+
+const invalidFields = [];
+  if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(NOMBRE)) invalidFields.push('Nombre');
+  if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(APELLIDO_PATERNO)) invalidFields.push('Apellido Paterno');
+  if (APELLIDO_MATERNO && !/^[A-ZÁÉÍÓÚÑ\s]+$/.test(APELLIDO_MATERNO)) invalidFields.push('Apellido Materno');
+  if (invalidFields.length > 0) {
+  return res.status(400).json({ error: `${invalidFields.join(', ')} solo deben contener letras.` });
   }
-  if (APELLIDO_MATERNO && !/^[a-zA-ZÁÉÍÓÚÑáéíóúñ\s]+$/.test(APELLIDO_MATERNO)) {
-    return res.status(400).json({ error: 'Apellido materno solo debe contener letras.' });
+
+  if (!/^[A-Z0-9_]{4,15}$/.test(USUARIO)) {
+    return res.status(400).json({ error: 'Usuario inválido. Debe tener entre 4 y 15 caracteres alfanuméricos o guion bajo.' });
   }
-  if (!/^[a-zA-Z0-9_]{4,30}$/.test(USUARIO)) {
-    return res.status(400).json({ error: 'Usuario inválido. Debe tener entre 4 y 30 caracteres alfanuméricos o guion bajo.' });
-  }
-  if (!validator.isStrongPassword(CONTRASENA, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1 })) {
-    return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.' });
+  if (!validator.isStrongPassword(CONTRASENA, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 })) {
+  return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un carácter especial.' });
   }
   if (!validator.isEmail(CORREO)) {
     return res.status(400).json({ error: 'Correo electrónico no válido.' });
   }
   if (!/^[A-Z]{4}\d{6}[A-Z0-9]{8}$/.test(CURP)) {
-    return res.status(400).json({ error: 'CURP no válido.' });
+  return res.status(400).json({ error: 'CURP no válido. Debe tener 18 caracteres: 4 letras, 6 dígitos y 8 alfanuméricos.' });
   }
   if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(RFC)) {
-    return res.status(400).json({ error: 'RFC no válido.' });
+  return res.status(400).json({ error: 'RFC no válido. Debe tener 12 o 13 caracteres: 3-4 letras, 6 dígitos y 3 alfanuméricos.' });
   }
 
   // Validar formato de correo
-  const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook.com)$/;
-  if (!emailRegex.test(CORREO)) {
-    return res.status(400).json({ error: 'Solo se permiten correos de @gmail.com. @hotmail.com o @outlook.com' });
-  }
+  const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
+if (!emailRegex.test(CORREO)) {
+  return res.status(400).json({ error: 'El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.' });
+}
 
    try {
     // Verificar si USUARIO, CORREO, CURP o RFC ya existen
@@ -93,7 +100,7 @@ router.post('/register', async (req, res) => {
     `;
     const checkResult = await pool.query(checkQuery, [USUARIO, CORREO, CURP, RFC]);
     if (checkResult.rows.length > 0) {
-      return res.status(400).json({ error: 'Usuario, correo, CURP o RFC ya existen.' });
+      return res.status(400).json({ error: 'Usuario, correo, CURP o RFC ya existen, intente con otros datos.' });
     }
 
     // Hashear contraseña
