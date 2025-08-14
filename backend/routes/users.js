@@ -175,20 +175,25 @@ router.put('/:id', async (req, res) => {
 });
 
 
-
 // Login usuario
 router.post('/login', async (req, res) => {
   let { USUARIO, CONTRASENA } = req.body;
 
-  USUARIO = typeof USUARIO === 'string' ? USUARIO.trim() : '';
+  // Sanitización básica
+  USUARIO = typeof USUARIO === 'string' ? USUARIO.trim().toUpperCase() : '';
   CONTRASENA = typeof CONTRASENA === 'string' ? CONTRASENA : '';
 
-  if (!USUARIO || !CONTRASENA) {
-    return res.status(400).json({ error: 'Usuario y contraseña son requeridos.' });
+  // Validación de campos obligatorios
+  if (!USUARIO) {
+    return res.status(400).json({ error: 'El usuario es requerido.' });
+  }
+  if (!CONTRASENA) {
+    return res.status(400).json({ error: 'La contraseña es requerida.' });
   }
 
-  if (!/^[a-zA-Z0-9_]{4,30}$/.test(USUARIO)) {
-    return res.status(400).json({ error: 'Usuario inválido.' });
+  // Validar formato de USUARIO
+  if (!/^[A-Z0-9_]{4,30}$/.test(USUARIO)) {
+    return res.status(400).json({ error: 'Usuario inválido. Debe tener entre 4 y 30 caracteres alfanuméricos o guion bajo en mayúsculas.' });
   }
 
   try {
@@ -196,18 +201,20 @@ router.post('/login', async (req, res) => {
     const query = 'SELECT * FROM personal WHERE USUARIO = $1';
     const result = await pool.query(query, [USUARIO]);
 
-    console.log('Resultado de la consulta:', result.rows);
+    //console.log('Resultado de la consulta:', result.rows);
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Credenciales inválidas.' });
+      return res.status(401).json({ error: 'Credenciales inválidas. Verifica tu usuario.' });
     }
 
     const user = result.rows[0];
-    console.log('Usuario encontrado:', user);
+    
 
-    const match = await bcrypt.compare(CONTRASENA, user.contrasena); // Cambia a CONTRASENA
+    const match = await bcrypt.compare(CONTRASENA, user.contrasena);
     if (!match) {
-      return res.status(401).json({ error: 'Credenciales inválidas.' });
+      return res.status(401).json({ error: 'Credenciales inválidas. Verifica tu contraseña.' });
     }
+    
+    //console.log('Login exitoso para usuario:', USUARIO);
 
     const tokenPayload = { id_personal: user.id_personal };
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
@@ -228,7 +235,10 @@ router.post('/login', async (req, res) => {
     });
   } catch (error) {
     console.error('Error en login:', error.stack);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    if (error.code === 'ECONNREFUSED') {
+      return res.status(503).json({ error: 'Error de conexión con la base de datos.' });
+    }
+    res.status(500).json({ error: 'Error interno del servidor.' });
   }
 });
 

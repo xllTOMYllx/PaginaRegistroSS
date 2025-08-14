@@ -110,6 +110,9 @@ const handleSubmit = async (e) => {
       CONTRASENA: '',
       RFC: ''
     });
+    setPasswordStrength(0);
+
+    setTimeout(() => setMensaje(''), 5000);
   } catch (error) {
     if (error.response && error.response.data.error) {
       setError({ general: error.response.data.error });
