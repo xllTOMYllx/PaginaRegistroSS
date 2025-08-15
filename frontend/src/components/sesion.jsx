@@ -41,7 +41,14 @@ function Sesion() {
       const { token, usuario } = response.data;
       localStorage.setItem('token', token);
       localStorage.setItem('usuario', JSON.stringify(usuario));
-      navigate('/home', { state: { user: usuario } });
+      
+      if (usuario.rol === 3) {  
+       navigate('/Homeadmin', { state: { user: usuario } });
+      } else if (usuario.rol === 1) {
+        navigate('/home', { state: { user: usuario } });
+      }
+    
+
     } catch (error) {
       if (error.response) {
         if (error.response.data.error.includes('usuario')) {
