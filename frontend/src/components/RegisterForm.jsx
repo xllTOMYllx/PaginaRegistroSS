@@ -50,7 +50,7 @@ function RegisterForm() {
   else if (!/^[A-Z0-9_]{4,15}$/.test(upperCaseData.USUARIO)) newErrors.USUARIO = 'El usuario debe tener entre 4 y 15 caracteres alfanuméricos o guion bajo en mayúsculas.';
 
   if (!formData.CONTRASENA) newErrors.CONTRASENA = 'La contraseña es obligatoria.';
-  else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(formData.CONTRASENA)) newErrors.CONTRASENA = 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.';
+  else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(formData.CONTRASENA)) newErrors.CONTRASENA = 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un caracter especial.';
 
   if (!formData.CORREO) newErrors.CORREO = 'El correo es obligatorio.';
   else if (!/^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/.test(formData.CORREO)) newErrors.CORREO = 'El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.'
@@ -240,23 +240,27 @@ const handleSubmit = async (e) => {
             {error.USUARIO && <div className="text-danger small mt-1">{error.USUARIO}</div>}
           </div>
 
-          <div className="mb-4 position-relative">
+          <div className="mb-4">
             <label className="form-label">CONTRASENA</label>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              name="CONTRASENA"
-              value={formData.CONTRASENA}
-              onChange={handleChange}
-              placeholder="Ingresa tu contraseña"
-              className="form-control rounded-3 pr-10"
-              required
-            />
-            <span
-              onClick={togglePasswordVisibility}
-              style={{ position: 'absolute', right: '10px', top: '47%', transform: 'translateY(-50%)', cursor: 'pointer' }}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </span>
+            <div className="input-group">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="CONTRASENA"
+                value={formData.CONTRASENA}
+                onChange={handleChange}
+                placeholder="Ingresa tu contraseña"
+                className="form-control rounded-3"
+                required
+              />
+              <button
+                type="button"
+                className="btn btn-outline-secondary rounded-end"
+                onClick={togglePasswordVisibility}
+                style={{ zIndex: 1, padding: '0 10px', border: 'none' }}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             {error.CONTRASENA && <div className="text-danger small mt-1">{error.CONTRASENA}</div>}
             <div className="mt-2">
               <div className="progress" style={{ height: '8px' }}>
