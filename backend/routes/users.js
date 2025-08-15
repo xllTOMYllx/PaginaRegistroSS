@@ -216,7 +216,7 @@ router.post('/login', async (req, res) => {
     
     //console.log('Login exitoso para usuario:', USUARIO);
 
-    const tokenPayload = { id_personal: user.id_personal };
+    const tokenPayload = { id_personal: user.id_personal, rol:user.rol };
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
 
     res.json({
@@ -231,6 +231,7 @@ router.post('/login', async (req, res) => {
         correo: user.correo,
         curp: user.curp,
         rfc: user.rfc,
+        rol: user.rol,
       },
     });
   } catch (error) {
@@ -257,6 +258,15 @@ function authenticateToken(req, res, next) {
   });
 }
 
+// Middleware para verificar si el usuario es Jefe
+function isJefe(req, res, next) {
+  if (!req.user) return res.status(401).json({ error: 'No autenticado' });
+  if (req.user.rol !== 3) {
+    return res.status(403).json({ error: 'Acceso denegado: solo Jefe' });
+  }
+  next();
+}
+
 // Ruta para obtener datos del usuario autenticado
 router.get('/me', authenticateToken, async (req, res) => {
   try {
@@ -274,5 +284,74 @@ router.get('/me', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+
+// Crear Jefe (solo bootstrap inicial o si ya hay un jefe logueado)
+router.post('/crear-jefe', async (req, res) => {
+  const { nombre, apellido_paterno, apellido_materno, usuario, contrasena, correo, curp, rfc } = req.body;
+
+  try {
+    // Verificar si ya existe un jefe
+    const jefeExistente = await pool.query(`SELECT * FROM personal WHERE rol = 3 LIMIT 1`);
+    if (jefeExistente.rows.length > 0) {
+      return res.status(403).json({ error: 'Ya existe un Jefe, use el login para autenticarse.' });
+    }
+
+    // Validaciones mínimas (puedes agregar más si quieres)
+    if (!usuario || !contrasena || !correo) {
+      return res.status(400).json({ error: 'Usuario, contraseña y correo son requeridos.' });
+    }
+
+    // Hash de contraseña
+    const hashedPassword = await bcrypt.hash(contrasena, 10);
+
+    // Insertar como rol = 3
+    const query = `
+      INSERT INTO personal (nombre, apellido_paterno, apellido_materno, usuario, contrasena, correo, curp, rfc, rol)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,3)
+      RETURNING id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc, rol
+    `;
+    const result = await pool.query(query, [
+      nombre, apellido_paterno, apellido_materno || null, usuario, hashedPassword, correo, curp, rfc
+    ]);
+
+    res.status(201).json({ message: 'Jefe creado con éxito', jefe: result.rows[0] });
+  } catch (error) {
+    console.error('Error al crear Jefe:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+
+// Obtener usuarios por rol
+router.get('/rol/:rol', authenticateToken, isJefe, async (req, res) => {
+  const { rol } = req.params;
+
+  try {
+    const query = `
+      SELECT id_personal, nombre, apellido_paterno, apellido_materno,
+             usuario, correo, curp, rfc, rol
+      FROM personal
+      WHERE rol = $1
+    `;
+    const result = await pool.query(query, [rol]);
+
+    // Si quieres agregar documentos asociados:
+    const usuariosConDocs = await Promise.all(result.rows.map(async (user) => {
+      const docsQuery = `SELECT archivo FROM documentos_academicos WHERE id_personal = $1`;
+      const docsResult = await pool.query(docsQuery, [user.id_personal]);
+      return {
+        ...user,
+        documentos: docsResult.rows.map(d => d.archivo)
+      };
+    }));
+
+    res.json(usuariosConDocs);
+  } catch (error) {
+    console.error('Error al obtener usuarios por rol:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 
 module.exports = router;
