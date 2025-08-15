@@ -101,7 +101,7 @@ return (
                 type="button"
                 className="btn btn-outline-secondary rounded-end"
                 onClick={togglePasswordVisibility}
-                style={{ zIndex: 1, padding: '0 10px', background: 'transparent', border:  'none'}}
+                style={{ zIndex: 1, padding: '0 10px', border:  'none'}}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
