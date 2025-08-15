@@ -144,7 +144,7 @@ router.put('/:id', async (req, res) => {
     rfc,
     correo
   } = req.body;
- console.log('Datos recibidos para actualizar:', req.body);
+ //console.log('Datos recibidos para actualizar:', req.body);
   try {
     const updateQuery = `
       UPDATE personal
