@@ -61,34 +61,6 @@ const upload = multer({
   }
 });
 
-// Configuración Multer para fotos de perfil (imágenes)
-const storageProfile = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const userFolder = path.join(__dirname, '../uploads/profile', `${req.user.id_personal}`);
-
-    if (!fs.existsSync(userFolder)) {
-      fs.mkdirSync(userFolder, { recursive: true });
-    }
-
-    cb(null, userFolder);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
-  }
-});
-
-// Solo imágenes para perfil (JPEG, PNG, etc.)
-const uploadProfile = multer({ 
-  storage: storageProfile,
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith("image/")) {
-      return cb(new Error("Solo se permiten archivos de imagen"), false);
-    }
-    cb(null, true);
-  }
-});
-
 
 // 📌 Ruta para subir documento académico
 router.post('/subir-academico', authenticateToken, upload.single('archivo'), async (req, res) => {
@@ -115,28 +87,6 @@ router.post('/subir-academico', authenticateToken, upload.single('archivo'), asy
     });
   } catch (error) {
     console.error('Error al subir documento académico:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-});
-
-// 📌 Ruta para subir foto de perfil
-router.post('/subir-profile', authenticateToken, uploadProfile.single('profilePicture'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'Archivo requerido' });
-    }
-
-    await pool.query(
-      `UPDATE personal SET profile_picture = $1 WHERE id_personal = $2`,
-      [req.file.filename, req.user.id_personal]
-    );
-
-    res.json({
-      message: 'Foto de perfil subida correctamente',
-      file: req.file.filename
-    });
-  } catch (error) {
-    console.error('Error al subir foto de perfil:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -189,6 +139,57 @@ router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+//IMAGENES
+// Configuración Multer para imágenes
+const storageFoto = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const userFolder = path.join(__dirname, '../uploads/fotos', `${req.user.id_personal}`);
+    if (!fs.existsSync(userFolder)) {
+      fs.mkdirSync(userFolder, { recursive: true });
+    }
+    cb(null, userFolder);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
+  }
+});
+
+const uploadFoto = multer({
+  storage: storageFoto,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(new Error("Solo se permiten imágenes JPG o PNG"), false);
+    }
+    cb(null, true);
+  }
+});
+
+//SUBIR FOTOS
+router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se subió ninguna imagen' });
+    }
+
+    // Puedes guardar el nombre del archivo en la tabla de usuarios si lo deseas
+    await pool.query(
+      `UPDATE personal SET foto_perfil = $1 WHERE id_personal = $2`,
+      [req.file.filename, req.user.id_personal]
+    );
+
+    res.json({
+      message: 'Foto de perfil subida correctamente',
+      file: req.file.filename
+    });
+  } catch (error) {
+    console.error('Error al subir foto de perfil:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 
 
 module.exports = router;

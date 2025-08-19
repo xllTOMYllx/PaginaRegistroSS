@@ -222,20 +222,22 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
 
     res.json({
-      message: 'Login exitoso',
-      token,
-      usuario: {
-        id_personal: user.id_personal,
-        nombre: user.nombre,
-        apellido_paterno: user.apellido_paterno,
-        apellido_materno: user.apellido_materno,
-        usuario: user.usuario,
-        correo: user.correo,
-        curp: user.curp,
-        rfc: user.rfc,
-        rol: user.rol,
-      },
-    });
+  message: 'Login exitoso',
+  token,
+  usuario: {
+    id_personal: user.id_personal,
+    nombre: user.nombre,
+    apellido_paterno: user.apellido_paterno,
+    apellido_materno: user.apellido_materno,
+    usuario: user.usuario,
+    correo: user.correo,
+    curp: user.curp,
+    rfc: user.rfc,
+    rol: user.rol,
+    foto_perfil: user.foto_perfil
+  },
+});
+
   } catch (error) {
     console.error('Error en login:', error.stack);
     if (error.code === 'ECONNREFUSED') {
@@ -272,7 +274,8 @@ function isJefe(req, res, next) {
 // Ruta para obtener datos del usuario autenticado
 router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const query = `SELECT id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc 
+    const query = `SELECT id_personal, nombre, apellido_paterno, apellido_materno, 
+    usuario, correo, curp, rfc, foto_perfil
                    FROM personal WHERE id_personal = $1`;
     const result = await pool.query(query, [req.user.id_personal]);
 
