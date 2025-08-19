@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
 
+
 require('dotenv').config();
 
 const pool = new Pool({
@@ -16,6 +17,7 @@ const pool = new Pool({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_aqui';
+
 
 // Registro de usuario con validaciones y contraseña hasheada
 router.post('/register', async (req, res) => {
