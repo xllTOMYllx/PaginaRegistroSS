@@ -35,9 +35,9 @@ function Home() {
           console.error('Error al obtener usuario:', err);
         });
     }
-    }, []);
+  }, []);
 
-// Si se pasa un usuario desde la navegación, actualizar el estado
+  // Si se pasa un usuario desde la navegación, actualizar el estado
   useEffect(() => {
     if (location.state && location.state.user) {
       //console.log("Usuario recibido:", location.state.user);
@@ -45,7 +45,7 @@ function Home() {
     }
   }, [location.state]);
 
-// Obtener documentos del usuario autenticado
+  // Obtener documentos del usuario autenticado
   useEffect(() => {
     const fetchDocumentos = async () => {
       const token = localStorage.getItem("token");
@@ -63,19 +63,19 @@ function Home() {
 
     fetchDocumentos();
   }, []);
-// Función para subir archivos PDF
+  // Función para subir archivos PDF
   const subirArchivo = async (archivo, tipo) => {
     if (!archivo || archivo.type !== "application/pdf") {
       ////alert("Selecciona un archivo PDF válido");
       return;
     }
-// Verificar si hay sesión activa
+    // Verificar si hay sesión activa
     const token = localStorage.getItem("token")?.trim();
     if (!token) {
       alert("No hay sesión activa");
       return;
     }
-// Crear FormData para enviar el archivo
+    // Crear FormData para enviar el archivo
     const formData = new FormData();
     formData.append("archivo", archivo);
     formData.append("tipo", tipo);
@@ -95,7 +95,7 @@ function Home() {
       //alert(error.response?.data?.error || "Error al subir el archivo");
     }
   };
-// Función para eliminar un documento
+  // Función para eliminar un documento
   const eliminarDocumento = async (id) => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -115,21 +115,21 @@ function Home() {
   };
 
   //IMAGENES
-// variables de estado para la foto de perfil
+  // variables de estado para la foto de perfil
   const [fotoPerfil, setFotoPerfil] = useState(null);
-// Función para subir la foto de perfil
+  // Función para subir la foto de perfil
   const subirFotoPerfil = async () => {
     if (!fotoPerfil || !["image/jpeg", "image/png", "image/jpg"].includes(fotoPerfil.type)) {
       alert("Selecciona una imagen válida (JPG o PNG)");
       return;
     }
-// Verificar si hay sesión activa
+    // Verificar si hay sesión activa
     const token = localStorage.getItem("token")?.trim();
     if (!token) {
       alert("No hay sesión activa");
       return;
     }
-// Crear FormData para enviar la foto
+    // Crear FormData para enviar la foto
     const formData = new FormData();
     formData.append("foto", fotoPerfil);
 
@@ -143,13 +143,13 @@ function Home() {
       //alert("Foto subida correctamente");
       //window.location.reload();
 
-// Vuelve a consultar los datos del usuario para obtener la nueva foto
-const userRes = await axios.get("http://localhost:5000/api/users/me", {
-  headers: {
-    "Authorization": `Bearer ${token}`
-  }
-});
-setUsuario(userRes.data);
+      // Vuelve a consultar los datos del usuario para obtener la nueva foto
+      const userRes = await axios.get("http://localhost:5000/api/users/me", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      setUsuario(userRes.data);
 
     } catch (error) {
       console.error("Error al subir foto:", error);
@@ -157,82 +157,38 @@ setUsuario(userRes.data);
     }
   };
 
-// diseño principal de la página
+  // diseño principal de la página
   return (
     <div className="d-flex flex-column align-items-center min-vh-100">
       <div className="container py-4" style={{ maxWidth: '800px', width: '90%' }}>
-        {/* Foto de Perfil */}
-        <div className="card shadow mb-4 text-center">
-          <div className="card-header bg-white border-0">
+        {/* Contenedor unificado de usuario + foto */}
+        <div className="card shadow mb-4">
+          <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
             <h4 className="mb-0" style={{ color: "#7A1737" }}>
-              Foto de Perfil
+              <i className="bi bi-person-circle me-2"></i>
+              Datos del Usuario: {usuario ? usuario.usuario : 'Desconocido'}
             </h4>
-          </div>
-          {/* Contenido de la tarjeta */}
-          <div className="card-body d-flex flex-column align-items-center justify-content-center">
-            {usuario?.foto_perfil ? (
-              <img
-                src={`http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`}
-                className="img-fluid rounded-circle mb-3"
-                alt="Foto de usuario"
-                crossOrigin="use-credentials"
-                style={{
-                  width: "300px",
-                  height: "300px",
-                  objectFit: "cover",
-                  border: "2px solid #7A1737"
-                }}
-              />
-            ) : (
-              <div className="text-muted mb-3">No hay foto de perfil</div>
-            )}
-            {/* Botón para subir foto de perfil */}
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/jpg"
-              className="form-control rounded-3 mb-2"
-              style={{ maxWidth: 300 }}
-              onChange={e => setFotoPerfil(e.target.files[0])}
-            />
             <button
-              type="button"
-              className="btn"
-              style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-              onClick={subirFotoPerfil}
+              onClick={() => navigate('/editarUsuario', { state: { user: usuario } })}
+              style={{
+                backgroundColor: "#7A1737",
+                color: "#fff",
+                border: "none",
+                padding: "8px 20px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontWeight: "bold",
+                letterSpacing: "1px"
+              }}
             >
-              <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-              Subir Foto
+              <i className="bi bi-pencil-square me-1"></i>
+              Editar
             </button>
           </div>
-        </div>
 
-        {/* Datos del Usuario */}
-        <div className="container mt-5" style={{ maxWidth: 700 }}>
-          <div className="card shadow mb-4">
-            <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-              <h4 className="mb-0" style={{ color: "#7A1737" }}>
-                <i className="bi bi-person-circle me-2"></i>
-                Datos del Usuario: {usuario ? usuario.usuario : 'Desconocido'}
-              </h4>
-              <button
-                onClick={() => navigate('/editarUsuario', { state: { user: usuario } })}
-                style={{
-                  backgroundColor: "#7A1737",
-                  color: "#fff",
-                  border: "none",
-                  padding: "8px 20px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  letterSpacing: "1px"
-                }}
-              >
-                <i className="bi bi-pencil-square me-1"></i>
-                Editar
-              </button>
-            </div>
-            {/* Contenido de la tarjeta con los datos del usuario */}
-            <div className="card-body">
+          <div className="card-body d-flex align-items-start">
+            {/* Columna izquierda: info del usuario */}
+            <div className="flex-grow-1 pe-4">
               {usuario ? (
                 <table className="table table-borderless align-middle mb-0">
                   <tbody>
@@ -245,101 +201,138 @@ setUsuario(userRes.data);
                   </tbody>
                 </table>
               ) : (
-                <div className="text-center text-muted">No hay datos de usuario. Inicia sesión para ver tu información.</div>
+                <div className="text-muted">No hay datos de usuario.</div>
               )}
             </div>
-          </div>
-          {/* Documentos Académicos */}
-          {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
-            const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
-            const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
-            const tipo = nivel.toLowerCase();
-            const documentoExistente = documentos.find(doc => doc.tipo === tipo);
 
-            return (
-              <div key={nivel} className="card shadow-sm mb-4">
-                <div className="card-body d-flex align-items-center">
-                  <i className="bi bi-mortarboard-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-                  <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>
-                    {nivel}
-                  </label>
+            {/* Columna derecha: foto y botones */}
+            <div className="d-flex flex-column align-items-center">
+              {usuario?.foto_perfil ? (
+                <img
+                  src={`http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`}
+                  className="img-fluid mb-3 rounded-3"  // cuadrado con esquinas redondeadas
+                  alt="Foto de usuario"
+                  crossOrigin="use-credentials"
+                  style={{
+                    width: "220px",
+                    height: "220px",
+                    objectFit: "cover",
+                    border: "2px solid #7A1737"
+                  }}
+                />
+              ) : (
+                <div className="text-muted mb-3">No hay foto de perfil</div>
+              )}
 
-                  {!documentoExistente ? (
-                    <>
-                      <input
-                        type="file"
-                        accept=".pdf"
-                        className="form-control rounded-3 me-2"
-                        style={{ flex: 1 }}
-                        onChange={e => setMap[idx](e.target.files[0])}
-                      />
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-                        onClick={() => subirArchivo(stateMap[idx], tipo)}
-                      >
-                        <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-                        Subir
-                      </button>
-                      {stateMap[idx] && (
-                        <span className="ms-2 small text-muted">{stateMap[idx].name}</span>
-                      )}
-                    </>
-                  ) : (
-                    <div className="ms-auto d-flex align-items-center">
-                      <a
-                        href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-sm me-2"
-                        style={{
-                          backgroundColor: "#7A1737",
-                          color: "#fff",
-                          border: "none"
-                        }}
-                      >
-                        Ver documento
-                      </a>
-                      <button
-                        className="btn btn-sm"
-                        style={{
-                          backgroundColor: "#dc3545",
-                          color: "#fff",
-                          border: "none"
-                        }}
-                        onClick={() => eliminarDocumento(documentoExistente.id)}
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-          {/* Documentos adicionales */}
-          <div className="card shadow-sm mb-4">
-            <div className="card-body d-flex align-items-center">
-              <i className="bi bi-award-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-              <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>
-                Certificados
-              </label>
               <input
                 type="file"
-                accept=".pdf"
-                className="form-control rounded-3 me-2"
-                style={{ flex: 1 }}
+                accept="image/jpeg,image/png,image/jpg"
+                className="form-control rounded-3 mb-2"
+                style={{ width: "250px" }}   // más ancho y alineado con la imagen
+                onChange={e => setFotoPerfil(e.target.files[0])}
               />
               <button
                 type="button"
                 className="btn"
-                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737", width: "250px" }} // mismo ancho que el input
+                onClick={subirFotoPerfil}
               >
                 <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-                Subir
+                Subir Foto
               </button>
             </div>
+          </div>
+        </div>
+        {/* Documentos Académicos */}
+        {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
+          const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
+          const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
+          const tipo = nivel.toLowerCase();
+          const documentoExistente = documentos.find(doc => doc.tipo === tipo);
+
+          return (
+            <div key={nivel} className="card shadow-sm mb-4">
+              <div className="card-body d-flex align-items-center">
+                <i className="bi bi-mortarboard-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
+                <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>
+                  {nivel}
+                </label>
+
+                {!documentoExistente ? (
+                  <>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      className="form-control rounded-3 me-2"
+                      style={{ flex: 1 }}
+                      onChange={e => setMap[idx](e.target.files[0])}
+                    />
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                      onClick={() => subirArchivo(stateMap[idx], tipo)}
+                    >
+                      <i className="bi bi-cloud-arrow-up-fill me-1"></i>
+                      Subir
+                    </button>
+                    {stateMap[idx] && (
+                      <span className="ms-2 small text-muted">{stateMap[idx].name}</span>
+                    )}
+                  </>
+                ) : (
+                  <div className="ms-auto d-flex align-items-center">
+                    <a
+                      href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm me-2"
+                      style={{
+                        backgroundColor: "#7A1737",
+                        color: "#fff",
+                        border: "none"
+                      }}
+                    >
+                      Ver documento
+                    </a>
+                    <button
+                      className="btn btn-sm"
+                      style={{
+                        backgroundColor: "#dc3545",
+                        color: "#fff",
+                        border: "none"
+                      }}
+                      onClick={() => eliminarDocumento(documentoExistente.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {/* Documentos adicionales */}
+        <div className="card shadow-sm mb-4">
+          <div className="card-body d-flex align-items-center">
+            <i className="bi bi-award-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
+            <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>
+              Certificados
+            </label>
+            <input
+              type="file"
+              accept=".pdf"
+              className="form-control rounded-3 me-2"
+              style={{ flex: 1 }}
+            />
+            <button
+              type="button"
+              className="btn"
+              style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+            >
+              <i className="bi bi-cloud-arrow-up-fill me-1"></i>
+              Subir
+            </button>
           </div>
         </div>
       </div>
