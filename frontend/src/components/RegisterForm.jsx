@@ -1,9 +1,10 @@
+//librerias necesarias
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import zxcvbn from 'zxcvbn';
-
+//función principal del componente RegisterForm
 function RegisterForm() {
   const navigate = useNavigate();
   const [mensaje, setMensaje] = useState('');
@@ -19,10 +20,10 @@ function RegisterForm() {
     CONTRASENA: '',
     RFC: ''
   });
-
+  // Estado para mostrar/ocultar la contraseña
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-
+  // Validación del formulario
   const validateForm = () => {
   const newErrors = {};
   const upperCaseData = {
@@ -34,7 +35,7 @@ function RegisterForm() {
     CURP: formData.CURP.toUpperCase(),
     RFC: formData.RFC.toUpperCase(),
   };
-
+  // Validaciones para cada campo
   if (!upperCaseData.NOMBRE) newErrors.NOMBRE = 'El nombre es obligatorio.';
   else if (upperCaseData.NOMBRE.length > 50) newErrors.NOMBRE = 'El nombre no debe exceder 50 caracteres.';
   else if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(upperCaseData.NOMBRE)) newErrors.NOMBRE = 'El nombre solo debe contener letras en mayúsculas.';
@@ -63,7 +64,7 @@ function RegisterForm() {
 
   return newErrors;
   };
-
+  // Manejo del cambio en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -76,12 +77,12 @@ function RegisterForm() {
     }
     setError({ ...error, [name]: '' });
   };
-
+// Manejo del envío del formulario
 const handleSubmit = async (e) => {
   e.preventDefault();
   setMensaje('');
   setError({});
-
+  // Validación del formulario
   const newErrors = validateForm();
   if (Object.keys(newErrors).length > 0) {
     setError(newErrors);
@@ -121,11 +122,11 @@ const handleSubmit = async (e) => {
     }
   }
 };
-
+// Función para alternar la visibilidad de la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
+// Función para obtener el color de la barra de progreso según la fuerza de la contraseña
   const getStrengthColor = (score) => {
     switch (score) {
       case 0: return 'bg-danger';
@@ -137,7 +138,7 @@ const handleSubmit = async (e) => {
     }
   };
 
-
+//pagina de registro
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
       <div className="p-4 rounded-4 shadow bg-white" style={{ width: '100%', maxWidth: '600px' }}>
@@ -156,7 +157,7 @@ const handleSubmit = async (e) => {
             />
             {error.NOMBRE && <div className="text-danger small mt-1">{error.NOMBRE}</div>}
           </div>
-
+          {/* Campo de apellido paterno */}
           <div className="mb-3">
             <label className="form-label">APELLIDO PATERNO</label>
             <input
@@ -170,7 +171,7 @@ const handleSubmit = async (e) => {
             />
             {error.APELLIDO_PATERNO && <div className="text-danger small mt-1">{error.APELLIDO_PATERNO}</div>}
           </div>
-
+          {/* Campo de apellido materno */}
           <div className="mb-3">
             <label className="form-label">APELLIDO MATERNO</label>
             <input
@@ -183,7 +184,7 @@ const handleSubmit = async (e) => {
             />
             {error.APELLIDO_MATERNO && <div className="text-danger small mt-1">{error.APELLIDO_MATERNO}</div>}
           </div>
-
+          {/* Campo de CURP */}
           <div className="mb-3">
             <label className="form-label">CURP</label>
             <input
@@ -197,7 +198,7 @@ const handleSubmit = async (e) => {
             />
             {error.CURP && <div className="text-danger small mt-1">{error.CURP}</div>}
           </div>
-
+          {/* Campo de correo electrónico */}
           <div className="mb-3">
             <label className="form-label">RFC</label>
             <input
@@ -211,7 +212,7 @@ const handleSubmit = async (e) => {
             />
             {error.RFC && <div className="text-danger small mt-1">{error.RFC}</div>}
           </div>
-
+          {/* Campo de correo electrónico */}
           <div className="mb-3">
             <label className="form-label">CORREO ELECTRÓNICO</label>
             <input
@@ -225,7 +226,7 @@ const handleSubmit = async (e) => {
             />
             {error.CORREO && <div className="text-danger small mt-1">{error.CORREO}</div>}
           </div>
-
+          {/* Campo de usuario */}
           <div className="mb-4">
             <label className="form-label">USUARIO</label>
             <input
@@ -239,7 +240,7 @@ const handleSubmit = async (e) => {
             />
             {error.USUARIO && <div className="text-danger small mt-1">{error.USUARIO}</div>}
           </div>
-
+          {/* Contraseña con visibilidad alternable y barra de progreso */}
           <div className="mb-4">
             <label className="form-label">CONTRASENA</label>
             <div className="input-group">
@@ -278,7 +279,7 @@ const handleSubmit = async (e) => {
               </small>
             </div>
           </div>
-
+          {/* Botón de registro */}
           <button type="submit" className="btn btn-primary w-100 rounded-3" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737' }}>
             Registrar
           </button>

@@ -1,7 +1,9 @@
+//librerias necesarias
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+// función principal del componente EditarUsuario
 function EditarUsuario() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ function EditarUsuario() {
   });
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState({});
-
+  // Efecto para cargar los datos del usuario desde location.state
   useEffect(() => {
     if (location.state && location.state.user) {
       setFormData({
@@ -25,7 +27,7 @@ function EditarUsuario() {
       });
     }
   }, [location.state]);
-
+  // Validación del formulario
   const validateForm = () => {
     const newErrors = {};
     const upperCaseData = {
@@ -35,7 +37,7 @@ function EditarUsuario() {
       curp: formData.curp.toUpperCase(),
       rfc: formData.rfc.toUpperCase(),
     };
-
+    // Validaciones para cada campo
     if (!upperCaseData.nombre) newErrors.nombre = "El nombre es obligatorio.";
     else if (upperCaseData.nombre.length > 50)
       newErrors.nombre = "El nombre no debe exceder 50 caracteres.";
@@ -68,7 +70,7 @@ function EditarUsuario() {
 
     return newErrors;
   };
-
+  // Manejo del cambio en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -77,7 +79,7 @@ function EditarUsuario() {
     }));
     setError({ ...error, [name]: "" }); // Limpia el error al cambiar
   };
-
+  // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje("");
@@ -108,6 +110,7 @@ function EditarUsuario() {
     }
   };
 
+//pagina de edición de usuario
   return (
     <div className="container py-5">
       <div>
@@ -125,7 +128,7 @@ function EditarUsuario() {
           Regresar
         </button>
       </div>
-
+      {/* Encabezado de la página */}
       <div className="row justify-content-center" style={{ marginTop: "20px" }}>
         <div className="col-12 col-md-8 col-lg-6">
           <h3 className="mb-4 text-center" style={{ color: "#7A1737" }}>

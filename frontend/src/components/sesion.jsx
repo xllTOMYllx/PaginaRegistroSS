@@ -1,18 +1,20 @@
+// variables de entorno
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
+// función principal del componente Sesion
 function Sesion() {
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     USUARIO: '',
     CONTRASENA: ''
   });
-
+  // Estado para mostrar/ocultar la contraseña
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
+  // Validación del formulario
   const validateForm = () => {
     const newErrors = {};
     if (!formData.USUARIO) newErrors.USUARIO = 'El usuario es requerido.';
@@ -22,7 +24,7 @@ function Sesion() {
 
     return newErrors;
   };
-  
+  // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError({});
@@ -63,23 +65,24 @@ function Sesion() {
       }
     }
   };
-
+  // Función para alternar la visibilidad de la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
+  // Manejo del cambio en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: name === 'USUARIO' ? value.toUpperCase() : value });
     setError({ ...error, [name]: '' }); // Limpia el error al cambiar
   };
-
+// Pagina de inicio de sesión
 return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
       <div className="p-4 rounded-4 shadow bg-white" style={{ width: '100%', maxWidth: '600px' }}>
         <h4 className="text-center mb-3" style={{ color: '#7A1737', fontSize: '30px' }}>INICIAR SESIÓN</h4>
         <form onSubmit={handleSubmit}>
           {error.general && <div className="alert alert-danger mt-3 text-center">{error.general}</div>}
+          {/* Campo de usuario */}
           <div className="mb-3">
             <label className="form-label">Usuario</label>
             <input
@@ -92,6 +95,7 @@ return (
             />
             {error.USUARIO && <div className="text-danger small mt-1">{error.USUARIO}</div>}
           </div>
+          {/* Campo de contraseña */}
           <div className="mb-4">
             <label className="form-label">Contraseña</label>
             <div className="input-group">
@@ -104,6 +108,7 @@ return (
                 className="form-control rounded-3"
                 required
               />
+              {/* Icono para mostrar/ocultar contraseña */}
               <button
                 type="button"
                 className="btn btn-outline-secondary rounded-end"
@@ -115,6 +120,7 @@ return (
             </div>
             {error.CONTRASENA && <div className="text-danger small mt-1">{error.CONTRASENA}</div>}
           </div>
+          {/* Botón de inicio de sesión */}
           <button type="submit" className="btn btn-primary w-100 rounded-3" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737' }}>
             Iniciar Sesión
           </button>

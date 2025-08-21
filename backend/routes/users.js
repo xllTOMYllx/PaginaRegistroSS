@@ -1,13 +1,12 @@
+// variables de entorno
 const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
-
-
 require('dotenv').config();
-
+// Configuración de la base de datos
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -15,9 +14,8 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT || 5432,
 });
-
+// Clave secreta para JWT
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_aqui';
-
 
 // Registro de usuario con validaciones y contraseña hasheada
 router.post('/register', async (req, res) => {

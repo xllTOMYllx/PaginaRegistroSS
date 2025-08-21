@@ -1,6 +1,7 @@
+//librerias necesarias
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+//función principal del componente Homeadmin
 function Homeadmin() {
   const [usuariosRol1, setUsuariosRol1] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,7 @@ function Homeadmin() {
     curp: '',
     rfc: ''
   });
+  // Estados para manejar errores y mensajes de éxito al crear usuario
   const [crearError, setCrearError] = useState('');
   const [crearExito, setCrearExito] = useState('');
 
@@ -73,7 +75,8 @@ function Homeadmin() {
   if (loading) {
     return <div className="text-center mt-5">Cargando usuarios...</div>;
   }
-
+  
+  //pagina principal del administrador
   return (
     <div className="container mt-4">
       <h2 className="mb-4 text-center" style={{ color: "#7A1737" }}>
