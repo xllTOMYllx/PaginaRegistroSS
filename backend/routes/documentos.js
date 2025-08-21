@@ -1,4 +1,4 @@
-const express = require('express');
+ const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
 const multer = require('multer');
@@ -174,7 +174,24 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
       return res.status(400).json({ error: 'No se subió ninguna imagen' });
     }
 
-    // Puedes guardar el nombre del archivo en la tabla de usuarios si lo deseas
+    // Obtener la foto anterior del usuario
+    const result = await pool.query(
+      `SELECT foto_perfil FROM personal WHERE id_personal = $1`,
+      [req.user.id_personal]
+    );
+
+    const fotoAnterior = result.rows[0]?.foto_perfil;
+    const carpetaUsuario = path.join(__dirname, '../uploads/fotos', `${req.user.id_personal}`);
+
+    // Eliminar la foto anterior si existe
+    if (fotoAnterior) {
+      const rutaFotoAnterior = path.join(carpetaUsuario, fotoAnterior);
+      if (fs.existsSync(rutaFotoAnterior)) {
+        fs.unlinkSync(rutaFotoAnterior);
+      }
+    }
+
+    // Guardar la nueva foto en la base de datos
     await pool.query(
       `UPDATE personal SET foto_perfil = $1 WHERE id_personal = $2`,
       [req.file.filename, req.user.id_personal]
