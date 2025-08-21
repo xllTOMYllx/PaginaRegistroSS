@@ -1,4 +1,5 @@
- const express = require('express');
+// variables de entorno
+const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
 const multer = require('multer');
@@ -108,7 +109,6 @@ router.get('/mis-documentos', authenticateToken, async (req, res) => {
 });
 
 //Eliminar documento
-
 router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
@@ -121,7 +121,7 @@ router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Documento no encontrado' });
     }
-
+    // Obtener el nombre del archivo
     const archivo = result.rows[0].archivo;
     const filePath = path.join(__dirname, '../uploads/academico', `${req.user.id_personal}`, archivo);
 
@@ -155,7 +155,7 @@ const storageFoto = multer.diskStorage({
     cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
   }
 });
-
+// Solo imágenes JPG y PNG
 const uploadFoto = multer({
   storage: storageFoto,
   fileFilter: (req, file, cb) => {
@@ -179,7 +179,7 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
       `SELECT foto_perfil FROM personal WHERE id_personal = $1`,
       [req.user.id_personal]
     );
-
+    // Si no hay foto anterior, se asigna null
     const fotoAnterior = result.rows[0]?.foto_perfil;
     const carpetaUsuario = path.join(__dirname, '../uploads/fotos', `${req.user.id_personal}`);
 
@@ -206,7 +206,5 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
-
 
 module.exports = router;

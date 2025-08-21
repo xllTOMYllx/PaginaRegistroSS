@@ -1,19 +1,20 @@
+
+// importaciones necesarias
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 
+// función principal del componente Home
 function Home() {
   const navigate = useNavigate();
   const location = useLocation();
   const [usuario, setUsuario] = useState(null);
-
   const [secundaria, setSecundaria] = useState(null);
   const [bachillerato, setBachillerato] = useState(null);
   const [universidad, setUniversidad] = useState(null);
   const [documentos, setDocumentos] = useState([]);
 
-  
+  // Obtener el usuario autenticado al cargar el componente
   useEffect(() => {
     const token = localStorage.getItem('token'); // o donde guardes tu JWT
 
@@ -36,7 +37,7 @@ function Home() {
     }
     }, []);
 
-
+// Si se pasa un usuario desde la navegación, actualizar el estado
   useEffect(() => {
     if (location.state && location.state.user) {
       //console.log("Usuario recibido:", location.state.user);
@@ -44,6 +45,7 @@ function Home() {
     }
   }, [location.state]);
 
+// Obtener documentos del usuario autenticado
   useEffect(() => {
     const fetchDocumentos = async () => {
       const token = localStorage.getItem("token");
@@ -61,19 +63,19 @@ function Home() {
 
     fetchDocumentos();
   }, []);
-
+// Función para subir archivos PDF
   const subirArchivo = async (archivo, tipo) => {
     if (!archivo || archivo.type !== "application/pdf") {
       ////alert("Selecciona un archivo PDF válido");
       return;
     }
-
+// Verificar si hay sesión activa
     const token = localStorage.getItem("token")?.trim();
     if (!token) {
       alert("No hay sesión activa");
       return;
     }
-
+// Crear FormData para enviar el archivo
     const formData = new FormData();
     formData.append("archivo", archivo);
     formData.append("tipo", tipo);
@@ -93,7 +95,7 @@ function Home() {
       //alert(error.response?.data?.error || "Error al subir el archivo");
     }
   };
-
+// Función para eliminar un documento
   const eliminarDocumento = async (id) => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -113,21 +115,21 @@ function Home() {
   };
 
   //IMAGENES
-
+// variables de estado para la foto de perfil
   const [fotoPerfil, setFotoPerfil] = useState(null);
-
+// Función para subir la foto de perfil
   const subirFotoPerfil = async () => {
     if (!fotoPerfil || !["image/jpeg", "image/png", "image/jpg"].includes(fotoPerfil.type)) {
       alert("Selecciona una imagen válida (JPG o PNG)");
       return;
     }
-
+// Verificar si hay sesión activa
     const token = localStorage.getItem("token")?.trim();
     if (!token) {
       alert("No hay sesión activa");
       return;
     }
-
+// Crear FormData para enviar la foto
     const formData = new FormData();
     formData.append("foto", fotoPerfil);
 
@@ -155,7 +157,7 @@ setUsuario(userRes.data);
     }
   };
 
-
+// diseño principal de la página
   return (
     <div className="d-flex flex-column align-items-center min-vh-100">
       <div className="container py-4" style={{ maxWidth: '800px', width: '90%' }}>
@@ -166,7 +168,7 @@ setUsuario(userRes.data);
               Foto de Perfil
             </h4>
           </div>
-
+          {/* Contenido de la tarjeta */}
           <div className="card-body d-flex flex-column align-items-center justify-content-center">
             {usuario?.foto_perfil ? (
               <img
@@ -184,7 +186,7 @@ setUsuario(userRes.data);
             ) : (
               <div className="text-muted mb-3">No hay foto de perfil</div>
             )}
-
+            {/* Botón para subir foto de perfil */}
             <input
               type="file"
               accept="image/jpeg,image/png,image/jpg"
@@ -229,6 +231,7 @@ setUsuario(userRes.data);
                 Editar
               </button>
             </div>
+            {/* Contenido de la tarjeta con los datos del usuario */}
             <div className="card-body">
               {usuario ? (
                 <table className="table table-borderless align-middle mb-0">
@@ -246,7 +249,7 @@ setUsuario(userRes.data);
               )}
             </div>
           </div>
-
+          {/* Documentos Académicos */}
           {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
             const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
             const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
@@ -315,7 +318,7 @@ setUsuario(userRes.data);
               </div>
             );
           })}
-
+          {/* Documentos adicionales */}
           <div className="card shadow-sm mb-4">
             <div className="card-body d-flex align-items-center">
               <i className="bi bi-award-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
