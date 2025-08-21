@@ -14,9 +14,33 @@ function Home() {
   const [universidad, setUniversidad] = useState(null);
   const [documentos, setDocumentos] = useState([]);
 
+  
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // o donde guardes tu JWT
+
+    if (token) {
+      fetch('http://localhost:5000/api/users/me', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+        .then(res => res.json())
+        .then(data => {
+          setUsuario(data);
+        })
+        .catch(err => {
+          console.error('Error al obtener usuario:', err);
+        });
+    }
+    }, []);
+
+
   useEffect(() => {
     if (location.state && location.state.user) {
-      console.log("Usuario recibido:", location.state.user);
+      //console.log("Usuario recibido:", location.state.user);
       setUsuario(location.state.user);
     }
   }, [location.state]);
@@ -115,9 +139,17 @@ function Home() {
           "Authorization": `Bearer ${token}`
         }
       });
+      //alert("Foto subida correctamente");
+      //window.location.reload();
 
-      alert("Foto subida correctamente");
-      window.location.reload();
+// Vuelve a consultar los datos del usuario para obtener la nueva foto
+const userRes = await axios.get("http://localhost:5000/api/users/me", {
+  headers: {
+    "Authorization": `Bearer ${token}`
+  }
+});
+setUsuario(userRes.data);
+
     } catch (error) {
       console.error("Error al subir foto:", error);
       alert(error.response?.data?.error || "Error al subir la foto");
