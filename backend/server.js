@@ -27,11 +27,14 @@ app.use('/api/users', usersRoutes);
 app.use('/api/documentos', documentosRoutes);
 
 // Middleware personalizado para servir archivos estáticos con CORS
+/*
 app.use('/uploads', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
-}, express.static(path.join(__dirname, 'uploads')));
+}, express.static(path.join(__dirname, 'uploads')));*/
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Ruta raíz
 app.get('/', (req, res) => {
