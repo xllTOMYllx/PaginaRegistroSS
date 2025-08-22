@@ -12,7 +12,15 @@ function Home() {
   const [secundaria, setSecundaria] = useState(null);
   const [bachillerato, setBachillerato] = useState(null);
   const [universidad, setUniversidad] = useState(null);
+  const  [Certificados, setCertificados] = useState(null);
   const [documentos, setDocumentos] = useState([]);
+
+  // ✅ Función para cerrar sesión
+  const cerrarSesion = () => {
+    localStorage.removeItem("token"); // elimina el token
+    setUsuario(null); // limpia el estado del usuario
+    navigate("/sesion"); // redirige a la ruta de login o inicio
+  };
 
   // Obtener el usuario autenticado al cargar el componente
   useEffect(() => {
@@ -159,13 +167,36 @@ function Home() {
 
   // diseño principal de la página
   return (
+
+
+    
     <div className="d-flex flex-column align-items-center min-vh-100">
+
+      <button
+        onClick={cerrarSesion}
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+          backgroundColor: "#ff4d4f",
+          color: "white",
+          padding: "8px 16px",
+          border: "none",
+          borderRadius: "20px",
+          cursor: "pointer",
+          fontWeight: "bold"
+        }}
+      >
+        Cerrar sesión
+      </button>
       <div className="container py-4" style={{ maxWidth: '800px', width: '90%' }}>
         {/* Contenedor unificado de usuario + foto */}
         <div className="card shadow mb-4">
           <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
             <h4 className="mb-0" style={{ color: "#7A1737" }}>
               <i className="bi bi-person-circle me-2"></i>
+
+              
               Datos del Usuario: {usuario ? usuario.usuario : 'Desconocido'}
             </h4>
             <button
@@ -181,6 +212,7 @@ function Home() {
                 letterSpacing: "1px"
               }}
             >
+              
               <i className="bi bi-pencil-square me-1"></i>
               Editar
             </button>
@@ -244,9 +276,9 @@ function Home() {
           </div>
         </div>
         {/* Documentos Académicos */}
-        {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
-          const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
-          const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
+        {["Secundaria", "Bachillerato", "Universidad", "Certificados"].map((nivel, idx) => {
+          const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad, 3: Certificados };
+          const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad, 3: setCertificados };
           const tipo = nivel.toLowerCase();
           const documentoExistente = documentos.find(doc => doc.tipo === tipo);
 
@@ -306,35 +338,15 @@ function Home() {
                     >
                       Eliminar
                     </button>
+
+
+                    
                   </div>
                 )}
               </div>
             </div>
           );
         })}
-        {/* Documentos adicionales */}
-        <div className="card shadow-sm mb-4">
-          <div className="card-body d-flex align-items-center">
-            <i className="bi bi-award-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-            <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>
-              Certificados
-            </label>
-            <input
-              type="file"
-              accept=".pdf"
-              className="form-control rounded-3 me-2"
-              style={{ flex: 1 }}
-            />
-            <button
-              type="button"
-              className="btn"
-              style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-            >
-              <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-              Subir
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
