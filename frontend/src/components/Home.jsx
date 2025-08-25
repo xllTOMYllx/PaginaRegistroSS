@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaBell } from "react-icons/fa";
+
 
 // función principal del componente Home
 function Home() {
@@ -12,8 +14,32 @@ function Home() {
   const [secundaria, setSecundaria] = useState(null);
   const [bachillerato, setBachillerato] = useState(null);
   const [universidad, setUniversidad] = useState(null);
-  const  [Certificados, setCertificados] = useState(null);
+  const [Certificados, setCertificados] = useState(null);
   const [documentos, setDocumentos] = useState([]);
+  const [notificaciones, setNotificaciones] = useState([]);
+  const [nuevas, setNuevas] = useState(0);
+  const [mostrarPanel, setMostrarPanel] = useState(false);
+
+  // Polling de notificaciones cada 10 segundos
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const fetchNotificaciones = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/documentos/notificaciones", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setNotificaciones(res.data);
+      } catch (err) {
+        console.error("Error al obtener notificaciones:", err);
+      }
+    };
+
+    fetchNotificaciones();
+    const intervalo = setInterval(fetchNotificaciones, 10000); // cada 10s
+    return () => clearInterval(intervalo);
+  }, []);
 
   // ✅ Función para cerrar sesión
   const cerrarSesion = () => {
@@ -169,7 +195,7 @@ function Home() {
   return (
 
 
-    
+
     <div className="d-flex flex-column align-items-center min-vh-100">
 
       <button
@@ -189,6 +215,74 @@ function Home() {
       >
         Cerrar sesión
       </button>
+
+      <div style={{ position: "absolute", top: "10px", right: "160px" }}>
+        <button
+          className="btn position-relative"
+          onClick={() => setMostrarPanel(!mostrarPanel)}  // 👈 toggle del panel
+        >
+          <FaBell size={20} />
+          {notificaciones.filter(n => !n.leido).length > 0 && (
+            <span
+              className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style={{ fontSize: "0.7rem" }}
+            >
+              {notificaciones.filter(n => !n.leido).length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Panel de Notificaciones */}
+      {mostrarPanel && (
+        <div
+          className="card shadow position-absolute"
+          style={{
+            top: "40px",      // se baja un poco para que no tape la campanita
+            right: "0px",
+            width: "245px",
+            zIndex: 1000,
+            maxHeight: "400px",
+            overflowY: "auto"
+          }}
+        >
+          <div className="card-header bg-white">
+            <strong style={{ color: "#7A1737" }}>Notificaciones</strong>
+          </div>
+          <div className="card-body p-2">
+            {notificaciones.length > 0 ? (
+              notificaciones.map((n) => (
+                <div
+                  key={n.id}
+                  className={`p-2 mb-2 rounded ${n.leido ? "bg-light" : "bg-white border"}`}
+                  style={{ cursor: "pointer" }}
+                  onClick={async () => {
+                    const token = localStorage.getItem("token");
+                    await axios.put(
+                      `http://localhost:5000/api/documentos/notificaciones/${n.id}/leido`,
+                      {},
+                      { headers: { Authorization: `Bearer ${token}` } }
+                    );
+                    setNotificaciones(prev =>
+                      prev.map(item =>
+                        item.id === n.id ? { ...item, leido: true } : item
+                      )
+                    );
+                  }}
+                >
+                  <small className="d-block">{n.mensaje}</small>
+                  <small className="text-muted">
+                    {new Date(n.fecha).toLocaleString()}
+                  </small>
+                </div>
+              ))
+            ) : (
+              <div className="text-muted text-center">No hay notificaciones</div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="container py-4" style={{ maxWidth: '800px', width: '90%' }}>
         {/* Contenedor unificado de usuario + foto */}
         <div className="card shadow mb-4">
@@ -196,7 +290,7 @@ function Home() {
             <h4 className="mb-0" style={{ color: "#7A1737" }}>
               <i className="bi bi-person-circle me-2"></i>
 
-              
+
               Datos del Usuario: {usuario ? usuario.usuario : 'Desconocido'}
             </h4>
             <button
@@ -212,7 +306,7 @@ function Home() {
                 letterSpacing: "1px"
               }}
             >
-              
+
               <i className="bi bi-pencil-square me-1"></i>
               Editar
             </button>
@@ -340,7 +434,7 @@ function Home() {
                     </button>
 
 
-                    
+
                   </div>
                 )}
               </div>

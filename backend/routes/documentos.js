@@ -52,7 +52,7 @@ const storage = multer.diskStorage({
 });
 
 // Solo PDF
-const upload = multer({ 
+const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
     if (file.mimetype !== "application/pdf") {
@@ -79,6 +79,12 @@ router.post('/subir-academico', authenticateToken, upload.single('archivo'), asy
       `INSERT INTO documentos_academicos (id_personal, tipo, archivo)
        VALUES ($1, $2, $3)`,
       [req.user.id_personal, tipo, req.file.filename]
+    );
+
+    await pool.query(
+      `INSERT INTO notificaciones (id_personal, mensaje) 
+   VALUES ($1, $2)`,
+      [req.user.id_personal, `Subiste un nuevo documento: ${tipo}`]
     );
 
     res.json({
@@ -203,6 +209,42 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
     });
   } catch (error) {
     console.error('Error al subir foto de perfil:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+
+// 📌 Obtener notificaciones del usuario
+router.get('/notificaciones', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, mensaje, fecha, leido
+       FROM notificaciones
+       WHERE id_personal = $1
+       ORDER BY fecha DESC
+       LIMIT 10`,
+      [req.user.id_personal]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener notificaciones:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// 📌 Marcar notificación como leída
+router.put('/notificaciones/:id/leido', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query(
+      `UPDATE notificaciones
+       SET leido = TRUE
+       WHERE id = $1 AND id_personal = $2`,
+      [id, req.user.id_personal]
+    );
+    res.json({ message: 'Notificación marcada como leída' });
+  } catch (error) {
+    console.error('Error al marcar notificación:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });

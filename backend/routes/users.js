@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
 require('dotenv').config();
+
 // Configuración de la base de datos
 const pool = new Pool({
   user: process.env.DB_USER,
