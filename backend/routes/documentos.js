@@ -81,11 +81,18 @@ router.post('/subir-academico', authenticateToken, upload.single('archivo'), asy
       [req.user.id_personal, tipo, req.file.filename]
     );
 
-    await pool.query(
-      `INSERT INTO notificaciones (id_personal, mensaje) 
-   VALUES ($1, $2)`,
-      [req.user.id_personal, `Subiste un nuevo documento: ${tipo}`]
+    const userResult = await pool.query(
+      `SELECT usuario FROM personal WHERE id_personal = $1`,
+      [req.user.id_personal]
     );
+
+    const nombreUsuario = userResult.rows[0]?.usuario || "Desconocido";
+
+    await pool.query(
+  `INSERT INTO notificaciones (id_personal, usuario, mensaje) 
+   VALUES ($1, $2, $3)`,
+  [req.user.id_personal, nombreUsuario, `Subiste un nuevo documento: ${tipo}`]
+);
 
     res.json({
       message: 'Documento académico subido correctamente',
@@ -218,7 +225,7 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
 router.get('/notificaciones', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, mensaje, fecha, leido
+      `SELECT id, usuario, mensaje, fecha, leido
        FROM notificaciones
        WHERE id_personal = $1
        ORDER BY fecha DESC
@@ -245,6 +252,24 @@ router.put('/notificaciones/:id/leido', authenticateToken, async (req, res) => {
     res.json({ message: 'Notificación marcada como leída' });
   } catch (error) {
     console.error('Error al marcar notificación:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// 📌 Eliminar notificación
+router.delete('/notificaciones/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await pool.query(
+      `DELETE FROM notificaciones 
+       WHERE id = $1 AND id_personal = $2`,
+      [id, req.user.id_personal]
+    );
+
+    res.json({ message: 'Notificación eliminada correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar notificación:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
