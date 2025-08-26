@@ -51,49 +51,49 @@ router.post('/register', async (req, res) => {
   if (!CURP) missingFields.push('CURP');
   if (!RFC) missingFields.push('RFC');
   if (missingFields.length > 0) {
-  return res.status(400).json({ error: `Por favor completa los siguientes campos: ${missingFields.join(', ')}.` });
+    return res.status(400).json({ error: `Por favor completa los siguientes campos: ${missingFields.join(', ')}.` });
   }
 
   // Validar longitud y formato de los campos
-const longFields = [];
+  const longFields = [];
   if (NOMBRE.length > 50) longFields.push('Nombre');
   if (APELLIDO_PATERNO.length > 50) longFields.push('Apellido Paterno');
   if (APELLIDO_MATERNO && APELLIDO_MATERNO.length > 50) longFields.push('Apellido Materno');
   if (longFields.length > 0) {
-  return res.status(400).json({ error: `${longFields.join(', ')} demasiado largos. Máximo 50 caracteres.` });
+    return res.status(400).json({ error: `${longFields.join(', ')} demasiado largos. Máximo 50 caracteres.` });
   }
 
-const invalidFields = [];
+  const invalidFields = [];
   if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(NOMBRE)) invalidFields.push('Nombre');
   if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(APELLIDO_PATERNO)) invalidFields.push('Apellido Paterno');
   if (APELLIDO_MATERNO && !/^[A-ZÁÉÍÓÚÑ\s]+$/.test(APELLIDO_MATERNO)) invalidFields.push('Apellido Materno');
   if (invalidFields.length > 0) {
-  return res.status(400).json({ error: `${invalidFields.join(', ')} solo deben contener letras.` });
+    return res.status(400).json({ error: `${invalidFields.join(', ')} solo deben contener letras.` });
   }
 
   if (!/^[A-Z0-9_]{4,15}$/.test(USUARIO)) {
     return res.status(400).json({ error: 'Usuario inválido. Debe tener entre 4 y 15 caracteres alfanuméricos o guion bajo.' });
   }
   if (!validator.isStrongPassword(CONTRASENA, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 })) {
-  return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un carácter especial.' });
+    return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un carácter especial.' });
   }
   if (!validator.isEmail(CORREO)) {
     return res.status(400).json({ error: 'Correo electrónico no válido.' });
   }
   if (!/^[A-Z]{4}\d{6}[A-Z0-9]{8}$/.test(CURP)) {
-  return res.status(400).json({ error: 'CURP no válido. Debe tener 18 caracteres: 4 letras, 6 dígitos y 8 alfanuméricos.' });
+    return res.status(400).json({ error: 'CURP no válido. Debe tener 18 caracteres: 4 letras, 6 dígitos y 8 alfanuméricos.' });
   }
   if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(RFC)) {
-  return res.status(400).json({ error: 'RFC no válido. Debe tener 12 o 13 caracteres: 3-4 letras, 6 dígitos y 3 alfanuméricos.' });
+    return res.status(400).json({ error: 'RFC no válido. Debe tener 12 o 13 caracteres: 3-4 letras, 6 dígitos y 3 alfanuméricos.' });
   }
 
   // Validar formato de correo
   const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
-if (!emailRegex.test(CORREO)) {
-  return res.status(400).json({ error: 'El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.' });
-}
+  if (!emailRegex.test(CORREO)) {
+    return res.status(400).json({ error: 'El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.' });
+  }
 
-   try {
+  try {
     // Verificar si USUARIO, CORREO, CURP o RFC ya existen
     const checkQuery = `
       SELECT 1 FROM personal
@@ -113,6 +113,7 @@ if (!emailRegex.test(CORREO)) {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORREO, CURP, RFC
     `;
+
     const values = [
       NOMBRE,
       APELLIDO_PATERNO,
@@ -132,6 +133,7 @@ if (!emailRegex.test(CORREO)) {
     console.error('Error al registrar usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
+  
 });
 
 // Actualizar datos personales
@@ -145,7 +147,7 @@ router.put('/:id', async (req, res) => {
     rfc,
     correo
   } = req.body;
- //console.log('Datos recibidos para actualizar:', req.body);
+  //console.log('Datos recibidos para actualizar:', req.body);
   try {
     const updateQuery = `
       UPDATE personal
@@ -168,11 +170,15 @@ router.put('/:id', async (req, res) => {
       id
     ]);
 
+    
+
     res.json({ user: result.rows[0] });
   } catch (error) {
     console.error('Error al actualizar usuario:', error);
     res.status(500).json({ error: 'Error al actualizar los datos.' });
   }
+
+  
 });
 
 
@@ -208,34 +214,34 @@ router.post('/login', async (req, res) => {
     }
 
     const user = result.rows[0];
-    
+
 
     const match = await bcrypt.compare(CONTRASENA, user.contrasena);
     if (!match) {
       return res.status(401).json({ error: 'Credenciales inválidas. Verifica tu contraseña.' });
     }
-    
+
     //console.log('Login exitoso para usuario:', USUARIO);
 
-    const tokenPayload = { id_personal: user.id_personal, rol:user.rol };
+    const tokenPayload = { id_personal: user.id_personal, rol: user.rol };
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
 
     res.json({
-  message: 'Login exitoso',
-  token,
-  usuario: {
-    id_personal: user.id_personal,
-    nombre: user.nombre,
-    apellido_paterno: user.apellido_paterno,
-    apellido_materno: user.apellido_materno,
-    usuario: user.usuario,
-    correo: user.correo,
-    curp: user.curp,
-    rfc: user.rfc,
-    rol: user.rol,
-    foto_perfil: user.foto_perfil
-  },
-});
+      message: 'Login exitoso',
+      token,
+      usuario: {
+        id_personal: user.id_personal,
+        nombre: user.nombre,
+        apellido_paterno: user.apellido_paterno,
+        apellido_materno: user.apellido_materno,
+        usuario: user.usuario,
+        correo: user.correo,
+        curp: user.curp,
+        rfc: user.rfc,
+        rol: user.rol,
+        foto_perfil: user.foto_perfil
+      },
+    });
 
   } catch (error) {
     console.error('Error en login:', error.stack);
@@ -249,7 +255,7 @@ router.post('/login', async (req, res) => {
 
 // Middleware JWT
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']; 
+  const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) return res.status(401).json({ error: 'Token requerido' });

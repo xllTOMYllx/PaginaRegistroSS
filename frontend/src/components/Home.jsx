@@ -238,9 +238,9 @@ function Home() {
         <div
           className="card shadow position-absolute"
           style={{
-            top: "40px",      // se baja un poco para que no tape la campanita
-            right: "0px",
-            width: "245px",
+            top: "60px", // se baja un poco para que no tape la campanita
+            right: "5px",
+            width: "235px",
             zIndex: 1000,
             maxHeight: "400px",
             overflowY: "auto"
@@ -254,26 +254,48 @@ function Home() {
               notificaciones.map((n) => (
                 <div
                   key={n.id}
-                  className={`p-2 mb-2 rounded ${n.leido ? "bg-light" : "bg-white border"}`}
-                  style={{ cursor: "pointer" }}
-                  onClick={async () => {
-                    const token = localStorage.getItem("token");
-                    await axios.put(
-                      `http://localhost:5000/api/documentos/notificaciones/${n.id}/leido`,
-                      {},
-                      { headers: { Authorization: `Bearer ${token}` } }
-                    );
-                    setNotificaciones(prev =>
-                      prev.map(item =>
-                        item.id === n.id ? { ...item, leido: true } : item
-                      )
-                    );
-                  }}
+                  className={`d-flex justify-content-between align-items-start p-2 mb-2 rounded ${n.leido ? "bg-light" : "bg-white border"}`}
                 >
-                  <small className="d-block">{n.mensaje}</small>
-                  <small className="text-muted">
-                    {new Date(n.fecha).toLocaleString()}
-                  </small>
+                  {/* Texto de la notificación (clic = marcar como leída) */}
+                  <div
+                    style={{ cursor: "pointer", flex: 1 }}
+                    onClick={async () => {
+                      const token = localStorage.getItem("token");
+                      await axios.put(
+                        `http://localhost:5000/api/documentos/notificaciones/${n.id}/leido`,
+                        {},
+                        { headers: { Authorization: `Bearer ${token}` } }
+                      );
+                      setNotificaciones(prev =>
+                        prev.map(item =>
+                          item.id === n.id ? { ...item, leido: true } : item
+                        )
+                      );
+                    }}
+                  >
+                    <small className="d-block">
+                      <strong>{n.usuario}:</strong> {n.mensaje}
+                    </small>
+                    <small className="text-muted">
+                      {new Date(n.fecha).toLocaleString()}
+                    </small>
+                  </div>
+
+                  {/* Botón eliminar */}
+                  <button
+                    className="btn p-0 text-danger ms-2"
+                    style={{ fontSize: "2.5rem" }}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      const token = localStorage.getItem("token");
+                      await axios.delete(
+                        `http://localhost:5000/api/documentos/notificaciones/${n.id}`,
+                        { headers: { Authorization: `Bearer ${token}` } }
+                      );
+                      setNotificaciones(prev => prev.filter(item => item.id !== n.id));
+                    }}
+                  > &times;
+                  </button>
                 </div>
               ))
             ) : (
@@ -282,6 +304,7 @@ function Home() {
           </div>
         </div>
       )}
+
 
       <div className="container py-4" style={{ maxWidth: '800px', width: '90%' }}>
         {/* Contenedor unificado de usuario + foto */}
