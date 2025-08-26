@@ -392,20 +392,25 @@ function Home() {
             </div>
           </div>
         </div>
-        {/* Documentos Académicos */}
-        {["Secundaria", "Bachillerato", "Universidad", "Certificados"].map((nivel, idx) => {
-          const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad, 3: Certificados };
-          const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad, 3: setCertificados };
-          const tipo = nivel.toLowerCase();
-          const documentoExistente = documentos.find(doc => doc.tipo === tipo);
+        {/* Información Académica */}
+      <div className="card shadow mb-4">
+        <div className="card-header bg-white border-0">
+          <h4 className="mb-0" style={{ color: "#7A1737" }}>
+            <i className="bi bi-journal-text me-2"></i>
+            Información Académica
+          </h4>
+        </div>
+        <div className="card-body">
+          {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
+            const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
+            const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
+            const tipo = nivel.toLowerCase();
+            const documentoExistente = documentos.find(doc => doc.tipo === tipo);
 
-          return (
-            <div key={nivel} className="card shadow-sm mb-4">
-              <div className="card-body d-flex align-items-center">
+            return (
+              <div key={nivel} className="mb-3 d-flex align-items-center">
                 <i className="bi bi-mortarboard-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-                <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>
-                  {nivel}
-                </label>
+                <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>{nivel}</label>
 
                 {!documentoExistente ? (
                   <>
@@ -436,36 +441,93 @@ function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-sm me-2"
-                      style={{
-                        backgroundColor: "#7A1737",
-                        color: "#fff",
-                        border: "none"
-                      }}
+                      style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
                     >
                       Ver documento
                     </a>
                     <button
                       className="btn btn-sm"
-                      style={{
-                        backgroundColor: "#dc3545",
-                        color: "#fff",
-                        border: "none"
-                      }}
+                      style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
                       onClick={() => eliminarDocumento(documentoExistente.id)}
                     >
                       Eliminar
                     </button>
-
-
-
                   </div>
                 )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Certificados */}
+      <div className="card shadow mb-4">
+        <div className="card-header bg-white border-0">
+          <h4 className="mb-0" style={{ color: "#7A1737" }}>
+            <i className="bi bi-award-fill me-2"></i>
+            Certificados
+          </h4>
+        </div>
+        <div className="card-body">
+          {(() => {
+            const tipo = "certificados";
+            const documentoExistente = documentos.find(doc => doc.tipo === tipo);
+
+            return (
+              <div className="d-flex align-items-center">
+                <i className="bi bi-file-earmark-text-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
+                <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>Certificados</label>
+
+                {!documentoExistente ? (
+                  <>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      className="form-control rounded-3 me-2"
+                      style={{ flex: 1 }}
+                      onChange={e => setCertificados(e.target.files[0])}
+                    />
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                      onClick={() => subirArchivo(Certificados, tipo)}
+                    >
+                      <i className="bi bi-cloud-arrow-up-fill me-1"></i>
+                      Subir
+                    </button>
+                    {Certificados && (
+                      <span className="ms-2 small text-muted">{Certificados.name}</span>
+                    )}
+                  </>
+                ) : (
+                  <div className="ms-auto d-flex align-items-center">
+                    <a
+                      href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm me-2"
+                      style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
+                    >
+                      Ver documento
+                    </a>
+                    <button
+                      className="btn btn-sm"
+                      style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
+                      onClick={() => eliminarDocumento(documentoExistente.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 }
 export default Home;
