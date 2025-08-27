@@ -16,8 +16,10 @@ function EditarUsuario() {
     rfc: "",
     correo: "",
   });
+  // Estados para mensajes y errores
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState({});
+
   // Efecto para cargar los datos del usuario desde location.state
   useEffect(() => {
     if (location.state && location.state.user) {
@@ -27,6 +29,7 @@ function EditarUsuario() {
       });
     }
   }, [location.state]);
+
   // Validación del formulario
   const validateForm = () => {
     const newErrors = {};
@@ -37,39 +40,47 @@ function EditarUsuario() {
       curp: formData.curp.toUpperCase(),
       rfc: formData.rfc.toUpperCase(),
     };
-    // Validaciones para cada campo
+
+    // ---Validaciones para cada campo--- //
+    //validacion de nombre
     if (!upperCaseData.nombre) newErrors.nombre = "El nombre es obligatorio.";
     else if (upperCaseData.nombre.length > 50)
       newErrors.nombre = "El nombre no debe exceder 50 caracteres.";
     else if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(upperCaseData.nombre))
       newErrors.nombre = "El nombre solo debe contener letras en mayúsculas.";
 
+    //validacion de apellido paterno
     if (!upperCaseData.apellido_paterno)
       newErrors.apellido_paterno = "El apellido paterno es obligatorio.";
     else if (upperCaseData.apellido_paterno.length > 50)
       newErrors.apellido_paterno = "El apellido paterno no debe exceder 50 caracteres.";
     else if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(upperCaseData.apellido_paterno))
       newErrors.apellido_paterno = "El apellido paterno solo debe contener letras en mayúsculas.";
-
+    
+    //validacion de apellido materno
     if (upperCaseData.apellido_materno && !/^[A-ZÁÉÍÓÚÑ\s]+$/.test(upperCaseData.apellido_materno))
       newErrors.apellido_materno = "El apellido materno solo debe contener letras en mayúsculas.";
     else if (upperCaseData.apellido_materno && upperCaseData.apellido_materno.length > 50)
       newErrors.apellido_materno = "El apellido materno no debe exceder 50 caracteres.";
-
+    
+    //validacion de curp
     if (!formData.curp) newErrors.curp = "La CURP es obligatoria.";
-    else if (!/^[A-Z]{4}\d{6}[A-Z0-9]{8}$/.test(upperCaseData.curp))
+    else if (!/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/.test(upperCaseData.curp))
       newErrors.curp = "CURP no válido. Debe tener 18 caracteres: 4 letras, 6 dígitos y 8 alfanuméricos.";
-
+    
+    //validacion de rfc
     if (!formData.rfc) newErrors.rfc = "El RFC es obligatorio.";
     else if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(upperCaseData.rfc))
       newErrors.rfc = "RFC no válido. Debe tener 12 o 13 caracteres: 3-4 letras, 6 dígitos y 3 alfanuméricos.";
-
+    
+    //validacion de correo
     if (!formData.correo) newErrors.correo = "El correo es obligatorio.";
     else if (!/^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/.test(formData.correo))
       newErrors.correo = "El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.";
 
     return newErrors;
   };
+
   // Manejo del cambio en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,18 +90,19 @@ function EditarUsuario() {
     }));
     setError({ ...error, [name]: "" }); // Limpia el error al cambiar
   };
+
   // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje("");
     setError({});
-
+    // Validar el formulario antes de enviarlo
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setError(newErrors);
       return;
     }
-
+    // Enviar datos al backend
     try {
       const response = await axios.put(
         `http://localhost:5000/api/users/${formData.id_personal}`,
@@ -111,9 +123,10 @@ function EditarUsuario() {
   };
 
 //pagina de edición de usuario
-  return (
+  return ( // Contenedor principal
     <div className="container py-5">
       <div>
+        {/* Botón para regresar a la página de inicio */}
         <button
           onClick={() => navigate("/home", { state: { user: formData } })}
           className="btn btn-dark mb-4"
@@ -128,12 +141,14 @@ function EditarUsuario() {
           Regresar
         </button>
       </div>
+
       {/* Encabezado de la página */}
       <div className="row justify-content-center" style={{ marginTop: "20px" }}>
         <div className="col-12 col-md-8 col-lg-6">
           <h3 className="mb-4 text-center" style={{ color: "#7A1737" }}>
             Editar Datos Personales
           </h3>
+          {/* Formulario de edición */}
           <form onSubmit={handleSubmit}>
             {["nombre", "apellido_paterno", "apellido_materno", "curp", "rfc", "correo"].map((field) => (
               <div className="mb-3" key={field}>
@@ -151,6 +166,8 @@ function EditarUsuario() {
                 {error[field] && <div className="text-danger small mt-1">{error[field]}</div>}
               </div>
             ))}
+            
+            {/* Botón para enviar el formulario y guardar cambios */}
             <button
               type="submit"
               className="btn w-100"
@@ -158,6 +175,8 @@ function EditarUsuario() {
             >
               Guardar Cambios
             </button>
+
+            {/* Mensajes de éxito o error */}
             {mensaje && <div className="alert alert-success mt-3 text-center">{mensaje}</div>}
             {error.general && <div className="alert alert-danger mt-3 text-center">{error.general}</div>}
           </form>

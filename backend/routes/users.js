@@ -62,7 +62,7 @@ router.post('/register', async (req, res) => {
   if (longFields.length > 0) {
     return res.status(400).json({ error: `${longFields.join(', ')} demasiado largos. Máximo 50 caracteres.` });
   }
-
+  // Validar que los campos de texto solo contengan las letras permitidas
   const invalidFields = [];
   if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(NOMBRE)) invalidFields.push('Nombre');
   if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(APELLIDO_PATERNO)) invalidFields.push('Apellido Paterno');
@@ -70,24 +70,28 @@ router.post('/register', async (req, res) => {
   if (invalidFields.length > 0) {
     return res.status(400).json({ error: `${invalidFields.join(', ')} solo deben contener letras.` });
   }
-
+  // Validar formato de USUARIO
   if (!/^[A-Z0-9_]{4,15}$/.test(USUARIO)) {
     return res.status(400).json({ error: 'Usuario inválido. Debe tener entre 4 y 15 caracteres alfanuméricos o guion bajo.' });
   }
+  // Validar fortaleza de CONTRASENA
   if (!validator.isStrongPassword(CONTRASENA, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 })) {
     return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un carácter especial.' });
   }
+  // Validar formato de CORREO
   if (!validator.isEmail(CORREO)) {
     return res.status(400).json({ error: 'Correo electrónico no válido.' });
   }
-  if (!/^[A-Z]{4}\d{6}[A-Z0-9]{8}$/.test(CURP)) {
+  // Validar formato de CURP con regex más estricta y expresiones regulares
+  if (!/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/.test(CURP)) {
     return res.status(400).json({ error: 'CURP no válido. Debe tener 18 caracteres: 4 letras, 6 dígitos y 8 alfanuméricos.' });
   }
+  // Validar formato de RFC
   if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(RFC)) {
     return res.status(400).json({ error: 'RFC no válido. Debe tener 12 o 13 caracteres: 3-4 letras, 6 dígitos y 3 alfanuméricos.' });
   }
 
-  // Validar formato de correo
+  // Validar formato de correo electrónico para dominios específicos
   const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
   if (!emailRegex.test(CORREO)) {
     return res.status(400).json({ error: 'El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.' });
@@ -98,7 +102,7 @@ router.post('/register', async (req, res) => {
     const checkQuery = `
       SELECT 1 FROM personal
       WHERE USUARIO = $1 OR CORREO = $2 OR CURP = $3 OR RFC = $4
-    `;
+    `;// Consulta para verificar existencia
     const checkResult = await pool.query(checkQuery, [USUARIO, CORREO, CURP, RFC]);
     if (checkResult.rows.length > 0) {
       return res.status(400).json({ error: 'Usuario, correo, CURP o RFC ya existen, intente con otros datos.' });
@@ -113,7 +117,7 @@ router.post('/register', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORREO, CURP, RFC
     `;
-
+    // Arreglo de valores para la consulta
     const values = [
       NOMBRE,
       APELLIDO_PATERNO,
@@ -124,16 +128,15 @@ router.post('/register', async (req, res) => {
       CURP,
       RFC,
     ];
-
+    // Ejecutar la consulta de inserción
     const insertResult = await pool.query(insertQuery, values);
     const user = insertResult.rows[0];
-
+    // Respuesta exitosa o error según el resultado
     res.status(201).json({ message: 'Usuario registrado', user });
   } catch (error) {
     console.error('Error al registrar usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
-  
 });
 
 // Actualizar datos personales
@@ -147,8 +150,8 @@ router.put('/:id', async (req, res) => {
     rfc,
     correo
   } = req.body;
-  //console.log('Datos recibidos para actualizar:', req.body);
-  try {
+  // consulta para actualizar
+  try { 
     const updateQuery = `
       UPDATE personal
       SET nombre = $1,
@@ -159,7 +162,7 @@ router.put('/:id', async (req, res) => {
           rfc = $6
       WHERE id_personal = $7
       RETURNING id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc
-    `;
+    `; // Consulta SQL para actualizar datos
     const result = await pool.query(updateQuery, [
       nombre,
       apellido_paterno,
@@ -169,16 +172,12 @@ router.put('/:id', async (req, res) => {
       rfc,
       id
     ]);
-
-    
-
+    // mensaje si no se encuentra el usuario
     res.json({ user: result.rows[0] });
-  } catch (error) {
+  } catch (error) { // Manejo de errores
     console.error('Error al actualizar usuario:', error);
     res.status(500).json({ error: 'Error al actualizar los datos.' });
   }
-
-  
 });
 
 
@@ -202,30 +201,27 @@ router.post('/login', async (req, res) => {
   if (!/^[A-Z0-9_]{4,30}$/.test(USUARIO)) {
     return res.status(400).json({ error: 'Usuario inválido. Debe tener entre 4 y 30 caracteres alfanuméricos o guion bajo en mayúsculas.' });
   }
-
+  // Validar fortaleza de CONTRASENA
   try {
     console.log('Buscando usuario:', USUARIO);
     const query = 'SELECT * FROM personal WHERE USUARIO = $1';
     const result = await pool.query(query, [USUARIO]);
-
-    //console.log('Resultado de la consulta:', result.rows);
+    // mensaje  si hay credenciales inválidas
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Credenciales inválidas. Verifica tu usuario.' });
     }
-
+    // Obtener el usuario encontrado
     const user = result.rows[0];
-
-
+    // Comparar contraseñas
     const match = await bcrypt.compare(CONTRASENA, user.contrasena);
     if (!match) {
       return res.status(401).json({ error: 'Credenciales inválidas. Verifica tu contraseña.' });
     }
 
-    //console.log('Login exitoso para usuario:', USUARIO);
-
+    // Generar token JWT
     const tokenPayload = { id_personal: user.id_personal, rol: user.rol };
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
-
+    // Respuesta exitosa con token y datos del usuario
     res.json({
       message: 'Login exitoso',
       token,
@@ -242,8 +238,8 @@ router.post('/login', async (req, res) => {
         foto_perfil: user.foto_perfil
       },
     });
-
-  } catch (error) {
+    // si hay un error en el proceso
+  } catch (error) {// Manejo de errores
     console.error('Error en login:', error.stack);
     if (error.code === 'ECONNREFUSED') {
       return res.status(503).json({ error: 'Error de conexión con la base de datos.' });
@@ -252,14 +248,13 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
 // Middleware JWT
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) return res.status(401).json({ error: 'Token requerido' });
-
+  // manejo del token
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: 'Token inválido' });
     req.user = user;
@@ -272,29 +267,28 @@ function isJefe(req, res, next) {
   if (!req.user) return res.status(401).json({ error: 'No autenticado' });
   if (req.user.rol !== 3) {
     return res.status(403).json({ error: 'Acceso denegado: solo Jefe' });
-  }
+  }// Si es jefe, continuar
   next();
 }
 
 // Ruta para obtener datos del usuario autenticado
 router.get('/me', authenticateToken, async (req, res) => {
-  try {
+  try {// consulta para obtener datos del usuario
     const query = `SELECT id_personal, nombre, apellido_paterno, apellido_materno, 
     usuario, correo, curp, rfc, foto_perfil
                    FROM personal WHERE id_personal = $1`;
     const result = await pool.query(query, [req.user.id_personal]);
-
+    // mensaje si no se encuentra el usuario
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-
+    // manejo de errores
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error al obtener usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
 
 // Crear Jefe (solo bootstrap inicial o si ya hay un jefe logueado)
 router.post('/crear-jefe', async (req, res) => {
@@ -306,12 +300,10 @@ router.post('/crear-jefe', async (req, res) => {
     if (jefeExistente.rows.length > 0) {
       return res.status(403).json({ error: 'Ya existe un Jefe, use el login para autenticarse.' });
     }
-
     // Validaciones mínimas (puedes agregar más si quieres)
     if (!usuario || !contrasena || !correo) {
       return res.status(400).json({ error: 'Usuario, contraseña y correo son requeridos.' });
     }
-
     // Hash de contraseña
     const hashedPassword = await bcrypt.hash(contrasena, 10);
 
@@ -320,11 +312,11 @@ router.post('/crear-jefe', async (req, res) => {
       INSERT INTO personal (nombre, apellido_paterno, apellido_materno, usuario, contrasena, correo, curp, rfc, rol)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,3)
       RETURNING id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc, rol
-    `;
+    `;// Consulta SQL para insertar jefe
     const result = await pool.query(query, [
       nombre, apellido_paterno, apellido_materno || null, usuario, hashedPassword, correo, curp, rfc
     ]);
-
+    // Respuesta exitosa o error según el resultado
     res.status(201).json({ message: 'Jefe creado con éxito', jefe: result.rows[0] });
   } catch (error) {
     console.error('Error al crear Jefe:', error);
@@ -332,18 +324,18 @@ router.post('/crear-jefe', async (req, res) => {
   }
 });
 
-
 // Obtener usuarios por rol
 router.get('/rol/:rol', authenticateToken, isJefe, async (req, res) => {
   const { rol } = req.params;
 
-  try {
+  try {// consulta para obtener usuarios por rol
     const query = `
       SELECT id_personal, nombre, apellido_paterno, apellido_materno,
              usuario, correo, curp, rfc, rol
       FROM personal
       WHERE rol = $1
     `;
+    // Ejecutar la consulta
     const result = await pool.query(query, [rol]);
 
     // Si quieres agregar documentos asociados:
@@ -355,13 +347,12 @@ router.get('/rol/:rol', authenticateToken, isJefe, async (req, res) => {
         documentos: docsResult.rows.map(d => d.archivo)
       };
     }));
-
+    // manejo de errores
     res.json(usuariosConDocs);
   } catch (error) {
     console.error('Error al obtener usuarios por rol:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
 
 module.exports = router;
