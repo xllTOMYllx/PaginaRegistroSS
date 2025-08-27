@@ -62,7 +62,6 @@ const upload = multer({
   }
 });
 
-
 // 📌 Ruta para subir documento académico
 router.post('/subir-academico', authenticateToken, upload.single('archivo'), async (req, res) => {
   try {
@@ -74,26 +73,26 @@ router.post('/subir-academico', authenticateToken, upload.single('archivo'), asy
     if (!tipo) {
       return res.status(400).json({ error: 'Debes indicar el tipo de documento' });
     }
-
+    // Insertar en la base de datos
     await pool.query(
       `INSERT INTO documentos_academicos (id_personal, tipo, archivo)
        VALUES ($1, $2, $3)`,
       [req.user.id_personal, tipo, req.file.filename]
     );
-
+    // Obtener nombre del usuario desde la tabla personal
     const userResult = await pool.query(
       `SELECT usuario FROM personal WHERE id_personal = $1`,
       [req.user.id_personal]
     );
-
+    // Si no se encuentra el usuario, usar "Desconocido"
     const nombreUsuario = userResult.rows[0]?.usuario || "Desconocido";
-
+    // Insertar notificación de subida
     await pool.query(
   `INSERT INTO notificaciones (id_personal, usuario, mensaje) 
    VALUES ($1, $2, $3)`,
   [req.user.id_personal, nombreUsuario, `Subiste un nuevo documento: ${tipo}`]
 );
-
+    // Mensaje de respuesta al cliente
     res.json({
       message: 'Documento académico subido correctamente',
       tipo,
@@ -126,32 +125,55 @@ router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
+    // 1️⃣ Obtener datos del documento (archivo y tipo)
     const result = await pool.query(
-      `SELECT archivo FROM documentos_academicos WHERE id = $1 AND id_personal = $2`,
+      `SELECT archivo, tipo FROM documentos_academicos 
+       WHERE id = $1 AND id_personal = $2`,
       [id, req.user.id_personal]
     );
-
+    // Si no se encuentra el documento
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Documento no encontrado' });
     }
-    // Obtener el nombre del archivo
-    const archivo = result.rows[0].archivo;
+    // Extraer nombre del archivo y tipo
+    const { archivo, tipo } = result.rows[0];
+
     const filePath = path.join(__dirname, '../uploads/academico', `${req.user.id_personal}`, archivo);
 
-    // Eliminar archivo físico
+    // 2️⃣ Eliminar archivo físico
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
 
-    // Eliminar de la base de datos
+    // 3️⃣ Eliminar de la base de datos
     await pool.query(`DELETE FROM documentos_academicos WHERE id = $1`, [id]);
 
+    // 4️⃣ Obtener nombre del usuario desde la tabla personal
+    const userResult = await pool.query(
+      `SELECT usuario FROM personal WHERE id_personal = $1`,
+      [req.user.id_personal]
+    );
+    // Si no se encuentra el usuario, usar "Desconocido"
+    const nombreUsuario = userResult.rows[0]?.usuario || "Desconocido";
+
+    // 5️⃣ Insertar notificación de eliminación
+    await pool.query(
+      `INSERT INTO notificaciones (id_personal, usuario, mensaje) 
+       VALUES ($1, $2, $3)`,
+      [
+        req.user.id_personal,
+        nombreUsuario,
+        `Eliminaste el documento: ${tipo || archivo}`
+      ]
+    );
+    // Mensaje de respuesta al cliente
     res.json({ message: 'Documento eliminado correctamente' });
   } catch (error) {
     console.error('Error al eliminar documento:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
 
 //IMAGENES
 // Configuración Multer para imágenes
@@ -163,11 +185,13 @@ const storageFoto = multer.diskStorage({
     }
     cb(null, userFolder);
   },
+  
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
   }
 });
+
 // Solo imágenes JPG y PNG
 const uploadFoto = multer({
   storage: storageFoto,
@@ -209,7 +233,7 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
       `UPDATE personal SET foto_perfil = $1 WHERE id_personal = $2`,
       [req.file.filename, req.user.id_personal]
     );
-
+    // mensaje de respuesta al cliente
     res.json({
       message: 'Foto de perfil subida correctamente',
       file: req.file.filename
@@ -219,7 +243,6 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
 
 // 📌 Obtener notificaciones del usuario
 router.get('/notificaciones', authenticateToken, async (req, res) => {
@@ -232,6 +255,7 @@ router.get('/notificaciones', authenticateToken, async (req, res) => {
        LIMIT 10`,
       [req.user.id_personal]
     );
+    // Enviar las notificaciones al cliente
     res.json(result.rows);
   } catch (error) {
     console.error('Error al obtener notificaciones:', error);
@@ -249,6 +273,7 @@ router.put('/notificaciones/:id/leido', authenticateToken, async (req, res) => {
        WHERE id = $1 AND id_personal = $2`,
       [id, req.user.id_personal]
     );
+    // Mensaje de respuesta al cliente
     res.json({ message: 'Notificación marcada como leída' });
   } catch (error) {
     console.error('Error al marcar notificación:', error);
@@ -260,13 +285,13 @@ router.put('/notificaciones/:id/leido', authenticateToken, async (req, res) => {
 router.delete('/notificaciones/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-
+    // Eliminar la notificación
     await pool.query(
       `DELETE FROM notificaciones 
        WHERE id = $1 AND id_personal = $2`,
       [id, req.user.id_personal]
     );
-
+    // Mensaje de respuesta al cliente
     res.json({ message: 'Notificación eliminada correctamente' });
   } catch (error) {
     console.error('Error al eliminar notificación:', error);

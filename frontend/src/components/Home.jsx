@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaBell } from "react-icons/fa";
 
-
 // función principal del componente Home
 function Home() {
   const navigate = useNavigate();
@@ -24,7 +23,7 @@ function Home() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
+    // Función para obtener notificaciones
     const fetchNotificaciones = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/documentos/notificaciones", {
@@ -35,7 +34,7 @@ function Home() {
         console.error("Error al obtener notificaciones:", err);
       }
     };
-
+    // Primera llamada inmediata
     fetchNotificaciones();
     const intervalo = setInterval(fetchNotificaciones, 10000); // cada 10s
     return () => clearInterval(intervalo);
@@ -50,8 +49,7 @@ function Home() {
 
   // Obtener el usuario autenticado al cargar el componente
   useEffect(() => {
-    const token = localStorage.getItem('token'); // o donde guardes tu JWT
-
+    const token = localStorage.getItem('token'); // obtener token del almacenamiento local
     if (token) {
       fetch('http://localhost:5000/api/users/me', {
         method: 'GET',
@@ -74,7 +72,6 @@ function Home() {
   // Si se pasa un usuario desde la navegación, actualizar el estado
   useEffect(() => {
     if (location.state && location.state.user) {
-      //console.log("Usuario recibido:", location.state.user);
       setUsuario(location.state.user);
     }
   }, [location.state]);
@@ -84,7 +81,6 @@ function Home() {
     const fetchDocumentos = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
-
       try {
         const res = await axios.get("http://localhost:5000/api/documentos/mis-documentos", {
           headers: { Authorization: `Bearer ${token}` }
@@ -94,21 +90,22 @@ function Home() {
         console.error("Error al obtener documentos:", error);
       }
     };
-
     fetchDocumentos();
   }, []);
+
   // Función para subir archivos PDF
   const subirArchivo = async (archivo, tipo) => {
     if (!archivo || archivo.type !== "application/pdf") {
-      ////alert("Selecciona un archivo PDF válido");
       return;
     }
+
     // Verificar si hay sesión activa
     const token = localStorage.getItem("token")?.trim();
     if (!token) {
       alert("No hay sesión activa");
       return;
     }
+
     // Crear FormData para enviar el archivo
     const formData = new FormData();
     formData.append("archivo", archivo);
@@ -121,34 +118,28 @@ function Home() {
           "Authorization": `Bearer ${token}`
         }
       });
-
-      //alert(`Archivo de ${tipo} subido correctamente`);
       window.location.reload();
     } catch (error) {
       console.error("Error al subir archivo:", error);
-      //alert(error.response?.data?.error || "Error al subir el archivo");
+      
     }
   };
+
   // Función para eliminar un documento
   const eliminarDocumento = async (id) => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
-    //if (!window.confirm("¿Estás seguro de que deseas eliminar este documento?")) return;
-
     try {
       await axios.delete(`http://localhost:5000/api/documentos/eliminar/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDocumentos(prev => prev.filter(doc => doc.id !== id));
-      //alert("Documento eliminado correctamente");
     } catch (error) {
-      console.error("Error al eliminar documento:", error);
-      //alert("No se pudo eliminar el documento");
+      console.error("Error al eliminar documento:", error); 
     }
   };
 
-  //IMAGENES
+  //----IMAGENES-----//
   // variables de estado para la foto de perfil
   const [fotoPerfil, setFotoPerfil] = useState(null);
   // Función para subir la foto de perfil
@@ -174,9 +165,6 @@ function Home() {
           "Authorization": `Bearer ${token}`
         }
       });
-      //alert("Foto subida correctamente");
-      //window.location.reload();
-
       // Vuelve a consultar los datos del usuario para obtener la nueva foto
       const userRes = await axios.get("http://localhost:5000/api/users/me", {
         headers: {
@@ -191,13 +179,11 @@ function Home() {
     }
   };
 
-  // diseño principal de la página
+  // ---Diseño principal de la página--- //
   return (
-
-
-
     <div className="d-flex flex-column align-items-center min-vh-100">
 
+      {/* Botón Cerrar Sesión */}
       <button
         onClick={cerrarSesion}
         style={{
@@ -216,6 +202,7 @@ function Home() {
         Cerrar sesión
       </button>
 
+      {/* Panel de Notificaciones */}
       <div style={{ position: "absolute", top: "10px", right: "160px" }}>
         <button
           className="btn position-relative"
@@ -233,19 +220,19 @@ function Home() {
         </button>
       </div>
 
-      {/* Panel de Notificaciones */}
+      {/* Panel desplegable de notificaciones */}
       {mostrarPanel && (
         <div
           className="card shadow position-absolute"
           style={{
-            top: "60px", // se baja un poco para que no tape la campanita
+            top: "60px", 
             right: "5px",
             width: "235px",
             zIndex: 1000,
             maxHeight: "400px",
             overflowY: "auto"
           }}
-        >
+        > {/* Contenido del panel */}
           <div className="card-header bg-white">
             <strong style={{ color: "#7A1737" }}>Notificaciones</strong>
           </div>
@@ -272,7 +259,7 @@ function Home() {
                         )
                       );
                     }}
-                  >
+                  > {/* Contenido de la notificación */}
                     <small className="d-block">
                       <strong>{n.usuario}:</strong> {n.mensaje}
                     </small>
@@ -305,15 +292,14 @@ function Home() {
         </div>
       )}
 
-
+      {/* Contenedor principal */}
       <div className="container py-4" style={{ maxWidth: '800px', width: '90%' }}>
         {/* Contenedor unificado de usuario + foto */}
         <div className="card shadow mb-4">
           <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
             <h4 className="mb-0" style={{ color: "#7A1737" }}>
               <i className="bi bi-person-circle me-2"></i>
-
-
+              {/* Datos del usuario */}
               Datos del Usuario: {usuario ? usuario.usuario : 'Desconocido'}
             </h4>
             <button
@@ -329,12 +315,12 @@ function Home() {
                 letterSpacing: "1px"
               }}
             >
-
+              {/* Botón Editar */}
               <i className="bi bi-pencil-square me-1"></i>
               Editar
             </button>
           </div>
-
+          {/* Cuerpo con dos columnas: info usuario + foto */}
           <div className="card-body d-flex align-items-start">
             {/* Columna izquierda: info del usuario */}
             <div className="flex-grow-1 pe-4">
@@ -372,7 +358,7 @@ function Home() {
               ) : (
                 <div className="text-muted mb-3">No hay foto de perfil</div>
               )}
-
+              {/* Input y botón para subir nueva foto */}
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/jpg"
@@ -380,6 +366,7 @@ function Home() {
                 style={{ width: "250px" }}   // más ancho y alineado con la imagen
                 onChange={e => setFotoPerfil(e.target.files[0])}
               />
+              {/* Botón Subir Foto */}
               <button
                 type="button"
                 className="btn"
@@ -392,6 +379,7 @@ function Home() {
             </div>
           </div>
         </div>
+
         {/* Información Académica */}
       <div className="card shadow mb-4">
         <div className="card-header bg-white border-0">
@@ -406,14 +394,15 @@ function Home() {
             const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
             const tipo = nivel.toLowerCase();
             const documentoExistente = documentos.find(doc => doc.tipo === tipo);
-
+            {/* Renderizado de cada nivel académico */}
             return (
               <div key={nivel} className="mb-3 d-flex align-items-center">
                 <i className="bi bi-mortarboard-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
                 <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>{nivel}</label>
-
+            
                 {!documentoExistente ? (
                   <>
+                  {/* Input y botón para subir documento */}
                     <input
                       type="file"
                       accept=".pdf"
@@ -435,7 +424,7 @@ function Home() {
                     )}
                   </>
                 ) : (
-                  <div className="ms-auto d-flex align-items-center">
+                  <div className="ms-auto d-flex align-items-center"> {/* Botones Ver y Eliminar */}
                     <a
                       href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
                       target="_blank"
@@ -468,18 +457,19 @@ function Home() {
             Certificados
           </h4>
         </div>
-        <div className="card-body">
+        {/* Cuerpo del card */}
+        <div className="card-body"> 
           {(() => {
             const tipo = "certificados";
             const documentoExistente = documentos.find(doc => doc.tipo === tipo);
-
+            {/* Renderizado del apartado de Certificados */}
             return (
               <div className="d-flex align-items-center">
                 <i className="bi bi-file-earmark-text-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
                 <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>Certificados</label>
 
                 {!documentoExistente ? (
-                  <>
+                  <> {/* Input y botón para subir documento */}
                     <input
                       type="file"
                       accept=".pdf"
@@ -501,7 +491,7 @@ function Home() {
                     )}
                   </>
                 ) : (
-                  <div className="ms-auto d-flex align-items-center">
+                  <div className="ms-auto d-flex align-items-center"> {/* Botones Ver y Eliminar */}
                     <a
                       href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
                       target="_blank"
@@ -528,6 +518,6 @@ function Home() {
     </div>
   </div>
 );
-
 }
+
 export default Home;
