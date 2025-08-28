@@ -82,14 +82,93 @@ router.post('/register', async (req, res) => {
   if (!validator.isEmail(CORREO)) {
     return res.status(400).json({ error: 'Correo electrónico no válido.' });
   }
-  // Validar formato de CURP con regex más estricta y expresiones regulares
+
+  // --- Codigo para validar CURP --- //
+  // Validar que CURP exista
+  if (!CURP) {
+    return res.status(400).json({ error: 'La CURP es obligatoria.' });
+  }
+
+  // Validar longitud
+  if (CURP.length !== 18) {
+    return res.status(400).json({ error: 'La CURP debe tener exactamente 18 caracteres.' });
+  }
+
+  // --- Función auxiliar para extraer y validar fecha del CURP --- //
+  function obtenerDatosFechaCURP(CURP) {
+    const fecha = CURP.substring(4, 10); // AAMMDD
+    const anio = parseInt(fecha.substring(0, 2), 10);
+    const mes = parseInt(fecha.substring(2, 4), 10);
+    const dia = parseInt(fecha.substring(4, 6), 10);
+    const fullYear = anio >= 0 && anio <= 25 ? 2000 + anio : 1900 + anio;
+
+    const fechaValida = new Date(`${fullYear}-${mes}-${dia}`);
+    const esFebrero29 = mes === 2 && dia === 29;
+    const esBisiesto = (fullYear % 4 === 0 && fullYear % 100 !== 0) || (fullYear % 400 === 0);
+
+    return { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto };
+  }
+
+  // Validar que CURP exista
+  if (!CURP) {
+    return res.status(400).json({ error: 'La CURP es obligatoria.' });
+  }
+
+  // Validar longitud
+  if (CURP.length !== 18) {
+    return res.status(400).json({ error: 'La CURP debe tener exactamente 18 caracteres.' });
+  }
+
+  // Validar fecha real
+  const { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto } = obtenerDatosFechaCURP(CURP);
+
+  if (
+    fechaValida.getFullYear() !== fullYear ||
+    fechaValida.getMonth() + 1 !== mes ||
+    fechaValida.getDate() !== dia
+  ) {
+    const errorMsg = esFebrero29 && !esBisiesto
+      ? 'CURP no válido. El año no es bisiesto, 29 de febrero no es válido.'
+      : 'CURP no válido. Fecha de nacimiento inválida o inexistente.';
+    return res.status(400).json({ error: errorMsg });
+  }
+  
+  // Validar formato con regex
   if (!/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/.test(CURP)) {
-    return res.status(400).json({ error: 'CURP no válido. Debe tener 18 caracteres: 4 letras, 6 dígitos y 8 alfanuméricos.' });
+    return res.status(400).json({ error: 'CURP no válido. Formato incorrecto.' });
   }
-  // Validar formato de RFC
-  if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(RFC)) {
-    return res.status(400).json({ error: 'RFC no válido. Debe tener 12 o 13 caracteres: 3-4 letras, 6 dígitos y 3 alfanuméricos.' });
+
+
+  //--- Codigo para validar RFC --- //
+  // Validar que RFC exista
+  if (!RFC) {
+    return res.status(400).json({ error: 'El RFC es obligatorio.' });
   }
+
+  // Validar longitud (12 o 13 caracteres)
+  if (RFC.length !== 12 && RFC.length !== 13) {
+    return res.status(400).json({ error: 'El RFC debe tener 12 o 13 caracteres.' });
+  }
+  // Validar formato con regex más estricta
+  if (!/^([A-ZÑ&]{3,4})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z0-9]{3})$/.test(RFC)) {
+    return res.status(400).json({ error: 'RFC no válido. Formato incorrecto.' });
+  }
+  // Validar fecha real (AAMMDD)
+  function validarFechaCURP(CURP) {
+    const fecha = CURP.substring(4, 10);
+    const anio = parseInt(fecha.substring(0, 2), 10);
+    const mes = parseInt(fecha.substring(2, 4), 10);
+    const dia = parseInt(fecha.substring(4, 6), 10);
+    const fullYear = anio >= 0 && anio <= 25 ? 2000 + anio : 1900 + anio;
+
+    const fechaValida = new Date(`${fullYear}-${mes}-${dia}`);
+    return (
+      fechaValida.getFullYear() === fullYear &&
+      fechaValida.getMonth() + 1 === mes &&
+      fechaValida.getDate() === dia
+    );
+  }
+
 
   // Validar formato de correo electrónico para dominios específicos
   const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
@@ -151,7 +230,7 @@ router.put('/:id', async (req, res) => {
     correo
   } = req.body;
   // consulta para actualizar
-  try { 
+  try {
     const updateQuery = `
       UPDATE personal
       SET nombre = $1,
