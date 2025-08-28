@@ -84,16 +84,6 @@ router.post('/register', async (req, res) => {
   }
 
   // --- Codigo para validar CURP --- //
-  // Validar que CURP exista
-  if (!CURP) {
-    return res.status(400).json({ error: 'La CURP es obligatoria.' });
-  }
-
-  // Validar longitud
-  if (CURP.length !== 18) {
-    return res.status(400).json({ error: 'La CURP debe tener exactamente 18 caracteres.' });
-  }
-
   // --- Función auxiliar para extraer y validar fecha del CURP --- //
   function obtenerDatosFechaCURP(CURP) {
     const fecha = CURP.substring(4, 10); // AAMMDD
@@ -132,7 +122,7 @@ router.post('/register', async (req, res) => {
       : 'CURP no válido. Fecha de nacimiento inválida o inexistente.';
     return res.status(400).json({ error: errorMsg });
   }
-  
+
   // Validar formato con regex
   if (!/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/.test(CURP)) {
     return res.status(400).json({ error: 'CURP no válido. Formato incorrecto.' });
@@ -140,35 +130,48 @@ router.post('/register', async (req, res) => {
 
 
   //--- Codigo para validar RFC --- //
-  // Validar que RFC exista
-  if (!RFC) {
-    return res.status(400).json({ error: 'El RFC es obligatorio.' });
-  }
-
-  // Validar longitud (12 o 13 caracteres)
-  if (RFC.length !== 12 && RFC.length !== 13) {
-    return res.status(400).json({ error: 'El RFC debe tener 12 o 13 caracteres.' });
-  }
-  // Validar formato con regex más estricta
-  if (!/^([A-ZÑ&]{3,4})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z0-9]{3})$/.test(RFC)) {
-    return res.status(400).json({ error: 'RFC no válido. Formato incorrecto.' });
-  }
-  // Validar fecha real (AAMMDD)
-  function validarFechaCURP(CURP) {
-    const fecha = CURP.substring(4, 10);
+  function validarFechaRFC(RFC) {
+    const fecha = RFC.length === 13 ? RFC.substring(4, 10) : RFC.substring(3, 9);
     const anio = parseInt(fecha.substring(0, 2), 10);
     const mes = parseInt(fecha.substring(2, 4), 10);
     const dia = parseInt(fecha.substring(4, 6), 10);
     const fullYear = anio >= 0 && anio <= 25 ? 2000 + anio : 1900 + anio;
 
     const fechaValida = new Date(`${fullYear}-${mes}-${dia}`);
-    return (
-      fechaValida.getFullYear() === fullYear &&
-      fechaValida.getMonth() + 1 === mes &&
-      fechaValida.getDate() === dia
-    );
+    const esFebrero29 = mes === 2 && dia === 29;
+    const esBisiesto = (fullYear % 4 === 0 && fullYear % 100 !== 0) || (fullYear % 400 === 0);
+
+    if (
+      fechaValida.getFullYear() !== fullYear ||
+      fechaValida.getMonth() + 1 !== mes ||
+      fechaValida.getDate() !== dia
+    ) {
+      return esFebrero29 && !esBisiesto
+        ? 'RFC no válido. El año no es bisiesto, 29 de febrero no es válido.'
+        : 'RFC no válido. Fecha de nacimiento inválida o inexistente.';
+    }
+
+    return null; // Fecha válida
   }
 
+  if (!RFC) {
+    return res.status(400).json({ error: 'El RFC es obligatorio.' });
+  }
+
+  if (RFC.length !== 12 && RFC.length !== 13) {
+    return res.status(400).json({ error: 'El RFC debe tener 12 caracteres para persona moral o 13 caracteres para persona física.' });
+  }
+
+  if (!/^([A-ZÑ&]{3})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$|^([A-ZÑ&]{4})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$/
+    .test(RFC)) {
+    return res.status(400).json({ error: 'RFC no válido. Formato incorrecto.' });
+  }
+
+  const fechaError = validarFechaRFC(RFC);
+  if (fechaError) {
+    return res.status(400).json({ error: fechaError });
+  }
+  //--- Fin de validaciones de RFC --- //
 
   // Validar formato de correo electrónico para dominios específicos
   const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
