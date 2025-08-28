@@ -75,7 +75,7 @@ function RegisterForm() {
 
       return { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto };
     }
-    
+
     // Validación específica para CURP
     if (!upperCaseData.CURP) {
       newErrors.CURP = 'La CURP es obligatoria.';
@@ -83,32 +83,76 @@ function RegisterForm() {
       newErrors.CURP = 'La CURP debe tener exactamente 18 caracteres.';
     } else {
       const regexCURP = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/;
-      
+
       // Validar formato general de CURP
       if (!regexCURP.test(upperCaseData.CURP)) {
         newErrors.CURP = 'CURP no válido. Formato incorrecto.';
       } else {
         const { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto } = obtenerDatosFechaCURP(upperCaseData.CURP);
-        
+
         // Validar fecha de nacimiento
         if (
           fechaValida.getFullYear() !== fullYear ||
           fechaValida.getMonth() + 1 !== mes ||
           fechaValida.getDate() !== dia
-        ) { 
-          newErrors.CURP = esFebrero29 && !esBisiesto 
+        ) {
+          newErrors.CURP = esFebrero29 && !esBisiesto
             ? 'CURP no válido. El año no es bisiesto, 29 de febrero no es válido.'
             : 'CURP no válido. Fecha de nacimiento inválida o inexistente.';
         }
       }
     }
-    
-    // Validación específica para RFC
-    if (!upperCaseData.RFC) newErrors.RFC = 'El RFC es obligatorio.';
-    else if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(upperCaseData.RFC)) newErrors.RFC = 'RFC no válido. Debe tener 12 o 13 caracteres: 3-4 letras, 6 dígitos y 3 alfanuméricos.';
 
+    // -- Codigo para validar RFC -- //
+    function obtenerDatosFechaRFC(RFC) {
+      const fecha = RFC.length === 13 ? RFC.substring(4, 10) : RFC.substring(3, 9);
+      const anio = parseInt(fecha.substring(0, 2), 10);
+      const mes = parseInt(fecha.substring(2, 4), 10);
+      const dia = parseInt(fecha.substring(4, 6), 10);
+      const fullYear = anio >= 0 && anio <= 25 ? 2000 + anio : 1900 + anio;
+      
+      const fechaValida = new Date(`${fullYear}-${mes}-${dia}`);
+      const esFebrero29 = mes === 2 && dia === 29;
+      const esBisiesto = (fullYear % 4 === 0 && fullYear % 100 !== 0) || (fullYear % 400 === 0);
+
+      return { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto };
+    }
+    // Validación específica para RFC
+    if (!upperCaseData.RFC) {
+      newErrors.RFC = 'El RFC es obligatorio.';
+    } else if (upperCaseData.RFC.length !== 12 && upperCaseData.RFC.length !== 13) {
+      newErrors.RFC = 'El RFC debe tener 12 caracteres para persona moral o 13 caracteres para persona física.';
+    } else {
+      const regexRFC = /^([A-ZÑ&]{3})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$|^([A-ZÑ&]{4})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$/
+        ;
+      // Validar formato general de RFC
+      if (!regexRFC.test(upperCaseData.RFC)) {
+        newErrors.RFC = 'RFC no válido. Formato incorrecto.';
+      } else {
+        const {
+          fullYear: rfcFullYear,
+          mes: rfcMes,
+          dia: rfcDia,
+          fechaValida: rfcFechaValida,
+          esFebrero29: rfcEsFebrero29,
+          esBisiesto: rfcEsBisiesto
+        } = obtenerDatosFechaRFC(upperCaseData.RFC);
+        
+        // Validar fecha de nacimiento
+        if (
+          rfcFechaValida.getFullYear() !== rfcFullYear ||
+          rfcFechaValida.getMonth() + 1 !== rfcMes ||
+          rfcFechaValida.getDate() !== rfcDia
+        ) {
+          newErrors.RFC = rfcEsFebrero29 && !rfcEsBisiesto
+            ? 'RFC no válido. El año no es bisiesto, 29 de febrero no es válido.'
+            : 'RFC no válido. Fecha de nacimiento inválida o inexistente.';
+        }
+      }
+    }
     return newErrors;
   };
+
 
   // Manejo del cambio en los campos del formulario
   const handleChange = (e) => {
