@@ -406,35 +406,42 @@ router.post('/crear-jefe', async (req, res) => {
   }
 });
 
-// Obtener usuarios por rol
+
+
+
+
+
 router.get('/rol/:rol', authenticateToken, isJefe, async (req, res) => {
   const { rol } = req.params;
 
-  try {// consulta para obtener usuarios por rol
+  try {
     const query = `
       SELECT id_personal, nombre, apellido_paterno, apellido_materno,
-             usuario, correo, curp, rfc, rol
+             usuario, correo, curp, rfc, rol, foto_perfil
       FROM personal
       WHERE rol = $1
     `;
-    // Ejecutar la consulta
     const result = await pool.query(query, [rol]);
 
-    // Si quieres agregar documentos asociados:
     const usuariosConDocs = await Promise.all(result.rows.map(async (user) => {
-      const docsQuery = `SELECT archivo FROM documentos_academicos WHERE id_personal = $1`;
+      const docsQuery = `
+        SELECT id, tipo, archivo, cotejado 
+        FROM documentos_academicos 
+        WHERE id_personal = $1
+      `;
       const docsResult = await pool.query(docsQuery, [user.id_personal]);
       return {
         ...user,
-        documentos: docsResult.rows.map(d => d.archivo)
+        documentos: docsResult.rows // objetos con id, tipo, archivo, cotejado
       };
     }));
-    // manejo de errores
+
     res.json(usuariosConDocs);
   } catch (error) {
     console.error('Error al obtener usuarios por rol:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
 
 module.exports = router;
