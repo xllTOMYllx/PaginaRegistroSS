@@ -174,6 +174,48 @@ router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// 📌 Cotejar documento académico (solo admin)
+router.put('/cotejar/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // 1️⃣ Actualizar el documento a cotejado
+    const result = await pool.query(
+      `UPDATE documentos_academicos
+       SET cotejado = TRUE
+       WHERE id = $1
+       RETURNING id, tipo, archivo, id_personal`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    const doc = result.rows[0];
+
+    // 2️⃣ Obtener nombre de usuario
+    const userResult = await pool.query(
+      `SELECT usuario FROM personal WHERE id_personal = $1`,
+      [doc.id_personal]
+    );
+    const nombreUsuario = userResult.rows[0]?.usuario || "Desconocido";
+
+    // 3️⃣ Insertar notificación
+    await pool.query(
+      `INSERT INTO notificaciones (id_personal, usuario, mensaje) 
+       VALUES ($1, $2, $3)`,
+      [doc.id_personal, nombreUsuario, `Tu documento "${doc.tipo}" fue cotejado ✅`]
+    );
+
+    res.json({ message: 'Documento cotejado con éxito', documento: doc });
+  } catch (error) {
+    console.error('Error al cotejar documento:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+
 
 //IMAGENES
 // Configuración Multer para imágenes
