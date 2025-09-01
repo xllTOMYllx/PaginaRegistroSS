@@ -444,4 +444,45 @@ router.get('/rol/:rol', authenticateToken, isJefe, async (req, res) => {
 });
 
 
+
+// 📌 Obtener información completa de un usuario (perfil + documentos)
+router.get('/usuarios/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Obtener datos del usuario
+    const userResult = await pool.query(
+      `SELECT id_personal, nombre, apellido_paterno, apellido_materno,
+              usuario, correo, curp, rfc, rol, foto_perfil
+       FROM personal
+       WHERE id_personal = $1`,
+      [id]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const user = userResult.rows[0];
+
+    // Obtener documentos del usuario
+    const docsResult = await pool.query(
+      `SELECT id, tipo, archivo, cotejado, fecha_subida
+       FROM documentos_academicos
+       WHERE id_personal = $1`,
+      [id]
+    );
+
+    res.json({
+      ...user,
+      documentos: docsResult.rows
+    });
+  } catch (error) {
+    console.error('Error al obtener usuario:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+
+
 module.exports = router;

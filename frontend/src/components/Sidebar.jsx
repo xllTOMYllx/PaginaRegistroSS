@@ -53,7 +53,7 @@ function Sidebar({ admin }) {
         onClick={() => {
           localStorage.removeItem("token");
           localStorage.removeItem("usuario");
-          navigate("/login");
+          navigate("/sesion");
         }}
         className="btn btn-danger w-100 mt-3"
       >
