@@ -21,9 +21,10 @@ function Sidebar({ admin }) {
               }
               alt="Foto de perfil"
               crossOrigin="use-credentials"
-              className="rounded-circle shadow"
-              width="120"
-              height="120"
+              className="img-fluid mb-3"
+              style={{ objectFit: "cover",
+              width:"120px",
+              height:"120px"}}
             />
             <h5>
               {admin.nombre} {admin.apellido_paterno}

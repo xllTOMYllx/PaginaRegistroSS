@@ -60,7 +60,7 @@ function Miembros() {
                       }
                       alt={usuario.nombre}
                       crossOrigin="use-credentials"
-                      className="rounded-circle mb-3"
+                      className="img-fluid mb-3"
                       style={{
                         width: "100px",
                         height: "100px",
