@@ -121,7 +121,7 @@ function Home() {
       window.location.reload();
     } catch (error) {
       console.error("Error al subir archivo:", error);
-      
+
     }
   };
 
@@ -135,7 +135,7 @@ function Home() {
       });
       setDocumentos(prev => prev.filter(doc => doc.id !== id));
     } catch (error) {
-      console.error("Error al eliminar documento:", error); 
+      console.error("Error al eliminar documento:", error);
     }
   };
 
@@ -181,7 +181,8 @@ function Home() {
 
   // ---Diseño principal de la página--- //
   return (
-    <div className="d-flex flex-column align-items-center min-vh-100">
+    
+    <header className="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-white sticky-top">
 
       {/* Botón Cerrar Sesión */}
       <button
@@ -198,10 +199,11 @@ function Home() {
           cursor: "pointer",
           fontWeight: "bold"
         }}
+        className="btn btn-danger btn-sm"
       >
         Cerrar sesión
       </button>
-
+      
       {/* Panel de Notificaciones */}
       <div style={{ position: "absolute", top: "10px", right: "160px" }}>
         <button
@@ -211,9 +213,9 @@ function Home() {
           <FaBell size={20} />
           {notificaciones.filter(n => !n.leido).length > 0 && (
             <span
-              className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
               style={{ fontSize: "0.7rem" }}
-            >
+
               {notificaciones.filter(n => !n.leido).length}
             </span>
           )}
@@ -225,7 +227,7 @@ function Home() {
         <div
           className="card shadow position-absolute"
           style={{
-            top: "60px", 
+            top: "60px",
             right: "5px",
             width: "235px",
             zIndex: 1000,
@@ -236,7 +238,7 @@ function Home() {
           <div className="card-header bg-white">
             <strong style={{ color: "#7A1737" }}>Notificaciones</strong>
           </div>
-          <div className="card-body p-2">
+          <div className="card-body p-2 w-100 w-md-50">
             {notificaciones.length > 0 ? (
               notificaciones.map((n) => (
                 <div
@@ -291,9 +293,10 @@ function Home() {
           </div>
         </div>
       )}
-
+  
       {/* Contenedor principal */}
-      <div className="container py-4" style={{ maxWidth: '800px', width: '90%' }}>
+      
+      <main className="container mt-5" style={{ maxWidth: '800px', width: '90%' }}>
         {/* Contenedor unificado de usuario + foto */}
         <div className="card shadow mb-4">
           <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
@@ -320,10 +323,11 @@ function Home() {
               Editar
             </button>
           </div>
+
           {/* Cuerpo con dos columnas: info usuario + foto */}
-          <div className="card-body d-flex align-items-start">
+          <div className="row g-3 align-items-start">
             {/* Columna izquierda: info del usuario */}
-            <div className="flex-grow-1 pe-4">
+            <div className="col-12 col-md-8">
               {usuario ? (
                 <table className="table table-borderless align-middle mb-0">
                   <tbody>
@@ -341,7 +345,7 @@ function Home() {
             </div>
 
             {/* Columna derecha: foto y botones */}
-            <div className="d-flex flex-column align-items-center">
+            <div className="col-12 col-md-4 text-center d-flex flex-column align-items-center justify-content-start">
               {usuario?.foto_perfil ? (
                 <img
                   src={`http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`}
@@ -359,18 +363,19 @@ function Home() {
                 <div className="text-muted mb-3">No hay foto de perfil</div>
               )}
               {/* Input y botón para subir nueva foto */}
+              <div className="w-100" style={{ maxWidth: 250 }}></div>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/jpg"
                 className="form-control rounded-3 mb-2"
-                style={{ width: "250px" }}   // más ancho y alineado con la imagen
+                style={{ width: "90%" }}   // más ancho y alineado con la imagen
                 onChange={e => setFotoPerfil(e.target.files[0])}
               />
               {/* Botón Subir Foto */}
               <button
                 type="button"
-                className="btn"
-                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737", width: "250px" }} // mismo ancho que el input
+                className="btn mb-2"
+                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737", width: "90%" }} // mismo ancho que el input
                 onClick={subirFotoPerfil}
               >
                 <i className="bi bi-cloud-arrow-up-fill me-1"></i>
@@ -381,136 +386,137 @@ function Home() {
         </div>
 
         {/* Información Académica */}
-      <div className="card shadow mb-4">
-        <div className="card-header bg-white border-0">
-          <h4 className="mb-0" style={{ color: "#7A1737" }}>
-            <i className="bi bi-journal-text me-2"></i>
-            Información Académica
-          </h4>
+        <div className="card shadow mb-4">
+          <div className="card-header bg-white border-0">
+            <h4 className="mb-0" style={{ color: "#7A1737" }}>
+              <i className="bi bi-journal-text me-2"></i>
+              Información Académica
+            </h4>
+          </div>
+          <div className="card-body">
+            {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
+              const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
+              const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
+              const tipo = nivel.toLowerCase();
+              const documentoExistente = documentos.find(doc => doc.tipo === tipo);
+              {/* Renderizado de cada nivel académico */ }
+              return (
+                <div key={nivel} className="d-flex flex-wrap align-items-center mb-3">
+                  <i className="bi bi-mortarboard-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
+                  <label className="form-label mb-2 me-2 flex-shrink-0" style={{ minWidth: 160 }}>{nivel}</label>
+
+                  {!documentoExistente ? (
+                    <>
+                      {/* Input y botón para subir documento */}
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        className="form-control mb-2 me-2 flex-grow-1"
+                        style={{ flex: 1 }}
+                        onChange={e => setMap[idx](e.target.files[0])}
+                      />
+                      <button
+                        type="button"
+                        className="btn mb-2" 
+                        style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                        onClick={() => subirArchivo(stateMap[idx], tipo)}
+                      >
+                        <i className="bi bi-cloud-arrow-up-fill me-1"></i>
+                        Subir
+                      </button>
+                      {stateMap[idx] && (
+                        <span className="ms-2 small text-muted">{stateMap[idx].name}</span>
+                      )}
+                    </>
+                  ) : (
+                    <div className="ms-auto d-flex align-items-center"> {/* Botones Ver y Eliminar */}
+                      <a
+                        href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-sm me-2"
+                        style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
+                      >
+                        Ver documento
+                      </a>
+                      <button
+                        className="btn btn-sm"
+                        style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
+                        onClick={() => eliminarDocumento(documentoExistente.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
-        <div className="card-body">
-          {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
-            const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
-            const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
-            const tipo = nivel.toLowerCase();
-            const documentoExistente = documentos.find(doc => doc.tipo === tipo);
-            {/* Renderizado de cada nivel académico */}
-            return (
-              <div key={nivel} className="mb-3 d-flex align-items-center">
-                <i className="bi bi-mortarboard-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-                <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>{nivel}</label>
-            
-                {!documentoExistente ? (
-                  <>
-                  {/* Input y botón para subir documento */}
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      className="form-control rounded-3 me-2"
-                      style={{ flex: 1 }}
-                      onChange={e => setMap[idx](e.target.files[0])}
-                    />
-                    <button
-                      type="button"
-                      className="btn"
-                      style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-                      onClick={() => subirArchivo(stateMap[idx], tipo)}
-                    >
-                      <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-                      Subir
-                    </button>
-                    {stateMap[idx] && (
-                      <span className="ms-2 small text-muted">{stateMap[idx].name}</span>
-                    )}
-                  </>
-                ) : (
-                  <div className="ms-auto d-flex align-items-center"> {/* Botones Ver y Eliminar */}
-                    <a
-                      href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-sm me-2"
-                      style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
-                    >
-                      Ver documento
-                    </a>
-                    <button
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
-                      onClick={() => eliminarDocumento(documentoExistente.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
         {/* Certificados */}
-<div className="card shadow mb-4">
-  <div className="card-header bg-white border-0">
-    <h4 className="mb-0" style={{ color: "#7A1737" }}>
-      <i className="bi bi-award-fill me-2"></i>
-      Certificados
-    </h4>
-  </div>
-  <div className="card-body">
-    {/* Input para subir un nuevo certificado */}
-    <div className="d-flex align-items-center mb-3">
-      <i className="bi bi-file-earmark-text-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-      <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>Nuevo certificado</label>
-      <input
-        type="file"
-        accept=".pdf"
-        className="form-control rounded-3 me-2"
-        style={{ flex: 1 }}
-        onChange={e => setCertificados(e.target.files[0])}
-      />
-      <button
-        type="button"
-        className="btn"
-        style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-        onClick={() => subirArchivo(Certificados, "certificados")}
-      >
-        <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-        Subir
-      </button>
-      {Certificados && (
-        <span className="ms-2 small text-muted">{Certificados.name}</span>
-      )}
-    </div>
+        <div className="card shadow mb-4">
+          <div className="card-header bg-white border-0">
+            <h4 className="mb-0" style={{ color: "#7A1737" }}>
+              <i className="bi bi-award-fill me-2"></i>
+              Certificados
+            </h4>
+          </div>
+          <div className="card-body">
+            {/* Input para subir un nuevo certificado */}
+            <div className="d-flex align-items-center mb-3">
+              <i className="bi bi-file-earmark-text-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
+              <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>Nuevo certificado</label>
+              <input
+                type="file"
+                accept=".pdf"
+                className="form-control rounded-3 me-2"
+                style={{ flex: 1 }}
+                onChange={e => setCertificados(e.target.files[0])}
+              />
+              <button
+                type="button"
+                className="btn"
+                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                onClick={() => subirArchivo(Certificados, "certificados")}
+              >
+                <i className="bi bi-cloud-arrow-up-fill me-1"></i>
+                Subir
+              </button>
+              {Certificados && (
+                <span className="ms-2 small text-muted">{Certificados.name}</span>
+              )}
+            </div>
 
-    {/* Lista de certificados subidos */}
-    {usuario && documentos.filter(doc => doc.tipo === "certificados").map((doc, index) => (
-  <div key={doc.id} className="d-flex align-items-center mb-2">
-    <i className="bi bi-file-earmark-text fs-5 me-3" style={{ color: "#7A1737" }}></i>
-    <span className="me-auto">{doc.nombre_original || doc.archivo}</span>
-    <a
-      href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="btn btn-sm me-2"
-      style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
-    >
-      Ver
-    </a>
-    <button
-      className="btn btn-sm"
-      style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
-      onClick={() => eliminarDocumento(doc.id)}
-    >
-      Eliminar
-    </button>
-  </div>
-))}
-  </div>
-</div>
-    </div>
-  </div>
-);
+            {/* Lista de certificados subidos */}
+            {usuario && documentos.filter(doc => doc.tipo === "certificados").map((doc, index) => (
+              <div key={doc.id} className="d-flex align-items-center mb-2">
+                <i className="bi bi-file-earmark-text fs-5 me-3" style={{ color: "#7A1737" }}></i>
+                <span className="me-auto">{doc.nombre_original || doc.archivo}</span>
+                <a
+                  href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm me-2"
+                  style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
+                >
+                  Ver
+                </a>
+                <button
+                  className="btn btn-sm"
+                  style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
+                  onClick={() => eliminarDocumento(doc.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+      
+    </header>
+  );
 }
 
 export default Home;
