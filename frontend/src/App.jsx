@@ -4,6 +4,7 @@ import RegisterForm from './components/RegisterForm';
 import Sesion from './components/sesion';
 import EditarUsuario from './components/EditarUsuario';
 import Homeadmin from './components/Homeadmin';
+import Usuarios from './components/Usuarios';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/Homeadmin" element={<Homeadmin />} />
         <Route path="/sesion" element={<Sesion />} />
         <Route path="/editarUsuario" element={<EditarUsuario />}/>
+        <Route path="/usuarios" element={<Usuarios />} />
 
       </Routes>
     </Router>
