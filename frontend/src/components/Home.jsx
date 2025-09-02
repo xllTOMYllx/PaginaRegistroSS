@@ -181,126 +181,123 @@ function Home() {
 
   // ---Diseño principal de la página--- //
   return (
-    
-    <header className="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-white sticky-top">
+    <>
+      {/* Barra de navegación superior */}
+      <nav className="navbar navbar-light bg-white shadow-sm mb-4">
+        <div className="container-fluid d-flex justify-content-end align-items-center gap-3">
 
-      {/* Botón Cerrar Sesión */}
-      <button
-        onClick={cerrarSesion}
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          backgroundColor: "#ff4d4f",
-          color: "white",
-          padding: "8px 16px",
-          border: "none",
-          borderRadius: "20px",
-          cursor: "pointer",
-          fontWeight: "bold"
-        }}
-        className="btn btn-danger btn-sm"
-      >
-        Cerrar sesión
-      </button>
-      
-      {/* Panel de Notificaciones
-      <div style={{ position: "absolute", top: "10px", right: "160px" }}>
-        <button
-          className="btn position-relative"
-          onClick={() => setMostrarPanel(!mostrarPanel)}  // 👈 toggle del panel
-        >
-          <FaBell size={20} />
-          {notificaciones.filter(n => !n.leido).length > 0 && (
-            <span
-              className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              style={{ fontSize: "0.7rem" }}
-
-              {notificaciones.filter(n => !n.leido).length}
-            </span>
-          )}
-        </button>
-      </div>
-      */}
-      
-
-      {/* Panel desplegable de notificaciones */}
-      {mostrarPanel && (
-        <div
-          className="card shadow position-absolute"
-          style={{
-            top: "60px",
-            right: "5px",
-            width: "235px",
-            zIndex: 1000,
-            maxHeight: "400px",
-            overflowY: "auto"
-          }}
-        > {/* Contenido del panel */}
-          <div className="card-header bg-white">
-            <strong style={{ color: "#7A1737" }}>Notificaciones</strong>
-          </div>
-          <div className="card-body p-2 w-100 w-md-50">
-            {notificaciones.length > 0 ? (
-              notificaciones.map((n) => (
-                <div
-                  key={n.id}
-                  className={`d-flex justify-content-between align-items-start p-2 mb-2 rounded ${n.leido ? "bg-light" : "bg-white border"}`}
-                >
-                  {/* Texto de la notificación (clic = marcar como leída) */}
-                  <div
-                    style={{ cursor: "pointer", flex: 1 }}
-                    onClick={async () => {
-                      const token = localStorage.getItem("token");
-                      await axios.put(
-                        `http://localhost:5000/api/documentos/notificaciones/${n.id}/leido`,
-                        {},
-                        { headers: { Authorization: `Bearer ${token}` } }
-                      );
-                      setNotificaciones(prev =>
-                        prev.map(item =>
-                          item.id === n.id ? { ...item, leido: true } : item
-                        )
-                      );
-                    }}
-                  > {/* Contenido de la notificación */}
-                    <small className="d-block">
-                      <strong>{n.usuario}:</strong> {n.mensaje}
-                    </small>
-                    <small className="text-muted">
-                      {new Date(n.fecha).toLocaleString()}
-                    </small>
-                  </div>
-
-                  {/* Botón eliminar */}
-                  <button
-                    className="btn p-0 text-danger ms-2"
-                    style={{ fontSize: "2.5rem" }}
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      const token = localStorage.getItem("token");
-                      await axios.delete(
-                        `http://localhost:5000/api/documentos/notificaciones/${n.id}`,
-                        { headers: { Authorization: `Bearer ${token}` } }
-                      );
-                      setNotificaciones(prev => prev.filter(item => item.id !== n.id));
-                    }}
-                  > &times;
-                  </button>
-                </div>
-              ))
-            ) : (
-              <div className="text-muted text-center">No hay notificaciones</div>
+          {/* Botón de Notificaciones */}
+          <button
+            className="btn position-relative"
+            onClick={() => setMostrarPanel(!mostrarPanel)}
+          >
+            <FaBell size={20} />
+            {notificaciones.filter(n => !n.leido).length > 0 && (
+              <span
+                className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style={{ fontSize: "0.7rem" }}
+              >
+                {notificaciones.filter(n => !n.leido).length}
+              </span>
             )}
-          </div>
+          </button>
+
+          {/* Botón Cerrar Sesión */}
+          <button
+            onClick={cerrarSesion}
+            style={{
+              backgroundColor: "#ff4d4f",
+              color: "white",
+              padding: "8px 16px",
+              border: "none",
+              borderRadius: "20px",
+              cursor: "pointer",
+              fontWeight: "bold",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+            }}
+            className="btn btn-danger btn-sm"
+          >
+            Cerrar sesión
+          </button>
         </div>
-      )}
-  
+
+
+        {/* Panel desplegable de notificaciones */}
+        {mostrarPanel && (
+          <div
+            className="card shadow position-absolute"
+            style={{
+              top: "60px",
+              right: "5px",
+              width: "235px",
+              zIndex: 1000,
+              maxHeight: "400px",
+              overflowY: "auto"
+            }}
+          >
+            <div className="card-header bg-white">
+              <strong style={{ color: "#7A1737" }}>Notificaciones</strong>
+            </div>
+            <div className="card-body p-2 w-100 w-md-50">
+              {notificaciones.length > 0 ? (
+                notificaciones.map((n) => (
+                  <div
+                    key={n.id}
+                    className={`d-flex justify-content-between align-items-start p-2 mb-2 rounded ${n.leido ? "bg-light" : "bg-white border"}`}
+                  >
+                    <div
+                      style={{ cursor: "pointer", flex: 1 }}
+                      onClick={async () => {
+                        const token = localStorage.getItem("token");
+                        await axios.put(
+                          `http://localhost:5000/api/documentos/notificaciones/${n.id}/leido`,
+                          {},
+                          { headers: { Authorization: `Bearer ${token}` } }
+                        );
+                        setNotificaciones(prev =>
+                          prev.map(item =>
+                            item.id === n.id ? { ...item, leido: true } : item
+                          )
+                        );
+                      }}
+                    >
+                      <small className="d-block">
+                        <strong>{n.usuario}:</strong> {n.mensaje}
+                      </small>
+                      <small className="text-muted">
+                        {new Date(n.fecha).toLocaleString()}
+                      </small>
+                    </div>
+                    <button
+                      className="btn p-0 text-danger ms-2"
+                      style={{ fontSize: "2.5rem" }}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const token = localStorage.getItem("token");
+                        await axios.delete(
+                          `http://localhost:5000/api/documentos/notificaciones/${n.id}`,
+                          { headers: { Authorization: `Bearer ${token}` } }
+                        );
+                        setNotificaciones(prev => prev.filter(item => item.id !== n.id));
+                      }}
+                    > &times;
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="text-muted text-center">No hay notificaciones</div>
+              )}
+            </div>
+          </div>
+        )}
+      </nav >
+
+
       {/* Contenedor principal */}
-      
-      <main className="container mt-5" style={{ maxWidth: '800px', width: '90%' }}>
+      < main className="container mt-4" style={{ maxWidth: "800px"}
+      }>
         {/* Contenedor unificado de usuario + foto */}
-        <div className="card shadow mb-4">
+        < div className="card shadow mb-4 w-100" >
           <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
             <h4 className="mb-0" style={{ color: "#7A1737" }}>
               <i className="bi bi-person-circle me-2"></i>
@@ -364,8 +361,8 @@ function Home() {
               ) : (
                 <div className="text-muted mb-3">No hay foto de perfil</div>
               )}
+
               {/* Input y botón para subir nueva foto */}
-              <div className="w-100" style={{ maxWidth: 250 }}></div>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/jpg"
@@ -373,6 +370,7 @@ function Home() {
                 style={{ width: "90%" }}   // más ancho y alineado con la imagen
                 onChange={e => setFotoPerfil(e.target.files[0])}
               />
+
               {/* Botón Subir Foto */}
               <button
                 type="button"
@@ -385,10 +383,10 @@ function Home() {
               </button>
             </div>
           </div>
-        </div>
+        </div >
 
         {/* Información Académica */}
-        <div className="card shadow mb-4">
+        < div className="card shadow mb-4 w-100" >
           <div className="card-header bg-white border-0">
             <h4 className="mb-0" style={{ color: "#7A1737" }}>
               <i className="bi bi-journal-text me-2"></i>
@@ -401,6 +399,7 @@ function Home() {
               const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
               const tipo = nivel.toLowerCase();
               const documentoExistente = documentos.find(doc => doc.tipo === tipo);
+
               {/* Renderizado de cada nivel académico */ }
               return (
                 <div key={nivel} className="d-flex flex-wrap align-items-center mb-3">
@@ -419,7 +418,7 @@ function Home() {
                       />
                       <button
                         type="button"
-                        className="btn mb-2" 
+                        className="btn mb-2"
                         style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
                         onClick={() => subirArchivo(stateMap[idx], tipo)}
                       >
@@ -454,71 +453,79 @@ function Home() {
               );
             })}
           </div>
-        </div>
+        </div >
 
         {/* Certificados */}
+        < div className="card shadow mb-4 w-100" >
+          <div className="card-header bg-white border-0">
+            <h4 className="mb-0" style={{ color: "#7A1737" }}>
+              <i className="bi bi-award-fill me-2"></i>
+              Certificados
+            </h4>
+          </div>
+          <div className="card-body">
+            {/* Input para subir un nuevo certificado */}
+            <div className="row g-2 align-items-center">
+              <div className="col-12 col-md-auto">
+                <i className="bi bi-file-earmark-text-fill fs-4" style={{ color: "#7A1737" }}></i>
+              </div>
+              <div className="col-12 col-md-auto">
+                <label className="form-label mb-0">Nuevo certificado</label>
+              </div>
+              <div className="col col-md">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  className="form-control rounded-3 mb-2 w-100"
+                  onChange={e => setCertificados(e.target.files[0])}
+                />
+              </div>
+              <div className="col-12 col-md-auto">
+                <button
+                  type="button"
+                  className="btn mb-2"
+                  style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                  onClick={() => subirArchivo(Certificados, "certificados")}
+                >
+                  <i className="bi bi-cloud-arrow-up-fill me-1"></i>
+                  Subir
+                </button>
+              </div>
 
-        {/* Certificados */}
-<div className="card shadow mb-4">
-  <div className="card-header bg-white border-0">
-    <h4 className="mb-0" style={{ color: "#7A1737" }}>
-      <i className="bi bi-award-fill me-2"></i>
-      Certificados
-    </h4>
-  </div>
-  <div className="card-body">
-    {/* Input para subir un nuevo certificado */}
-    <div className="d-flex align-items-center mb-3">
-      <i className="bi bi-file-earmark-text-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-      <label className="form-label mb-0 me-2" style={{ minWidth: 160 }}>Nuevo certificado</label>
-      <input
-        type="file"
-        accept=".pdf"
-        className="form-control rounded-3 me-2"
-        style={{ flex: 1 }}
-        onChange={e => setCertificados(e.target.files[0])}
-      />
-      <button
-        type="button"
-        className="btn"
-        style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-        onClick={() => subirArchivo(Certificados, "certificados")}
-      >
-        <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-        Subir
-      </button>
-      {Certificados && (
-        <span className="ms-2 small text-muted">{Certificados.name}</span>
-      )}
-    </div>
-        {/* Lista de certificados subidos */}
-    {usuario && documentos.filter(doc => doc.tipo === "certificados").map((doc, index) => (
-  <div key={doc.id} className="d-flex align-items-center mb-2">
-    <i className="bi bi-file-earmark-text fs-5 me-3" style={{ color: "#7A1737" }}></i>
-    <span className="me-auto">{doc.nombre_original || doc.archivo}</span>
-    <a
-      href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="btn btn-sm me-2"
-      style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
-    >
-      Ver
-    </a>
-    <button
-      className="btn btn-sm"
-      style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
-      onClick={() => eliminarDocumento(doc.id)}
-    >
-      Eliminar
-    </button>
-  </div>
-))}
-  </div>
-</div>
-      </main>
-      
-    </header>
+              {Certificados && (
+                <div className="col-12">
+                  <span className="small text-muted">{Certificados.name}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Lista de certificados subidos */}
+            {usuario && documentos.filter(doc => doc.tipo === "certificados").map((doc, index) => (
+              <div key={doc.id} className="d-flex align-items-center mb-2">
+                <i className="bi bi-file-earmark-text fs-5 me-3" style={{ color: "#7A1737" }}></i>
+                <span className="me-auto">{doc.nombre_original || doc.archivo} </span>
+                <a
+                  href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm me-2"
+                  style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
+                >
+                  Ver
+                </a>
+                <button
+                  className="btn btn-sm"
+                  style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
+                  onClick={() => eliminarDocumento(doc.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            ))}
+          </div>
+        </div >
+      </main >
+    </>
   );
 }
 
