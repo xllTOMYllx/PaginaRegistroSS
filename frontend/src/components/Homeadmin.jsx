@@ -11,6 +11,8 @@ function HomeAdmin() {
     setAdmin(adminData);
   }, []);
 
+  
+
   return (
     <div className="d-flex vh-100">
       {/* Sidebar reutilizable */}

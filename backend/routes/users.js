@@ -483,6 +483,36 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// Buscar usuarios por nombre o apellido
+router.get("/buscar", async (req, res) => {
+  const { nombre } = req.query;
+
+  if (!nombre || nombre.trim() === "") {
+    return res.status(400).json({ error: "Falta el parámetro 'nombre'" });
+  }
+
+  try {
+    const searchTerm = `%${nombre}%`;
+
+    const result = await pool.query(
+  `SELECT * FROM PERSONAL
+   WHERE nombre ILIKE $1
+   OR apellido_paterno ILIKE $1
+   OR apellido_materno ILIKE $1
+   OR curp ILIKE $1
+   OR rfc ILIKE $1
+   ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
+   LIMIT 50`,
+  [searchTerm]
+);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error al buscar usuarios:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 
 
 module.exports = router;
