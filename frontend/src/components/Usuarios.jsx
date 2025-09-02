@@ -10,7 +10,6 @@ function Miembros() {
   const [admin, setAdmin] = useState(null);
   const navigate = useNavigate();
 
-  // función para obtener usuarios
   const fetchUsuarios = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -24,7 +23,24 @@ function Miembros() {
     }
   };
 
-  // obtener datos del admin (desde localStorage al iniciar sesión)
+  const buscarUsuario = async (termino) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const url = termino.trim()
+      ? `http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(termino)}`
+      : "http://localhost:5000/api/users/rol/1";
+
+    const response = await axios.get(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setUsuarios(response.data);
+  } catch (error) {
+    console.error("Error al buscar usuario:", error);
+  }
+};
+
   useEffect(() => {
     const adminData = JSON.parse(localStorage.getItem("usuario"));
     setAdmin(adminData);
@@ -33,15 +49,9 @@ function Miembros() {
 
   return (
     <div className="d-flex vh-100">
-      {/* Sidebar */}
       <Sidebar admin={admin} />
-
-      {/* Contenido principal */}
       <main className="flex-grow-1 d-flex flex-column">
-        {/* Navbar */}
-        <Navbar />
-
-        {/* Lista de miembros */}
+        <Navbar onBuscar={buscarUsuario} />
         <div className="container py-4">
           <div className="row">
             {usuarios.map((usuario) => (
@@ -52,26 +62,33 @@ function Miembros() {
                   onClick={() => navigate(`/Usuarios/${usuario.id_personal}`)}
                 >
                   <div className="card-body">
-                    <img
-                      src={
-                        usuario.foto_perfil
-                          ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
-                          : "http://localhost:5000/uploads/default-avatar.jpg"
-                      }
-                      alt={usuario.nombre}
-                      crossOrigin="use-credentials"
-                      className="img-fluid mb-3"
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
-                    />
-                    <h5 className="card-title">
-                      {usuario.nombre} {usuario.apellido_paterno}{" "}
-                      {usuario.apellido_materno}
-                    </h5>
-                  </div>
+  <img
+    src={
+      usuario.foto_perfil
+        ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
+        : "http://localhost:5000/uploads/default-avatar.jpg"
+    }
+    alt={usuario.nombre}
+    crossOrigin="use-credentials"
+    className="img-fluid mb-3"
+    style={{
+      width: "100px",
+      height: "100px",
+      objectFit: "cover",
+    }}
+  />
+
+  <h6 className="card-title">
+    {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
+  </h6>
+
+  <p className="mb-1">
+    <strong>CURP:</strong> {usuario.curp || "No disponible"}
+  </p>
+  <p className="mb-0">
+    <strong>RFC:</strong> {usuario.rfc || "No disponible"}
+  </p>
+</div>
                 </div>
               </div>
             ))}
