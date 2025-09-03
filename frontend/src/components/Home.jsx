@@ -19,33 +19,19 @@ function Home() {
   const [nuevas, setNuevas] = useState(0);
   const [mostrarPanel, setMostrarPanel] = useState(false);
 
-  // Polling de notificaciones cada 10 segundos
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    // Función para obtener notificaciones
-    const fetchNotificaciones = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/documentos/notificaciones", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setNotificaciones(res.data);
-      } catch (err) {
-        console.error("Error al obtener notificaciones:", err);
-      }
-    };
-    // Primera llamada inmediata
-    fetchNotificaciones();
-    const intervalo = setInterval(fetchNotificaciones, 10000); // cada 10s
-    return () => clearInterval(intervalo);
-  }, []);
 
   // ✅ Función para cerrar sesión
   const cerrarSesion = () => {
-    localStorage.removeItem("token"); // elimina el token
-    setUsuario(null); // limpia el estado del usuario
-    navigate("/sesion"); // redirige a la ruta de login o inicio
-  };
+  localStorage.removeItem('token'); // Elimina el token
+  setUsuario(null); // Limpia el estado del usuario
+  setDocumentos([]); // Limpia los documentos
+  setNotificaciones([]); // Limpia las notificaciones
+  setSecundaria(null); // Limpia estado de secundaria
+  setBachillerato(null); // Limpia estado de bachillerato
+  setUniversidad(null); // Limpia estado de universidad
+  setCertificados(null); // Limpia estado de certificados
+  navigate('/sesion', { replace: true }); // Redirige sin guardar en historial
+};
 
   // Obtener el usuario autenticado al cargar el componente
   useEffect(() => {
@@ -91,6 +77,27 @@ function Home() {
       }
     };
     fetchDocumentos();
+  }, []);
+
+  // Polling de notificaciones cada 10 segundos
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    // Función para obtener notificaciones
+    const fetchNotificaciones = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/documentos/notificaciones", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setNotificaciones(res.data);
+      } catch (err) {
+        console.error("Error al obtener notificaciones:", err);
+      }
+    };
+    // Primera llamada inmediata
+    fetchNotificaciones();
+    const intervalo = setInterval(fetchNotificaciones, 10000); // cada 10s
+    return () => clearInterval(intervalo);
   }, []);
 
   // Función para subir archivos PDF
