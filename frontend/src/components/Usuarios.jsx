@@ -24,22 +24,22 @@ function Miembros() {
   };
 
   const buscarUsuario = async (termino) => {
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    const url = termino.trim()
-      ? `http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(termino)}`
-      : "http://localhost:5000/api/users/rol/1";
+      const url = termino.trim()
+        ? `http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(termino)}`
+        : "http://localhost:5000/api/users/rol/1";
 
-    const response = await axios.get(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    setUsuarios(response.data);
-  } catch (error) {
-    console.error("Error al buscar usuario:", error);
-  }
-};
+      setUsuarios(response.data);
+    } catch (error) {
+      console.error("Error al buscar usuario:", error);
+    }
+  };
 
   useEffect(() => {
     const adminData = JSON.parse(localStorage.getItem("usuario"));
@@ -62,33 +62,33 @@ function Miembros() {
                   onClick={() => navigate(`/Usuarios/${usuario.id_personal}`)}
                 >
                   <div className="card-body">
-  <img
-    src={
-      usuario.foto_perfil
-        ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
-        : "http://localhost:5000/uploads/default-avatar.jpg"
-    }
-    alt={usuario.nombre}
-    crossOrigin="use-credentials"
-    className="img-fluid mb-3"
-    style={{
-      width: "100px",
-      height: "100px",
-      objectFit: "cover",
-    }}
-  />
+                    <img
+                      src={
+                        usuario.foto_perfil
+                          ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
+                          : "http://localhost:5000/uploads/default-avatar.jpg"
+                      }
+                      alt={usuario.nombre}
+                      crossOrigin="use-credentials"
+                      className="img-fluid mb-3"
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                      }}
+                    />
 
-  <h6 className="card-title">
-    {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
-  </h6>
+                    <h6 className="card-title">
+                      {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
+                    </h6>
 
-  <p className="mb-1">
-    <strong>CURP:</strong> {usuario.curp || "No disponible"}
-  </p>
-  <p className="mb-0">
-    <strong>RFC:</strong> {usuario.rfc || "No disponible"}
-  </p>
-</div>
+                    <p className="mb-1">
+                      <strong>CURP:</strong> {usuario.curp || "No disponible"}
+                    </p>
+                    <p className="mb-0">
+                      <strong>RFC:</strong> {usuario.rfc || "No disponible"}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
