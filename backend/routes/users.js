@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
 require('dotenv').config();
+const { validarNombre, validarUsuario, validarCorreo, validarPassword, validarCURP, validarRFC
+} = require("../utils/validations");
 
 // Configuración de la base de datos
 const pool = new Pool({
@@ -15,16 +17,17 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT || 5432,
 });
+
 // Clave secreta para JWT
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_aqui';
 
+// Middleware para evitar cacheo de respuestas
 router.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   next();
 });
-
 
 // Registro de usuario con validaciones y contraseña hasheada
 router.post('/register', async (req, res) => {
@@ -49,150 +52,29 @@ router.post('/register', async (req, res) => {
   CURP = typeof CURP === 'string' ? CURP.trim().toUpperCase() : '';
   RFC = typeof RFC === 'string' ? RFC.trim().toUpperCase() : '';
 
-  // Validación de campos obligatorios
-  const missingFields = [];
-  if (!NOMBRE) missingFields.push('Nombre');
-  if (!APELLIDO_PATERNO) missingFields.push('Apellido Paterno');
-  if (!USUARIO) missingFields.push('Usuario');
-  if (!CONTRASENA) missingFields.push('Contraseña');
-  if (!CORREO) missingFields.push('Correo');
-  if (!CURP) missingFields.push('CURP');
-  if (!RFC) missingFields.push('RFC');
-  if (missingFields.length > 0) {
-    return res.status(400).json({ error: `Por favor completa los siguientes campos: ${missingFields.join(', ')}.` });
+  // Validaciones
+  const errores = [];
+  if (validarNombre(NOMBRE)) errores.push(validarNombre(NOMBRE));
+  if (validarNombre(APELLIDO_PATERNO)) errores.push(validarNombre(APELLIDO_PATERNO));
+  if (APELLIDO_MATERNO && validarNombre(APELLIDO_MATERNO)) errores.push(validarNombre(APELLIDO_MATERNO));
+  if (validarUsuario(USUARIO)) errores.push(validarUsuario(USUARIO));
+  if (validarPassword(CONTRASENA)) errores.push(validarPassword(CONTRASENA));
+  if (validarCorreo(CORREO)) errores.push(validarCorreo(CORREO));
+  if (validarCURP(CURP)) errores.push(validarCURP(CURP));
+  if (validarRFC(RFC)) errores.push(validarRFC(RFC));
+  // Si hay errores, responder con todos los errores encontrados
+  if (errores.length > 0) {
+    return res.status(400).json({ error: errores.join(" | ") });
   }
-
-  // Validar longitud y formato de los campos
-  const longFields = [];
-  if (NOMBRE.length > 50) longFields.push('Nombre');
-  if (APELLIDO_PATERNO.length > 50) longFields.push('Apellido Paterno');
-  if (APELLIDO_MATERNO && APELLIDO_MATERNO.length > 50) longFields.push('Apellido Materno');
-  if (longFields.length > 0) {
-    return res.status(400).json({ error: `${longFields.join(', ')} demasiado largos. Máximo 50 caracteres.` });
-  }
-  // Validar que los campos de texto solo contengan las letras permitidas
-  const invalidFields = [];
-  if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(NOMBRE)) invalidFields.push('Nombre');
-  if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(APELLIDO_PATERNO)) invalidFields.push('Apellido Paterno');
-  if (APELLIDO_MATERNO && !/^[A-ZÁÉÍÓÚÑ\s]+$/.test(APELLIDO_MATERNO)) invalidFields.push('Apellido Materno');
-  if (invalidFields.length > 0) {
-    return res.status(400).json({ error: `${invalidFields.join(', ')} solo deben contener letras.` });
-  }
-  // Validar formato de USUARIO
-  if (!/^[A-Z0-9_]{4,15}$/.test(USUARIO)) {
-    return res.status(400).json({ error: 'Usuario inválido. Debe tener entre 4 y 15 caracteres alfanuméricos o guion bajo.' });
-  }
-  // Validar fortaleza de CONTRASENA
-  if (!validator.isStrongPassword(CONTRASENA, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 })) {
-    return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un carácter especial.' });
-  }
-  // Validar formato de CORREO
-  if (!validator.isEmail(CORREO)) {
-    return res.status(400).json({ error: 'Correo electrónico no válido.' });
-  }
-
-  // --- Codigo para validar CURP --- //
-  // --- Función auxiliar para extraer y validar fecha del CURP --- //
-  function obtenerDatosFechaCURP(CURP) {
-    const fecha = CURP.substring(4, 10); // AAMMDD
-    const anio = parseInt(fecha.substring(0, 2), 10);
-    const mes = parseInt(fecha.substring(2, 4), 10);
-    const dia = parseInt(fecha.substring(4, 6), 10);
-    const fullYear = anio >= 0 && anio <= 25 ? 2000 + anio : 1900 + anio;
-
-    const fechaValida = new Date(`${fullYear}-${mes}-${dia}`);
-    const esFebrero29 = mes === 2 && dia === 29;
-    const esBisiesto = (fullYear % 4 === 0 && fullYear % 100 !== 0) || (fullYear % 400 === 0);
-
-    return { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto };
-  }
-
-  // Validar que CURP exista
-  if (!CURP) {
-    return res.status(400).json({ error: 'La CURP es obligatoria.' });
-  }
-
-  // Validar longitud
-  if (CURP.length !== 18) {
-    return res.status(400).json({ error: 'La CURP debe tener exactamente 18 caracteres.' });
-  }
-
-  // Validar fecha real
-  const { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto } = obtenerDatosFechaCURP(CURP);
-
-  if (
-    fechaValida.getFullYear() !== fullYear ||
-    fechaValida.getMonth() + 1 !== mes ||
-    fechaValida.getDate() !== dia
-  ) {
-    const errorMsg = esFebrero29 && !esBisiesto
-      ? 'CURP no válido. El año no es bisiesto, 29 de febrero no es válido.'
-      : 'CURP no válido. Fecha de nacimiento inválida o inexistente.';
-    return res.status(400).json({ error: errorMsg });
-  }
-
-  // Validar formato con regex
-  if (!/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/.test(CURP)) {
-    return res.status(400).json({ error: 'CURP no válido. Formato incorrecto.' });
-  }
-
-
-  //--- Codigo para validar RFC --- //
-  function validarFechaRFC(RFC) {
-    const fecha = RFC.length === 13 ? RFC.substring(4, 10) : RFC.substring(3, 9);
-    const anio = parseInt(fecha.substring(0, 2), 10);
-    const mes = parseInt(fecha.substring(2, 4), 10);
-    const dia = parseInt(fecha.substring(4, 6), 10);
-    const fullYear = anio >= 0 && anio <= 25 ? 2000 + anio : 1900 + anio;
-
-    const fechaValida = new Date(`${fullYear}-${mes}-${dia}`);
-    const esFebrero29 = mes === 2 && dia === 29;
-    const esBisiesto = (fullYear % 4 === 0 && fullYear % 100 !== 0) || (fullYear % 400 === 0);
-
-    if (
-      fechaValida.getFullYear() !== fullYear ||
-      fechaValida.getMonth() + 1 !== mes ||
-      fechaValida.getDate() !== dia
-    ) {
-      return esFebrero29 && !esBisiesto
-        ? 'RFC no válido. El año no es bisiesto, 29 de febrero no es válido.'
-        : 'RFC no válido. Fecha de nacimiento inválida o inexistente.';
-    }
-
-    return null; // Fecha válida
-  }
-
-  if (!RFC) {
-    return res.status(400).json({ error: 'El RFC es obligatorio.' });
-  }
-
-  if (RFC.length !== 12 && RFC.length !== 13) {
-    return res.status(400).json({ error: 'El RFC debe tener 12 caracteres para persona moral o 13 caracteres para persona física.' });
-  }
-
-  if (!/^([A-ZÑ&]{3})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$|^([A-ZÑ&]{4})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$/
-    .test(RFC)) {
-    return res.status(400).json({ error: 'RFC no válido. Formato incorrecto.' });
-  }
-
-  const fechaError = validarFechaRFC(RFC);
-  if (fechaError) {
-    return res.status(400).json({ error: fechaError });
-  }
-  //--- Fin de validaciones de RFC --- //
-
-  // Validar formato de correo electrónico para dominios específicos
-  const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
-  if (!emailRegex.test(CORREO)) {
-    return res.status(400).json({ error: 'El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.' });
-  }
-
+  // REGISTRO
   try {
     // Verificar si USUARIO, CORREO, CURP o RFC ya existen
     const checkQuery = `
       SELECT 1 FROM personal
       WHERE USUARIO = $1 OR CORREO = $2 OR CURP = $3 OR RFC = $4
-    `;// Consulta para verificar existencia
+    `;
+
+    // Consulta para verificar existencia
     const checkResult = await pool.query(checkQuery, [USUARIO, CORREO, CURP, RFC]);
     if (checkResult.rows.length > 0) {
       return res.status(400).json({ error: 'Usuario, correo, CURP o RFC ya existen, intente con otros datos.' });
@@ -207,6 +89,7 @@ router.post('/register', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORREO, CURP, RFC
     `;
+
     // Arreglo de valores para la consulta
     const values = [
       NOMBRE,
@@ -218,9 +101,11 @@ router.post('/register', async (req, res) => {
       CURP,
       RFC,
     ];
+
     // Ejecutar la consulta de inserción
     const insertResult = await pool.query(insertQuery, values);
     const user = insertResult.rows[0];
+
     // Respuesta exitosa o error según el resultado
     res.status(201).json({ message: 'Usuario registrado', user });
   } catch (error) {
@@ -240,6 +125,7 @@ router.put('/:id', async (req, res) => {
     rfc,
     correo
   } = req.body;
+
   // consulta para actualizar
   try {
     const updateQuery = `
@@ -252,7 +138,8 @@ router.put('/:id', async (req, res) => {
           rfc = $6
       WHERE id_personal = $7
       RETURNING id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc
-    `; // Consulta SQL para actualizar datos
+    `; 
+    // Consulta SQL para actualizar datos
     const result = await pool.query(updateQuery, [
       nombre,
       apellido_paterno,
@@ -269,7 +156,6 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar los datos.' });
   }
 });
-
 
 // Login usuario
 router.post('/login', async (req, res) => {
@@ -291,17 +177,21 @@ router.post('/login', async (req, res) => {
   if (!/^[A-Z0-9_]{4,30}$/.test(USUARIO)) {
     return res.status(400).json({ error: 'Usuario inválido. Debe tener entre 4 y 30 caracteres alfanuméricos o guion bajo en mayúsculas.' });
   }
-  // Validar fortaleza de CONTRASENA
-  try {
+
+  // Proceso de login
+  try { // consulta para obtener usuario
     console.log('Buscando usuario:', USUARIO);
     const query = 'SELECT * FROM personal WHERE USUARIO = $1';
     const result = await pool.query(query, [USUARIO]);
+
     // mensaje  si hay credenciales inválidas
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Credenciales inválidas. Verifica tu usuario.' });
     }
+
     // Obtener el usuario encontrado
     const user = result.rows[0];
+
     // Comparar contraseñas
     const match = await bcrypt.compare(CONTRASENA, user.contrasena);
     if (!match) {
@@ -311,6 +201,7 @@ router.post('/login', async (req, res) => {
     // Generar token JWT
     const tokenPayload = { id_personal: user.id_personal, rol: user.rol };
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
+
     // Respuesta exitosa con token y datos del usuario
     res.json({
       message: 'Login exitoso',
@@ -328,6 +219,7 @@ router.post('/login', async (req, res) => {
         foto_perfil: user.foto_perfil
       },
     });
+
     // si hay un error en el proceso
   } catch (error) {// Manejo de errores
     console.error('Error en login:', error.stack);
@@ -342,7 +234,7 @@ router.post('/login', async (req, res) => {
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-
+  
   if (!token) return res.status(401).json({ error: 'Token requerido' });
   // manejo del token
   jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -363,7 +255,7 @@ function isJefe(req, res, next) {
 
 // Ruta para obtener datos del usuario autenticado
 router.get('/me', authenticateToken, async (req, res) => {
-  
+
   try {// consulta para obtener datos del usuario
     const query = `SELECT id_personal, nombre, apellido_paterno, apellido_materno, 
     usuario, correo, curp, rfc, foto_perfil
@@ -415,44 +307,40 @@ router.post('/crear-jefe', async (req, res) => {
   }
 });
 
-
-
-
-
-
+// 📌 Obtener usuarios por rol (solo Jefe)
 router.get('/rol/:rol', authenticateToken, isJefe, async (req, res) => {
   const { rol } = req.params;
 
-  try {
+  try { // consulta para obtener usuarios por rol
     const query = `
       SELECT id_personal, nombre, apellido_paterno, apellido_materno,
              usuario, correo, curp, rfc, rol, foto_perfil
       FROM personal
       WHERE rol = $1
     `;
+    // Ejecutar consulta
     const result = await pool.query(query, [rol]);
-
+    // Agregar documentos académicos a cada usuario
     const usuariosConDocs = await Promise.all(result.rows.map(async (user) => {
       const docsQuery = `
         SELECT id, tipo, archivo, cotejado 
         FROM documentos_academicos 
         WHERE id_personal = $1
       `;
+      // Consulta para obtener documentos
       const docsResult = await pool.query(docsQuery, [user.id_personal]);
       return {
         ...user,
         documentos: docsResult.rows // objetos con id, tipo, archivo, cotejado
       };
     }));
-
+    // Responder con usuarios y sus documentos
     res.json(usuariosConDocs);
-  } catch (error) {
+  } catch (error) {// Manejo de errores
     console.error('Error al obtener usuarios por rol:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
-
 
 // 📌 Obtener información completa de un usuario (perfil + documentos)
 router.get('/usuarios/:id', authenticateToken, async (req, res) => {
@@ -467,11 +355,11 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
        WHERE id_personal = $1`,
       [id]
     );
-
+    // mensaje si no se encuentra el usuario
     if (userResult.rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-
+    // Obtener el usuario
     const user = userResult.rows[0];
 
     // Obtener documentos del usuario
@@ -481,12 +369,12 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
        WHERE id_personal = $1`,
       [id]
     );
-
+    // Responder con datos del usuario y sus documentos
     res.json({
       ...user,
       documentos: docsResult.rows
     });
-  } catch (error) {
+  } catch (error) {// Manejo de errores
     console.error('Error al obtener usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
@@ -500,11 +388,11 @@ router.get("/buscar", async (req, res) => {
     return res.status(400).json({ error: "Falta el parámetro 'nombre'" });
   }
 
-  try {
+  try {// consulta para buscar usuarios
     const searchTerm = `%${nombre}%`;
 
     const result = await pool.query(
-  `SELECT * FROM PERSONAL
+      `SELECT * FROM PERSONAL
    WHERE nombre ILIKE $1
    OR apellido_paterno ILIKE $1
    OR apellido_materno ILIKE $1
@@ -512,19 +400,15 @@ router.get("/buscar", async (req, res) => {
    OR rfc ILIKE $1
    ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
    LIMIT 50`,
-  [searchTerm]
-);
-
+      [searchTerm]
+    );
+    // Responder con resultados
     res.json(result.rows);
-  } catch (error) {
+  } catch (error) {// Manejo de errores
     console.error("Error al buscar usuarios:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
-
-
 
 
 module.exports = router;

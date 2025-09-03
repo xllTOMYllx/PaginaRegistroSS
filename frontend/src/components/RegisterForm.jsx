@@ -5,12 +5,17 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import zxcvbn from 'zxcvbn';
+import { validateForm } from '../utils/validations';
+import { getPasswordStrength, getStrengthColor, getStrengthText} from "../utils/validations";
 
 //función principal del componente RegisterForm
 function RegisterForm() {
   const navigate = useNavigate();
   const [mensaje, setMensaje] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const [passwordStrength, setPasswordStrength] = useState(0); // Fuerza de la contraseña (0-4)
   const [formData, setFormData] = useState({
 
     NOMBRE: '',
@@ -23,137 +28,6 @@ function RegisterForm() {
     RFC: ''
   });
 
-  // Estado para mostrar/ocultar la contraseña
-  const [showPassword, setShowPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
-
-  // Validación del formulario
-  const validateForm = () => {
-    const newErrors = {};
-    const upperCaseData = {
-      ...formData,
-      NOMBRE: formData.NOMBRE.toUpperCase(),
-      APELLIDO_PATERNO: formData.APELLIDO_PATERNO.toUpperCase(),
-      APELLIDO_MATERNO: formData.APELLIDO_MATERNO.toUpperCase(),
-      USUARIO: formData.USUARIO.toUpperCase(),
-      CURP: formData.CURP.toUpperCase(),
-      RFC: formData.RFC.toUpperCase(),
-    };
-
-    // Validaciones para cada campo
-    if (!upperCaseData.NOMBRE) newErrors.NOMBRE = 'El nombre es obligatorio.';
-    else if (upperCaseData.NOMBRE.length > 50) newErrors.NOMBRE = 'El nombre no debe exceder 50 caracteres.';
-    else if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(upperCaseData.NOMBRE)) newErrors.NOMBRE = 'El nombre solo debe contener letras en mayúsculas.';
-
-    if (!upperCaseData.APELLIDO_PATERNO) newErrors.APELLIDO_PATERNO = 'El apellido paterno es obligatorio.';
-    else if (upperCaseData.APELLIDO_PATERNO.length > 50) newErrors.APELLIDO_PATERNO = 'El apellido paterno no debe exceder 50 caracteres.';
-    else if (!/^[A-ZÁÉÍÓÚÑ\s]+$/.test(upperCaseData.APELLIDO_PATERNO)) newErrors.APELLIDO_PATERNO = 'El apellido paterno solo debe contener letras en mayúsculas.';
-
-    if (upperCaseData.APELLIDO_MATERNO && !/^[A-ZÁÉÍÓÚÑ\s]+$/.test(upperCaseData.APELLIDO_MATERNO)) newErrors.APELLIDO_MATERNO = 'El apellido materno solo debe contener letras en mayúsculas.';
-    else if (upperCaseData.APELLIDO_MATERNO && upperCaseData.APELLIDO_MATERNO.length > 50) newErrors.APELLIDO_MATERNO = 'El apellido materno no debe exceder 50 caracteres.';
-
-    if (!upperCaseData.USUARIO) newErrors.USUARIO = 'El usuario es obligatorio.';
-    else if (!/^[A-Z0-9_]{4,15}$/.test(upperCaseData.USUARIO)) newErrors.USUARIO = 'El usuario debe tener entre 4 y 15 caracteres alfanuméricos o guion bajo en mayúsculas.';
-
-    if (!formData.CONTRASENA) newErrors.CONTRASENA = 'La contraseña es obligatoria.';
-    else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(formData.CONTRASENA)) newErrors.CONTRASENA = 'La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un caracter especial.';
-
-    if (!formData.CORREO) newErrors.CORREO = 'El correo es obligatorio.';
-    else if (!/^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/.test(formData.CORREO)) newErrors.CORREO = 'El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.'
-
-    // Función para obtener y validar la fecha de nacimiento desde la CURP
-    function obtenerDatosFechaCURP(CURP) {
-      const fecha = CURP.substring(4, 10); // AAMMDD
-      const anio = parseInt(fecha.substring(0, 2), 10);
-      const mes = parseInt(fecha.substring(2, 4), 10);
-      const dia = parseInt(fecha.substring(4, 6), 10);
-      const fullYear = anio >= 0 && anio <= 25 ? 2000 + anio : 1900 + anio;
-      
-      const fechaValida = new Date(`${fullYear}-${mes}-${dia}`);
-      const esFebrero29 = mes === 2 && dia === 29;
-      const esBisiesto = (fullYear % 4 === 0 && fullYear % 100 !== 0) || (fullYear % 400 === 0);
-
-      return { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto };
-    }
-
-    // Validación específica para CURP
-    if (!upperCaseData.CURP) {
-      newErrors.CURP = 'La CURP es obligatoria.';
-    } else if (upperCaseData.CURP.length !== 18) {
-      newErrors.CURP = 'La CURP debe tener exactamente 18 caracteres.';
-    } else {
-      const regexCURP = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/;
-
-      // Validar formato general de CURP
-      if (!regexCURP.test(upperCaseData.CURP)) {
-        newErrors.CURP = 'CURP no válido. Formato incorrecto.';
-      } else {
-        const { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto } = obtenerDatosFechaCURP(upperCaseData.CURP);
-
-        // Validar fecha de nacimiento
-        if (
-          fechaValida.getFullYear() !== fullYear ||
-          fechaValida.getMonth() + 1 !== mes ||
-          fechaValida.getDate() !== dia
-        ) {
-          newErrors.CURP = esFebrero29 && !esBisiesto
-            ? 'CURP no válido. El año no es bisiesto, 29 de febrero no es válido.'
-            : 'CURP no válido. Fecha de nacimiento inválida o inexistente.';
-        }
-      }
-    }
-
-    // -- Codigo para validar RFC -- //
-    function obtenerDatosFechaRFC(RFC) {
-      const fecha = RFC.length === 13 ? RFC.substring(4, 10) : RFC.substring(3, 9);
-      const anio = parseInt(fecha.substring(0, 2), 10);
-      const mes = parseInt(fecha.substring(2, 4), 10);
-      const dia = parseInt(fecha.substring(4, 6), 10);
-      const fullYear = anio >= 0 && anio <= 25 ? 2000 + anio : 1900 + anio;
-      
-      const fechaValida = new Date(`${fullYear}-${mes}-${dia}`);
-      const esFebrero29 = mes === 2 && dia === 29;
-      const esBisiesto = (fullYear % 4 === 0 && fullYear % 100 !== 0) || (fullYear % 400 === 0);
-
-      return { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto };
-    }
-    // Validación específica para RFC
-    if (!upperCaseData.RFC) {
-      newErrors.RFC = 'El RFC es obligatorio.';
-    } else if (upperCaseData.RFC.length !== 12 && upperCaseData.RFC.length !== 13) {
-      newErrors.RFC = 'El RFC debe tener 12 caracteres para persona moral o 13 caracteres para persona física.';
-    } else {
-      const regexRFC = /^([A-ZÑ&]{3})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$|^([A-ZÑ&]{4})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$/
-        ;
-      // Validar formato general de RFC
-      if (!regexRFC.test(upperCaseData.RFC)) {
-        newErrors.RFC = 'RFC no válido. Formato incorrecto.';
-      } else {
-        const {
-          fullYear: rfcFullYear,
-          mes: rfcMes,
-          dia: rfcDia,
-          fechaValida: rfcFechaValida,
-          esFebrero29: rfcEsFebrero29,
-          esBisiesto: rfcEsBisiesto
-        } = obtenerDatosFechaRFC(upperCaseData.RFC);
-        
-        // Validar fecha de nacimiento
-        if (
-          rfcFechaValida.getFullYear() !== rfcFullYear ||
-          rfcFechaValida.getMonth() + 1 !== rfcMes ||
-          rfcFechaValida.getDate() !== rfcDia
-        ) {
-          newErrors.RFC = rfcEsFebrero29 && !rfcEsBisiesto
-            ? 'RFC no válido. El año no es bisiesto, 29 de febrero no es válido.'
-            : 'RFC no válido. Fecha de nacimiento inválida o inexistente.';
-        }
-      }
-    }
-    return newErrors;
-  };
-
-
   // Manejo del cambio en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -163,7 +37,7 @@ function RegisterForm() {
     }));
     if (name === 'CONTRASENA') {
       const result = zxcvbn(value); // Evalúa la fuerza
-      setPasswordStrength(result.score); // 0 (débil) a 4 (fuerte)
+      setPasswordStrength(getPasswordStrength(value)); // 0 (débil) a 4 (fuerte)
     }
     setError({ ...error, [name]: '' });
   };
@@ -174,11 +48,12 @@ function RegisterForm() {
     setMensaje('');
     setError({});
     // Validación del formulario
-    const newErrors = validateForm();
+    const newErrors = validateForm( formData);
     if (Object.keys(newErrors).length > 0) {
       setError(newErrors);
       return;
     }
+
     // Envío de datos al backend
     try {
       const response = await axios.post('http://localhost:5000/api/users/register', {
@@ -212,23 +87,6 @@ function RegisterForm() {
       } else {
         setError({ general: 'Error al registrar. Intenta de nuevo.' });
       }
-    }
-  };
-
-  // Función para alternar la visibilidad de la contraseña
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  // Función para obtener el color de la barra de progreso según la fuerza de la contraseña
-  const getStrengthColor = (score) => {
-    switch (score) {
-      case 0: return 'bg-danger';
-      case 1: return 'bg-warning';
-      case 2: return 'bg-info';
-      case 3: return 'bg-primary';
-      case 4: return 'bg-success';
-      default: return 'bg-secondary';
     }
   };
 
@@ -355,6 +213,7 @@ function RegisterForm() {
                 className="form-control rounded-3"
                 required
               />
+              {/* Botón para alternar la visibilidad de la contraseña */}
               <button
                 type="button"
                 className="btn btn-outline-secondary rounded-end"
@@ -364,7 +223,9 @@ function RegisterForm() {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+            {/* Mostrar error de contraseña si existe */}
             {error.CONTRASENA && <div className="text-danger small mt-1">{error.CONTRASENA}</div>}
+            {/* Barra de progreso para la fuerza de la contraseña */}
             <div className="mt-2">
               <div className="progress" style={{ height: '8px' }}>
                 <div
@@ -377,7 +238,7 @@ function RegisterForm() {
                 ></div>
               </div>
               <small className="text-muted">
-                Fuerza de la contraseña: {['Muy débil', 'Débil', 'Regular', 'Buena', 'Fuerte'][passwordStrength]}
+                Fuerza de la contraseña: {getStrengthText(passwordStrength)}
               </small>
             </div>
           </div>
