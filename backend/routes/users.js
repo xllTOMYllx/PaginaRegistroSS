@@ -18,6 +18,14 @@ const pool = new Pool({
 // Clave secreta para JWT
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_aqui';
 
+router.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
+
 // Registro de usuario con validaciones y contraseña hasheada
 router.post('/register', async (req, res) => {
   let {
@@ -355,6 +363,7 @@ function isJefe(req, res, next) {
 
 // Ruta para obtener datos del usuario autenticado
 router.get('/me', authenticateToken, async (req, res) => {
+  
   try {// consulta para obtener datos del usuario
     const query = `SELECT id_personal, nombre, apellido_paterno, apellido_materno, 
     usuario, correo, curp, rfc, foto_perfil
@@ -512,6 +521,9 @@ router.get("/buscar", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
+
+
 
 
 
