@@ -27,9 +27,11 @@ function Navbar({ onBuscar }) {
           value={termino}
           onChange={(e) => setTermino(e.target.value)}
         />
+        {/*
         <button className="btn btn-outline-success" type="submit" disabled>
           🔍
         </button>
+        */}
         <button
           className="btn btn-outline-secondary ms-2"
           type="button"
