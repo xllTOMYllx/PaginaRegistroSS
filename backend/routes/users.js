@@ -40,6 +40,7 @@ router.post('/register', async (req, res) => {
     CORREO,
     CURP,
     RFC,
+    ROL
   } = req.body;
 
   // Sanitización básica
@@ -51,6 +52,7 @@ router.post('/register', async (req, res) => {
   CORREO = typeof CORREO === 'string' ? CORREO.trim() : '';
   CURP = typeof CURP === 'string' ? CURP.trim().toUpperCase() : '';
   RFC = typeof RFC === 'string' ? RFC.trim().toUpperCase() : '';
+  ROL = parseInt(ROL);
 
   // Validaciones
   const errores = [];
@@ -62,6 +64,10 @@ router.post('/register', async (req, res) => {
   if (validarCorreo(CORREO)) errores.push(validarCorreo(CORREO));
   if (validarCURP(CURP)) errores.push(validarCURP(CURP));
   if (validarRFC(RFC)) errores.push(validarRFC(RFC));
+
+  //validar solo roles 1=normal, 2=supervisor, 3=admin
+  if (![1, 2, 3].includes(ROL)) errores.push('Rol inválido');
+
   // Si hay errores, responder con todos los errores encontrados
   if (errores.length > 0) {
     return res.status(400).json({ error: errores.join(" | ") });
@@ -85,9 +91,12 @@ router.post('/register', async (req, res) => {
 
     // Insertar usuario
     const insertQuery = `
-      INSERT INTO personal (NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CONTRASENA, CORREO, CURP, RFC)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORREO, CURP, RFC
+      INSERT INTO personal (
+  NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO,
+  USUARIO, CONTRASENA, CORREO, CURP, RFC, ROL
+)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORREO, CURP, RFC, ROL
     `;
 
     // Arreglo de valores para la consulta
@@ -100,6 +109,7 @@ router.post('/register', async (req, res) => {
       CORREO,
       CURP,
       RFC,
+      ROL
     ];
 
     // Ejecutar la consulta de inserción
@@ -316,7 +326,8 @@ router.get('/rol/:rol', authenticateToken, isJefe, async (req, res) => {
       SELECT id_personal, nombre, apellido_paterno, apellido_materno,
              usuario, correo, curp, rfc, rol, foto_perfil
       FROM personal
-      WHERE rol = $1
+      WHERE rol = $1 
+      ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
     `;
     // Ejecutar consulta
     const result = await pool.query(query, [rol]);
@@ -391,17 +402,19 @@ router.get("/buscar", async (req, res) => {
   try {// consulta para buscar usuarios
     const searchTerm = `%${nombre}%`;
 
-    const result = await pool.query(
-      `SELECT * FROM PERSONAL
-   WHERE nombre ILIKE $1
-   OR apellido_paterno ILIKE $1
-   OR apellido_materno ILIKE $1
-   OR curp ILIKE $1
-   OR rfc ILIKE $1
+const result = await pool.query(
+  `SELECT * FROM PERSONAL
+   WHERE rol = 1 AND (
+     nombre ILIKE $1
+     OR apellido_paterno ILIKE $1
+     OR apellido_materno ILIKE $1
+     OR curp ILIKE $1
+     OR rfc ILIKE $1
+   )
    ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
    LIMIT 50`,
-      [searchTerm]
-    );
+  [searchTerm]
+);
     // Responder con resultados
     res.json(result.rows);
   } catch (error) {// Manejo de errores

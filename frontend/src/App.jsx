@@ -6,6 +6,7 @@ import EditarUsuario from './components/EditarUsuario';
 import Homeadmin from './components/Homeadmin';
 import Usuarios from './components/Usuarios';
 import UsuarioDetalle from './components/UsuarioDetalle';
+import CrearUsuario from './components/CrearUsuario';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/editarUsuario" element={<EditarUsuario />}/>
         <Route path="/usuarios" element={<Usuarios />} />
         <Route path="/Usuarios/:id" element={<UsuarioDetalle />} />
+        <Route path="/crearUsuario" element={<CrearUsuario />} />
 
       </Routes>
     </Router>

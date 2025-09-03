@@ -44,7 +44,7 @@ function Navbar({ onBuscar }) {
       <div className="d-flex align-items-center gap-3">
         <button className="btn btn-light">🔔</button>
         <button
-          onClick={() => navigate("/crear-usuario")}
+          onClick={() => navigate("/CrearUsuario")}
           className="btn btn-primary"
         >
           ➕ Crear Usuario
