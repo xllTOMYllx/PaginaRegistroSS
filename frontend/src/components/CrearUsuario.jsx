@@ -156,6 +156,7 @@ function CrearUsuario() {
             >
               <option value="">Selecciona un rol</option>
               <option value="1">Usuario normal</option>
+              <option value="2">Supervisor</option>
               <option value="3">Administrador</option>
             </select>
             {error.ROL && <div className="text-danger small mt-1">{error.ROL}</div>}

@@ -25,7 +25,8 @@ function RegisterForm() {
     CORREO: '',
     USUARIO: '',
     CONTRASENA: '',
-    RFC: ''
+    RFC: '',
+    ROL: '1'
   });
 
   // Manejo del cambio en los campos del formulario
@@ -64,6 +65,7 @@ function RegisterForm() {
         USUARIO: formData.USUARIO.toUpperCase(),
         CURP: formData.CURP.toUpperCase(),
         RFC: formData.RFC.toUpperCase(),
+        ROL: formData.ROL
       });// petición POST al backend
       setMensaje('Usuario registrado correctamente');
       setError({});
