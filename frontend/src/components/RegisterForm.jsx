@@ -15,7 +15,7 @@ function RegisterForm() {
   const [error, setError] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const [passwordStrength, setPasswordStrength] = useState(0); // Fuerza de la contraseña (0-4)
+  const [touched, setTouched] = useState({});const [passwordStrength, setPasswordStrength] = useState(0); // Fuerza de la contraseña (0-4)
   const [formData, setFormData] = useState({
 
     NOMBRE: '',
@@ -26,32 +26,53 @@ function RegisterForm() {
     USUARIO: '',
     CONTRASENA: '',
     RFC: '',
-    ROL: '1'
+
+    ROL: 1 // Asignar rol predeterminado (1 = usuario normal)
+   
   });
 
   // Manejo del cambio en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const updatedValue = (name === 'CORREO' || name === 'CONTRASENA') ? value : value.toUpperCase();
+    
     setFormData(prev => ({
       ...prev,
-      [name]: (name === 'CORREO' || name === 'CONTRASENA') ? value : value.toUpperCase()
+      [name]: updatedValue
     }));
+
     if (name === 'CONTRASENA') {
-      const result = zxcvbn(value); // Evalúa la fuerza
-      setPasswordStrength(getPasswordStrength(value)); // 0 (débil) a 4 (fuerte)
+      setPasswordStrength(getPasswordStrength(value));
     }
-    setError({ ...error, [name]: '' });
+
+    // Validar el campo actual si ya fue tocado
+    if (touched[name]) {
+      const fieldErrors = validateForm({ ...formData, [name]: updatedValue });
+      setError(prev => ({ ...prev, [name]: fieldErrors[name] || '' }));
+    }
   };
 
+  // Marcar campo como "tocado" y validar
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+
+    // Validar el campo al perder el foco
+    const fieldErrors = validateForm({ ...formData, [name]: value });
+    setError(prev => ({ ...prev, [name]: fieldErrors[name] || '' }));
+  };
+  
   // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje('');
     setError({});
+    
     // Validación del formulario
-    const newErrors = validateForm( formData);
+    const newErrors = validateForm(formData);
     if (Object.keys(newErrors).length > 0) {
       setError(newErrors);
+      setTouched(Object.keys(formData).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
       return;
     }
 
@@ -77,10 +98,13 @@ function RegisterForm() {
         CORREO: '',
         USUARIO: '',
         CONTRASENA: '',
-        RFC: ''
+        RFC: '',
+        ROL: 1 // Asignar rol predeterminado (1 = usuario normal)
+
       });
       // Reiniciar la fuerza de la contraseña
       setPasswordStrength(0);
+      setTouched({});
       // Limpiar el mensaje después de 5 segundos
       setTimeout(() => setMensaje(''), 5000);
     } catch (error) {
@@ -92,25 +116,33 @@ function RegisterForm() {
     }
   };
 
+// Función para determinar las clases del input
+  const getInputClass = (fieldName) => {
+    if (!touched[fieldName]) return 'form-control rounded-3';
+    return `form-control rounded-3 ${error[fieldName] ? 'is-invalid' : 'is-valid'}`;
+  };
+
   //pagina de registro
   return ( //contenedor principal
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
       <div className="p-4 rounded-4 shadow bg-white" style={{ width: '100%', maxWidth: '600px' }}>
         <h4 className="text-center mb-3" style={{ color: '#7A1737', fontSize: '30px' }}>CREACIÓN DE CUENTA</h4>
         <form onSubmit={handleSubmit}>
+
           {/* Campo de nombre */}
-          <div className="mb-3">
-            <label className="form-label">NOMBRE</label>
-            <input
-              type="text"
-              name="NOMBRE"
-              value={formData.NOMBRE}
-              onChange={handleChange}
-              placeholder="Ingresa tu nombre"
-              className="form-control rounded-3"
+<div className="mb-3">
+  <label className="form-label">NOMBRE</label>
+  <input
+    type="text"
+    name="NOMBRE"
+    value={formData.NOMBRE}
+    onChange={handleChange}
+    onBlur={handleBlur}
+    placeholder="Ingresa tu nombre"
+    className={getInputClass('NOMBRE')}
               required
-            />
-            {error.NOMBRE && <div className="text-danger small mt-1">{error.NOMBRE}</div>}
+  />
+  {error.NOMBRE && touched.NOMBRE && <div className="invalid-feedback">{error.NOMBRE}</div>}
           </div>
 
           {/* Campo de apellido paterno */}
@@ -121,11 +153,12 @@ function RegisterForm() {
               name="APELLIDO_PATERNO"
               value={formData.APELLIDO_PATERNO}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Ingresa tu apellido paterno"
-              className="form-control rounded-3"
+              className={getInputClass('APELLIDO_PATERNO')}
               required
             />
-            {error.APELLIDO_PATERNO && <div className="text-danger small mt-1">{error.APELLIDO_PATERNO}</div>}
+            {error.APELLIDO_PATERNO && touched.APELLIDO_PATERNO && <div className="invalid-feedback">{error.APELLIDO_PATERNO}</div>}
           </div>
 
           {/* Campo de apellido materno */}
@@ -136,10 +169,12 @@ function RegisterForm() {
               name="APELLIDO_MATERNO"
               value={formData.APELLIDO_MATERNO}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Ingresa tu apellido materno"
-              className="form-control rounded-3"
+              className= {getInputClass('APELLIDO_MATERNO')}
+              required
             />
-            {error.APELLIDO_MATERNO && <div className="text-danger small mt-1">{error.APELLIDO_MATERNO}</div>}
+            {error.APELLIDO_MATERNO && touched.APELLIDO_MATERNO && <div className="invalid-feedback">{error.APELLIDO_MATERNO}</div>}
           </div>
 
           {/* Campo de CURP */}
@@ -150,11 +185,12 @@ function RegisterForm() {
               name="CURP"
               value={formData.CURP}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Ingresa tu CURP"
-              className="form-control rounded-3"
+              className= {getInputClass('CURP')}
               required
             />
-            {error.CURP && <div className="text-danger small mt-1">{error.CURP}</div>}
+            {error.CURP && touched.CURP && <div className="invalid-feedback">{error.CURP}</div>}
           </div>
 
           {/* Campo RFC */}
@@ -165,26 +201,28 @@ function RegisterForm() {
               name="RFC"
               value={formData.RFC}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Ingresa tu RFC"
-              className="form-control rounded-3"
+              className={getInputClass('RFC')}
               required
             />
-            {error.RFC && <div className="text-danger small mt-1">{error.RFC}</div>}
+            {error.RFC && touched.RFC && <div className="invalid-feedback">{error.RFC}</div>}
           </div>
 
-          {/* Campo de correo electrónico */}
-          <div className="mb-3">
-            <label className="form-label">CORREO ELECTRÓNICO</label>
-            <input
-              type="email"
-              name="CORREO"
-              value={formData.CORREO}
-              onChange={handleChange}
-              placeholder="Ingresa tu correo electrónico"
-              className="form-control rounded-3"
-              required
-            />
-            {error.CORREO && <div className="text-danger small mt-1">{error.CORREO}</div>}
+          {/* Campo de correo */}
+<div className="mb-3">
+  <label className="form-label">CORREO ELECTRÓNICO</label>
+  <input
+    type="email"
+    name="CORREO"
+    value={formData.CORREO}
+    onChange={handleChange}
+    onBlur={handleBlur}
+    placeholder="Ingresa tu correo electrónico"
+    className={getInputClass('CORREO')}
+    required
+  />
+  {error.CORREO && touched.CORREO && <div className="invalid-feedback">{error.CORREO}</div>}
           </div>
 
           {/* Campo de usuario */}
@@ -195,11 +233,12 @@ function RegisterForm() {
               name="USUARIO"
               value={formData.USUARIO}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Ingresa tu usuario"
-              className="form-control rounded-3"
+              className={getInputClass('USUARIO')}
               required
             />
-            {error.USUARIO && <div className="text-danger small mt-1">{error.USUARIO}</div>}
+            {error.USUARIO && touched.USUARIO && <div className="invalid-feedback">{error.USUARIO}</div>}
           </div>
 
           {/* Contraseña con visibilidad alternable y barra de progreso */}
@@ -211,8 +250,9 @@ function RegisterForm() {
                 name="CONTRASENA"
                 value={formData.CONTRASENA}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 placeholder="Ingresa tu contraseña"
-                className="form-control rounded-3"
+                className={getInputClass('CONTRASENA')}
                 required
               />
               {/* Botón para alternar la visibilidad de la contraseña */}
@@ -226,7 +266,7 @@ function RegisterForm() {
               </button>
             </div>
             {/* Mostrar error de contraseña si existe */}
-            {error.CONTRASENA && <div className="text-danger small mt-1">{error.CONTRASENA}</div>}
+           {error.CONTRASENA && touched.CONTRASENA && <div className="invalid-feedback">{error.CONTRASENA}</div>}
             {/* Barra de progreso para la fuerza de la contraseña */}
             <div className="mt-2">
               <div className="progress" style={{ height: '8px' }}>
