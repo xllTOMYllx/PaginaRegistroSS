@@ -14,7 +14,7 @@ const usersRoutes = require('./routes/users');
 // Middleware general
 app.use(cors({
   origin: 'http://localhost:5173', // tu frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'CORS'],
   credentials: true
 }));
 // Configuración de seguridad

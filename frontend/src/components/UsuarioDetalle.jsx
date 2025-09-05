@@ -4,7 +4,6 @@ import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 
-// ...importaciones
 function UsuarioDetalle() {
   const { id } = useParams();
   const [usuario, setUsuario] = useState(null);
@@ -31,12 +30,33 @@ function UsuarioDetalle() {
     fetchUsuario();
   }, [id]);
 
+  // Función para marcar un documento como cotejado
+  const toggleCotejado = async (docId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `http://localhost:5000/api/documentos/${docId}/cotejado`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Actualizar estado local
+      setUsuario(prev => ({
+        ...prev,
+        documentos: prev.documentos.map(doc =>
+          doc.id === docId ? { ...doc, cotejado: true } : doc
+        )
+      }));
+    } catch (error) {
+      console.error("Error al actualizar cotejado:", error);
+    }
+  };
+
   if (!usuario) {
     return <p className="text-center mt-5">Cargando información...</p>;
   }
 
-  // 🔍 Separar documentos por tipo
-  // Separar documentos académicos y certificados
+  // Separar documentos por tipo
   const documentosAcademicos = usuario.documentos?.filter(doc =>
     ["secundaria", "bachillerato", "universidad"].includes(doc.tipo.toLowerCase())
   ) || [];
@@ -45,52 +65,19 @@ function UsuarioDetalle() {
     doc.tipo.toLowerCase().includes("certificado")
   ) || [];
 
-  //Orden documentos academicos
-  const ordenAcademico = {
-  secundaria: 1,
-  bachillerato: 2,
-  universidad: 3
-};
-
-const documentosAcademicosOrdenados = documentosAcademicos.sort((a, b) => {
-  const tipoA = ordenAcademico[a.tipo.toLowerCase()] || 99;
-  const tipoB = ordenAcademico[b.tipo.toLowerCase()] || 99;
-  return tipoA - tipoB;
-});
-
-  // 🔄 Agrupar académicos por nivel
-  const nivelesAcademicos = ["secundaria", "bachillerato", "universidad"];
-
-  const renderDocumentos = (docs) => (
-    docs.map(doc => (
-      <tr key={doc.id}>
-        <td>{doc.tipo}</td>
-        <td>{doc.archivo}</td>
-        <td>{new Date(doc.fecha_subida).toLocaleDateString()}</td>
-        <td className="text-center">{doc.cotejado ? "✅" : "❌"}</td>
-        <td>
-          <a
-            href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-sm btn-primary"
-          >
-            Ver PDF
-          </a>
-        </td>
-      </tr>
-    ))
-  );
+  // Orden documentos académicos
+  const ordenAcademico = { secundaria: 1, bachillerato: 2, universidad: 3 };
+  const documentosAcademicosOrdenados = documentosAcademicos.sort((a, b) => {
+    const tipoA = ordenAcademico[a.tipo.toLowerCase()] || 99;
+    const tipoB = ordenAcademico[b.tipo.toLowerCase()] || 99;
+    return tipoA - tipoB;
+  });
 
   return (
     <div className="d-flex flex-column flex-lg-row min-vh-100">
-      {/* Sidebar */}
       <Sidebar admin={admin} />
-
-      {/* Contenido principal */}
       <main className="flex-grow-1 d-flex flex-column">
         <Navbar />
-
         <div className="container py-4">
           <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>
             ← Regresar
@@ -108,11 +95,7 @@ const documentosAcademicosOrdenados = documentosAcademicos.sort((a, b) => {
                 alt={usuario.nombre}
                 crossOrigin="use-credentials"
                 className="img-fluid mb-3"
-                style={{
-                  width: "100px",
-                  height: "100px",
-                  objectFit: "cover",
-                }}
+                style={{ width: "100px", height: "100px", objectFit: "cover" }}
               />
               <div className="ms-md-4 text-center text-md-start">
                 <p><strong>Nombre:</strong> {usuario.nombre}</p>
@@ -127,7 +110,7 @@ const documentosAcademicosOrdenados = documentosAcademicos.sort((a, b) => {
 
             {/* Documentos Académicos */}
             <h5 className="mb-3">📚 Documentos Académicos</h5>
-            {documentosAcademicos.length > 0 ? (
+            {documentosAcademicosOrdenados.length > 0 ? (
               <div className="table-responsive">
                 <table className="table table-striped table-bordered">
                   <thead className="table-dark">
@@ -141,23 +124,31 @@ const documentosAcademicosOrdenados = documentosAcademicos.sort((a, b) => {
                   </thead>
                   <tbody>
                     {documentosAcademicosOrdenados.map(doc => (
-  <tr key={doc.id}>
-    <td>{doc.tipo}</td>
-    <td>{doc.archivo}</td>
-    <td>{new Date(doc.fecha_subida).toLocaleDateString()}</td>
-    <td className="text-center">{doc.cotejado ? "✅" : "❌"}</td>
-    <td>
-      <a
-        href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn btn-sm btn-primary"
-      >
-        Ver PDF
-      </a>
-    </td>
-  </tr>
-))}
+                      <tr key={doc.id}>
+                        <td>{doc.tipo}</td>
+                        <td>{doc.archivo}</td>
+                        <td>{new Date(doc.fecha_subida).toLocaleDateString()}</td>
+                        <td className="text-center">{doc.cotejado ? "✅" : "❌"}</td>
+                        <td>
+                          <a
+                            href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-sm btn-primary me-2"
+                          >
+                            Ver PDF
+                          </a>
+                          {!doc.cotejado && (
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={() => toggleCotejado(doc.id)}
+                            >
+                              Marcar Cotejado
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -191,10 +182,18 @@ const documentosAcademicosOrdenados = documentosAcademicos.sort((a, b) => {
                             href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn btn-sm btn-primary"
+                            className="btn btn-sm btn-primary me-2"
                           >
                             Ver PDF
                           </a>
+                          {!doc.cotejado && (
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={() => toggleCotejado(doc.id)}
+                            >
+                              Marcar Cotejado
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}

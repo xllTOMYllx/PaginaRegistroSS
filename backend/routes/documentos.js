@@ -299,4 +299,29 @@ router.delete('/notificaciones/:id', authenticateToken, async (req, res) => {
   }
 });
 
+
+// 📌 Marcar documento como cotejado
+
+router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await pool.query(
+      `UPDATE documentos_academicos
+       SET cotejado = TRUE
+       WHERE id = $1`,
+      [id]
+    );
+
+    res.json({ message: 'Documento marcado como cotejado correctamente' });
+  } catch (error) {
+    console.error('Error al actualizar cotejado:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+
+
+
+
 module.exports = router;
