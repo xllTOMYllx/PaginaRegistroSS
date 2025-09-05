@@ -31,6 +31,7 @@ router.use((req, res, next) => {
 
 // Registro de usuario con validaciones y contraseña hasheada
 router.post('/register', async (req, res) => {
+
   let {
     NOMBRE,
     APELLIDO_PATERNO,
@@ -52,7 +53,14 @@ router.post('/register', async (req, res) => {
   CORREO = typeof CORREO === 'string' ? CORREO.trim() : '';
   CURP = typeof CURP === 'string' ? CURP.trim().toUpperCase() : '';
   RFC = typeof RFC === 'string' ? RFC.trim().toUpperCase() : '';
+
+  //Revisar esto y lo de abajo(tomas)
   ROL = parseInt(ROL);
+
+  //Validacion de que solo se inserten ROL 1, 2 o 3
+if (![1,2,3].includes(ROL)) {
+  return res.status(400).json({ error: 'Rol inválido. Solo se permite 1 o 3.' });
+}
 
   // Validaciones
   const errores = [];
@@ -69,7 +77,6 @@ router.post('/register', async (req, res) => {
 if (![1,2,3].includes(ROL)) {
   return res.status(400).json({ error: 'Rol inválido. Solo se permite 1, 2 y 3.' });
 }
-
   // Si hay errores, responder con todos los errores encontrados
   //if (errores.length > 0) {
     //return res.status(400).json({ error: errores.join(" | ") });

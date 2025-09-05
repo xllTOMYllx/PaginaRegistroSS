@@ -26,7 +26,9 @@ function RegisterForm() {
     USUARIO: '',
     CONTRASENA: '',
     RFC: '',
+
     ROL: 1 // Asignar rol predeterminado (1 = usuario normal)
+   
   });
 
   // Manejo del cambio en los campos del formulario
