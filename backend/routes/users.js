@@ -65,13 +65,16 @@ router.post('/register', async (req, res) => {
   if (validarCURP(CURP)) errores.push(validarCURP(CURP));
   if (validarRFC(RFC)) errores.push(validarRFC(RFC));
 
-  //validar solo roles 1=normal, 2=supervisor, 3=admin
-  if (![1, 2, 3].includes(ROL)) errores.push('Rol inválido');
+  //Validacion de que solo se inserten ROL 1, 2 o 3
+if (![1,2,3].includes(ROL)) {
+  return res.status(400).json({ error: 'Rol inválido. Solo se permite 1, 2 y 3.' });
+}
 
   // Si hay errores, responder con todos los errores encontrados
-  if (errores.length > 0) {
-    return res.status(400).json({ error: errores.join(" | ") });
-  }
+  //if (errores.length > 0) {
+    //return res.status(400).json({ error: errores.join(" | ") });
+  //}
+
   // REGISTRO
   try {
     // Verificar si USUARIO, CORREO, CURP o RFC ya existen

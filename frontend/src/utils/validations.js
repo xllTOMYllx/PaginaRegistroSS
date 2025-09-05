@@ -93,11 +93,10 @@ export function validateForm(formData) {
   else if (!regexNombre.test(upperCaseData.APELLIDO_PATERNO)) newErrors.APELLIDO_PATERNO = 'El apellido paterno solo debe contener letras en mayúsculas.';
 
   // Apellido materno
-  if (upperCaseData.APELLIDO_MATERNO && !regexNombre.test(upperCaseData.APELLIDO_MATERNO)) {
-    newErrors.APELLIDO_MATERNO = 'El apellido materno solo debe contener letras en mayúsculas.';
-  } else if (upperCaseData.APELLIDO_MATERNO && upperCaseData.APELLIDO_MATERNO.length > 50) {
-    newErrors.APELLIDO_MATERNO = 'El apellido materno no debe exceder 50 caracteres.';
-  }
+  if (!upperCaseData.APELLIDO_MATERNO) newErrors.APELLIDO_MATERNO = 'El apellido materno es obligatorio.';
+  else if (upperCaseData.APELLIDO_MATERNO.length > 50) newErrors.APELLIDO_MATERNO = 'El apellido materno no debe exceder 50 caracteres.';
+  else if (!regexNombre.test(upperCaseData.APELLIDO_MATERNO)) newErrors.APELLIDO_MATERNO = 'El apellido materno solo debe contener letras en mayúsculas.';
+
 
   // Usuario
   if (!upperCaseData.USUARIO) newErrors.USUARIO = 'El usuario es obligatorio.';
