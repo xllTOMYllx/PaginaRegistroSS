@@ -10,6 +10,18 @@ function Miembros() {
   const [admin, setAdmin] = useState(null);
   const navigate = useNavigate();
 
+  // Verificar autenticación al montar el componente (similar a Homeadmin.jsx)
+  useEffect(() => {
+    const adminData = JSON.parse(localStorage.getItem("usuario"));
+    const token = localStorage.getItem("token");
+    if (!adminData || !token) {
+      navigate('/sesion', { replace: true });
+      return;
+    }
+    setAdmin(adminData);
+    fetchUsuarios();
+  }, [navigate]);
+
   const fetchUsuarios = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -20,6 +32,11 @@ function Miembros() {
       setUsuarios(response.data);
     } catch (error) {
       console.error("Error al obtener usuarios:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        navigate('/sesion', { replace: true });
+      }
     }
   };
 
@@ -38,6 +55,24 @@ function Miembros() {
       setUsuarios(response.data);
     } catch (error) {
       console.error("Error al buscar usuario:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        navigate('/sesion', { replace: true });
+      }
+    }
+  };
+
+  // Función para cerrar sesión (similar a Homeadmin.jsx)
+  const cerrarSesion = () => {
+    try {
+      localStorage.removeItem("usuario");
+      localStorage.removeItem("token");
+      setAdmin(null);
+      setUsuarios([]);
+      navigate('/sesion', { replace: true });
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
     }
   };
 
@@ -49,7 +84,7 @@ function Miembros() {
 
   return (
     <div className="d-flex vh-100">
-      <Sidebar admin={admin} />
+      <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
         <Navbar onBuscar={buscarUsuario} />
         <div className="container py-4">

@@ -6,7 +6,7 @@ import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import zxcvbn from 'zxcvbn';
 import { validateForm } from '../utils/validations';
-import { getPasswordStrength, getStrengthColor, getStrengthText} from "../utils/validations";
+import { getPasswordStrength, getStrengthColor, getStrengthText } from "../utils/validations";
 
 //función principal del componente RegisterForm
 function RegisterForm() {
@@ -15,7 +15,7 @@ function RegisterForm() {
   const [error, setError] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const [touched, setTouched] = useState({});const [passwordStrength, setPasswordStrength] = useState(0); // Fuerza de la contraseña (0-4)
+  const [touched, setTouched] = useState({}); const [passwordStrength, setPasswordStrength] = useState(0); // Fuerza de la contraseña (0-4)
   const [formData, setFormData] = useState({
 
     NOMBRE: '',
@@ -26,16 +26,15 @@ function RegisterForm() {
     USUARIO: '',
     CONTRASENA: '',
     RFC: '',
-
     ROL: 1 // Asignar rol predeterminado (1 = usuario normal)
-   
+
   });
 
   // Manejo del cambio en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedValue = (name === 'CORREO' || name === 'CONTRASENA') ? value : value.toUpperCase();
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: updatedValue
@@ -61,13 +60,13 @@ function RegisterForm() {
     const fieldErrors = validateForm({ ...formData, [name]: value });
     setError(prev => ({ ...prev, [name]: fieldErrors[name] || '' }));
   };
-  
+
   // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje('');
     setError({});
-    
+
     // Validación del formulario
     const newErrors = validateForm(formData);
     if (Object.keys(newErrors).length > 0) {
@@ -116,7 +115,7 @@ function RegisterForm() {
     }
   };
 
-// Función para determinar las clases del input
+  // Función para determinar las clases del input
   const getInputClass = (fieldName) => {
     if (!touched[fieldName]) return 'form-control rounded-3';
     return `form-control rounded-3 ${error[fieldName] ? 'is-invalid' : 'is-valid'}`;
@@ -130,19 +129,19 @@ function RegisterForm() {
         <form onSubmit={handleSubmit}>
 
           {/* Campo de nombre */}
-<div className="mb-3">
-  <label className="form-label">NOMBRE</label>
-  <input
-    type="text"
-    name="NOMBRE"
-    value={formData.NOMBRE}
-    onChange={handleChange}
-    onBlur={handleBlur}
-    placeholder="Ingresa tu nombre"
-    className={getInputClass('NOMBRE')}
+          <div className="mb-3">
+            <label className="form-label">NOMBRE</label>
+            <input
+              type="text"
+              name="NOMBRE"
+              value={formData.NOMBRE}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Ingresa tu nombre"
+              className={getInputClass('NOMBRE')}
               required
-  />
-  {error.NOMBRE && touched.NOMBRE && <div className="invalid-feedback">{error.NOMBRE}</div>}
+            />
+            {error.NOMBRE && touched.NOMBRE && <div className="invalid-feedback">{error.NOMBRE}</div>}
           </div>
 
           {/* Campo de apellido paterno */}
@@ -171,7 +170,7 @@ function RegisterForm() {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="Ingresa tu apellido materno"
-              className= {getInputClass('APELLIDO_MATERNO')}
+              className={getInputClass('APELLIDO_MATERNO')}
               required
             />
             {error.APELLIDO_MATERNO && touched.APELLIDO_MATERNO && <div className="invalid-feedback">{error.APELLIDO_MATERNO}</div>}
@@ -187,7 +186,7 @@ function RegisterForm() {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="Ingresa tu CURP"
-              className= {getInputClass('CURP')}
+              className={getInputClass('CURP')}
               required
             />
             {error.CURP && touched.CURP && <div className="invalid-feedback">{error.CURP}</div>}
@@ -210,19 +209,19 @@ function RegisterForm() {
           </div>
 
           {/* Campo de correo */}
-<div className="mb-3">
-  <label className="form-label">CORREO ELECTRÓNICO</label>
-  <input
-    type="email"
-    name="CORREO"
-    value={formData.CORREO}
-    onChange={handleChange}
-    onBlur={handleBlur}
-    placeholder="Ingresa tu correo electrónico"
-    className={getInputClass('CORREO')}
-    required
-  />
-  {error.CORREO && touched.CORREO && <div className="invalid-feedback">{error.CORREO}</div>}
+          <div className="mb-3">
+            <label className="form-label">CORREO ELECTRÓNICO</label>
+            <input
+              type="email"
+              name="CORREO"
+              value={formData.CORREO}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Ingresa tu correo electrónico"
+              className={getInputClass('CORREO')}
+              required
+            />
+            {error.CORREO && touched.CORREO && <div className="invalid-feedback">{error.CORREO}</div>}
           </div>
 
           {/* Campo de usuario */}
@@ -266,7 +265,7 @@ function RegisterForm() {
               </button>
             </div>
             {/* Mostrar error de contraseña si existe */}
-           {error.CONTRASENA && touched.CONTRASENA && <div className="invalid-feedback">{error.CONTRASENA}</div>}
+            {error.CONTRASENA && touched.CONTRASENA && <div className="invalid-feedback">{error.CONTRASENA}</div>}
             {/* Barra de progreso para la fuerza de la contraseña */}
             <div className="mt-2">
               <div className="progress" style={{ height: '8px' }}>

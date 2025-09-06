@@ -73,7 +73,7 @@ function validarCURP(CURP) {
   if (!CURP) return "La CURP es obligatoria.";
   if (CURP.length !== 18) return "La CURP debe tener exactamente 18 caracteres.";
   if (!regexCURP.test(CURP)) return "CURP no válido. Formato incorrecto.";
-    // Validar fecha de nacimiento en CURP
+  // Validar fecha de nacimiento en CURP
   const { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto } = obtenerDatosFechaCURP(CURP);
   if (
     fechaValida.getFullYear() !== fullYear ||
@@ -91,7 +91,7 @@ function validarRFC(RFC) {
   if (!RFC) return "El RFC es obligatorio.";
   if (RFC.length !== 12 && RFC.length !== 13) return "El RFC debe tener 12 o 13 caracteres.";
   if (!regexRFC.test(RFC)) return "RFC no válido. Formato incorrecto.";
-    // Validar fecha en RFC
+  // Validar fecha en RFC
   const { fullYear, mes, dia, fechaValida, esFebrero29, esBisiesto } = obtenerDatosFechaRFC(RFC);
   if (
     fechaValida.getFullYear() !== fullYear ||

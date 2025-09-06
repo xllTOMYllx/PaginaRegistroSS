@@ -58,9 +58,9 @@ router.post('/register', async (req, res) => {
   ROL = parseInt(ROL);
 
   //Validacion de que solo se inserten ROL 1, 2 o 3
-if (![1,2,3].includes(ROL)) {
-  return res.status(400).json({ error: 'Rol inválido. Solo se permite 1 o 3.' });
-}
+  if (![1, 2, 3].includes(ROL)) {
+    return res.status(400).json({ error: 'Rol inválido. Solo se permite 1 o 3.' });
+  }
 
   // Validaciones
   const errores = [];
@@ -74,12 +74,12 @@ if (![1,2,3].includes(ROL)) {
   if (validarRFC(RFC)) errores.push(validarRFC(RFC));
 
   //Validacion de que solo se inserten ROL 1, 2 o 3
-if (![1,2,3].includes(ROL)) {
-  return res.status(400).json({ error: 'Rol inválido. Solo se permite 1, 2 y 3.' });
-}
+  if (![1, 2, 3].includes(ROL)) {
+    return res.status(400).json({ error: 'Rol inválido. Solo se permite 1, 2 y 3.' });
+  }
   // Si hay errores, responder con todos los errores encontrados
   //if (errores.length > 0) {
-    //return res.status(400).json({ error: errores.join(" | ") });
+  //return res.status(400).json({ error: errores.join(" | ") });
   //}
 
   // REGISTRO
@@ -158,7 +158,7 @@ router.put('/:id', async (req, res) => {
           rfc = $6
       WHERE id_personal = $7
       RETURNING id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc
-    `; 
+    `;
     // Consulta SQL para actualizar datos
     const result = await pool.query(updateQuery, [
       nombre,
@@ -254,7 +254,7 @@ router.post('/login', async (req, res) => {
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  
+
   if (!token) return res.status(401).json({ error: 'Token requerido' });
   // manejo del token
   jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -275,6 +275,9 @@ function isJefe(req, res, next) {
 
 // Ruta para obtener datos del usuario autenticado
 router.get('/me', authenticateToken, async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
 
   try {// consulta para obtener datos del usuario
     const query = `SELECT id_personal, nombre, apellido_paterno, apellido_materno, 
@@ -412,8 +415,8 @@ router.get("/buscar", async (req, res) => {
   try {// consulta para buscar usuarios
     const searchTerm = `%${nombre}%`;
 
-const result = await pool.query(
-  `SELECT * FROM PERSONAL
+    const result = await pool.query(
+      `SELECT * FROM PERSONAL
    WHERE rol = 1 AND (
      nombre ILIKE $1
      OR apellido_paterno ILIKE $1
@@ -423,8 +426,8 @@ const result = await pool.query(
    )
    ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
    LIMIT 50`,
-  [searchTerm]
-);
+      [searchTerm]
+    );
     // Responder con resultados
     res.json(result.rows);
   } catch (error) {// Manejo de errores

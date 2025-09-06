@@ -1,7 +1,8 @@
 // src/components/Sidebar.jsx
 import { useNavigate } from "react-router-dom";
 
-function Sidebar({ admin }) {
+
+function Sidebar({ admin, cerrarSesion }) {
   const navigate = useNavigate();
 
   return (
@@ -51,11 +52,7 @@ function Sidebar({ admin }) {
 
       {/* Botón cerrar sesión */}
       <button
-        onClick={() => {
-          localStorage.removeItem("token");
-          localStorage.removeItem("usuario");
-          navigate("/sesion");
-        }}
+        onClick={cerrarSesion}
         className="btn btn-danger w-100 mt-3"
       >
         🔒 Cerrar Sesión
