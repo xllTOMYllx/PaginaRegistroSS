@@ -7,24 +7,65 @@ import Homeadmin from './components/Homeadmin';
 import Usuarios from './components/Usuarios';
 import UsuarioDetalle from './components/UsuarioDetalle';
 import CrearUsuario from './components/CrearUsuario';
-
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Ruta inicial */}
+        {/* Rutas públicas */}
         <Route path="/" element={<RegisterForm />} />
-
-        {/* Otras rutas */}
-        <Route path="/home" element={<Home />} />
-        <Route path="/Homeadmin" element={<Homeadmin />} />
         <Route path="/sesion" element={<Sesion />} />
-        <Route path="/editarUsuario" element={<EditarUsuario />}/>
-        <Route path="/usuarios" element={<Usuarios />} />
-        <Route path="/Usuarios/:id" element={<UsuarioDetalle />} />
-        <Route path="/crearUsuario" element={<CrearUsuario />} />
 
+        {/* Rutas protegidas */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/homeadmin"
+          element={
+            <ProtectedRoute>
+              <Homeadmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/editarUsuario"
+          element={
+            <ProtectedRoute>
+              <EditarUsuario />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usuarios"
+          element={
+            <ProtectedRoute>
+              <Usuarios />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Usuarios/:id"
+          element={
+            <ProtectedRoute>
+              <UsuarioDetalle />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/crearUsuario"
+          element={
+            <ProtectedRoute>
+              <CrearUsuario />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

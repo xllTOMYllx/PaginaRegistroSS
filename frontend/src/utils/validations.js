@@ -156,5 +156,5 @@ export function validateForm(formData) {
     }
   }
   return newErrors;
-  
+
 }
