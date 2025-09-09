@@ -77,7 +77,7 @@ function UsuarioDetalle() {
     <div className="d-flex flex-column flex-lg-row min-vh-100">
       <Sidebar admin={admin} />
       <main className="flex-grow-1 d-flex flex-column">
-        <Navbar />
+  <Navbar hideCrear={admin?.rol === 2} />
         <div className="container py-4">
           <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}
             style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)"  }}>
@@ -247,7 +247,8 @@ function UsuarioDetalle() {
           </div>
         </div>
       </main>
-      <style jsx>{`
+      {/* Estilos responsivos
+      <style>{`
         @media (max-width: 768px) {
           .card {
             padding: 1rem !important;
@@ -286,6 +287,7 @@ function UsuarioDetalle() {
           }
         }
       `}</style>
+      */}
     </div>
   );
 }

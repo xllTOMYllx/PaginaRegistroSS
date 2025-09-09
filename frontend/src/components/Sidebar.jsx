@@ -1,6 +1,7 @@
 // src/components/Sidebar.jsx
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import '../Sidebar.css';
 
 function Sidebar({ admin, cerrarSesion }) {
   const navigate = useNavigate();
@@ -103,8 +104,9 @@ function Sidebar({ admin, cerrarSesion }) {
           🔒 Cerrar Sesión
         </button>
       </aside>
-
-      <style jsx>{`
+      
+      {/* Estilos responsivos 
+      <style>{`
         @media (min-width: 992px) {
           aside {
             transform: translateX(0) !important;
@@ -133,6 +135,7 @@ function Sidebar({ admin, cerrarSesion }) {
           }
         }
       `}</style>
+      */}
     </>
   );
 }
