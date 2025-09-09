@@ -438,8 +438,8 @@ function Home() {
                     </>
                   ) : (
                     <div className="ms-auto d-flex align-items-center"> {/* Botones Ver y Eliminar */}
-                      <a
-                        href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${documentoExistente.archivo}`}
+                      <a href={`http://localhost:5000/uploads/academico/${usuario?.id_personal}/${documentoExistente.archivo}`}
+                        
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-sm me-2"
