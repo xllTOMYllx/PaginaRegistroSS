@@ -1,0 +1,224 @@
+/* RegisterForm.css */
+/* General container styling for the form */
+.d-flex.justify-content-center.align-items-center.min-vh-100.bg-light {
+    background-color: #F5F5F5;
+    /* Light gray background for a clean look */
+    padding: 20px;
+}
+
+/* Form container styling */
+.p-4.rounded-4.shadow.bg-white {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 600px;
+    width: 100%;
+    background-color: #FFFFFF;
+    /* White background for the form */
+}
+
+/* Form title styling */
+h4.text-center.mb-3 {
+    color: #4A2C2A;
+    /* Dark brown for the title */
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+/* Form labels */
+.form-label {
+    color: #4A2C2A;
+    /* Dark brown for labels */
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+/* Input fields */
+.form-control {
+    border: 1px solid #8B6F47;
+    /* Medium brown border */
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    color: #333333;
+    background-color: #F9F9F9;
+    /* Light gray input background */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #4A2C2A;
+    /* Darker brown on focus */
+    box-shadow: 0 0 8px rgba(74, 44, 42, 0.2);
+    outline: none;
+    background-color: #FFFFFF;
+}
+
+/* Valid and invalid input states */
+.form-control.is-valid {
+    border-color: #4A2C2A;
+    /* Dark brown for valid */
+    background-image: none;
+    /* Remove Bootstrap's default checkmark */
+}
+
+.form-control.is-invalid {
+    border-color: #D32F2F;
+    /* Red for error */
+    background-image: none;
+    /* Remove Bootstrap's default error icon */
+}
+
+.invalid-feedback {
+    font-size: 12px;
+    color: #D32F2F;
+    margin-top: 5px;
+}
+
+/* Password input group */
+.input-group {
+    position: relative;
+}
+
+.btn-outline-secondary {
+    border: 1px solid #8B6F47;
+    /* Medium brown border */
+    background-color: #F9F9F9;
+    color: #4A2C2A;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #4A2C2A;
+    /* Dark brown on hover */
+    color: #FFFFFF;
+}
+
+/* Password strength progress bar */
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #EDEDED;
+    /* Light gray background */
+    margin-top: 10px;
+}
+
+.progress-bar {
+    border-radius: 4px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.bg-weak {
+    background-color: #D32F2F;
+}
+
+/* Red for weak password */
+.bg-fair {
+    background-color: #FFCA28;
+}
+
+/* Yellow for fair password */
+.bg-good {
+    background-color: #FFB300;
+}
+
+/* Amber for good password */
+.bg-strong {
+    background-color: #4A2C2A;
+}
+
+/* Dark brown for strong password */
+
+.text-muted {
+    font-size: 12px;
+    color: #6B4E31;
+    /* Medium brown for text */
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #4A2C2A;
+    /* Dark brown for buttons */
+    border-color: #4A2C2A;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #6B4E31;
+    /* Lighter brown on hover */
+    border-color: #6B4E31;
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Alerts */
+.alert-success {
+    background-color: #E8F5E9;
+    /* Light green for success */
+    border-color: #4A2C2A;
+    /* Dark brown border */
+    color: #4A2C2A;
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 12px;
+    margin-top: 20px;
+}
+
+.alert-danger {
+    background-color: #FFEBEE;
+    /* Light red for error */
+    border-color: #D32F2F;
+    color: #D32F2F;
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 12px;
+    margin-top: 20px;
+}
+
+/* Link text */
+.text-center.mt-3 {
+    font-size: 14px;
+    color: #6B4E31;
+    /* Medium brown */
+    margin-top: 20px;
+}
+
+.text-center.text-muted.mt-4.small {
+    font-size: 12px;
+    color: #8B6F47;
+    /* Medium brown */
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .p-4.rounded-4.shadow.bg-white {
+        padding: 20px;
+    }
+
+    h4.text-center.mb-3 {
+        font-size: 24px;
+    }
+
+    .form-control {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .btn-primary {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
