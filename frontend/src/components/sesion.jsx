@@ -43,11 +43,17 @@ function Sesion() {
       const { token, usuario } = response.data;
       localStorage.setItem('token', token);
       localStorage.setItem('usuario', JSON.stringify(usuario));
+
+      if (usuario.rol === 1) {
+        navigate('/Home', { state: { user: usuario } });
+      }
       
+      if (usuario.rol === 2) {
+        navigate('/HomeUsuario2', { state: { user: usuario } });
+      } 
+
       if (usuario.rol === 3) {  
        navigate('/Homeadmin', { state: { user: usuario } });
-      } else if (usuario.rol === 1) {
-        navigate('/home', { state: { user: usuario } });
       }
     
 
