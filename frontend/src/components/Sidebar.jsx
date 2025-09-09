@@ -1,19 +1,20 @@
 // src/components/Sidebar.jsx
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import '../Sidebar.css';
 
+// Componente Sidebar con foto de perfil, nombre, botones de navegación y cerrar sesión
 function Sidebar({ admin, cerrarSesion }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-
+  // Función para alternar el estado del sidebar en pantallas pequeñas
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-
+  
+  // Renderizado del componente Sidebar
   return (
     <>
-      <button
+      <button 
         className="btn btn-dark d-lg-none p-2"
         onClick={toggleSidebar}
         style={{
@@ -23,7 +24,7 @@ function Sidebar({ admin, cerrarSesion }) {
           zIndex: 1050,
           fontSize: "clamp(0.9rem, 2.5vw, 1rem)",
         }}
-      >
+      > 
         {isOpen ? "✖" : "☰"}
       </button>
       <aside
@@ -40,7 +41,7 @@ function Sidebar({ admin, cerrarSesion }) {
           transition: "transform 0.3s ease-in-out",
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
         }}
-      >
+      > 
         <div>
           {admin && (
             <div className="text-center mb-4">
@@ -68,7 +69,7 @@ function Sidebar({ admin, cerrarSesion }) {
               </h5>
             </div>
           )}
-
+          
           <div className="nav flex-column">
             <button
               onClick={() => {
@@ -92,7 +93,7 @@ function Sidebar({ admin, cerrarSesion }) {
             </button>
           </div>
         </div>
-
+              
         <button
           onClick={() => {
             cerrarSesion();
@@ -105,7 +106,7 @@ function Sidebar({ admin, cerrarSesion }) {
         </button>
       </aside>
       
-      {/* Estilos responsivos 
+      {/* Estilos responsivos */}
       <style>{`
         @media (min-width: 992px) {
           aside {
@@ -135,7 +136,6 @@ function Sidebar({ admin, cerrarSesion }) {
           }
         }
       `}</style>
-      */}
     </>
   );
 }

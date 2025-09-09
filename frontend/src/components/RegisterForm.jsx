@@ -1,4 +1,4 @@
-
+// RegisterForm.jsx
 //librerias necesarias
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import zxcvbn from 'zxcvbn';
 import { validateForm } from '../utils/validations';
 import { getPasswordStrength, getStrengthColor, getStrengthText } from "../utils/validations";
+import '../css/RegisterForm.css';
 
 //función principal del componente RegisterForm
 function RegisterForm() {
@@ -301,6 +302,8 @@ function RegisterForm() {
       </div>
     </div>
   );
+
 }
+
 
 export default RegisterForm;

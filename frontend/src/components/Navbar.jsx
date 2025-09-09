@@ -1,8 +1,9 @@
+// src/components/Navbar.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import '../Navbar.css';
 
-function Navbar({ onBuscar, hideCrear }) {
+// Componente Navbar con búsqueda y botones
+function Navbar({ onBuscar }) {
   const [termino, setTermino] = useState("");
   const navigate = useNavigate();
 
@@ -16,8 +17,9 @@ function Navbar({ onBuscar, hideCrear }) {
 
     return () => clearTimeout(delay); // limpia el timeout si el usuario sigue escribiendo
   }, [termino]);
+  // ⏳ Fin Debounce
 
-  return (
+  return (// Navbar con estilos responsivos
     <nav
       className="navbar navbar-light bg-white shadow-sm px-3 px-md-4"
       style={{
@@ -27,7 +29,7 @@ function Navbar({ onBuscar, hideCrear }) {
         paddingTop: "clamp(0.5rem, 1.5vw, 0.75rem)",
         paddingBottom: "clamp(0.5rem, 1.5vw, 0.75rem)",
       }}
-    >
+    > {/* Contenedor principal */}
       <div className="container-fluid d-flex align-items-center flex-nowrap">
         <form
           className="d-flex align-items-center flex-grow-0"
@@ -36,7 +38,7 @@ function Navbar({ onBuscar, hideCrear }) {
             maxWidth: "clamp(300px, 40vw, 300px)",
             width: "100%",
           }}
-        >
+        > {/* Formulario de búsqueda */}
           <input
             className="form-control me-2"
             type="search"
@@ -48,7 +50,7 @@ function Navbar({ onBuscar, hideCrear }) {
               fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
               padding: "clamp(0.3rem, 1vw, 0.4rem)",
             }}
-          />
+          /> {/* Botón para limpiar búsqueda */}
           <button
             className="btn btn-outline-secondary"
             type="button"
@@ -62,11 +64,11 @@ function Navbar({ onBuscar, hideCrear }) {
             🧹
           </button>
         </form>
-
+        {/* Contenedor de botones a la derecha */}
         <div
           className="d-flex align-items-center ms-auto gap-2"
           style={{ flexShrink: 0 }}
-        >
+        > {/* Botones de notificaciones y crear usuario */}
           <button
             className="btn btn-light"
             style={{
@@ -76,22 +78,21 @@ function Navbar({ onBuscar, hideCrear }) {
           >
             🔔
           </button>
-          {!hideCrear && (
-            <button
-              onClick={() => navigate("/CrearUsuario")}
-              className="btn btn-primary"
-              style={{
-                fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-                padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              ➕ Crear
-            </button>
-          )}
+          {/* Botón para navegar a crear usuario */}
+          <button
+            onClick={() => navigate("/CrearUsuario")}
+            className="btn btn-primary"
+            style={{
+              fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
+              padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            ➕ Crear
+          </button>
         </div>
       </div>
-{/* Estilos responsivos 
+      {/* Estilos responsivos */}
       <style>{`
         @media (min-width: 768px) {
           .navbar {
@@ -139,7 +140,6 @@ function Navbar({ onBuscar, hideCrear }) {
           }
         }
       `}</style>
-      */}
     </nav>
   );
 }
