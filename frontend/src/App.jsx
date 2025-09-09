@@ -4,6 +4,7 @@ import RegisterForm from './components/RegisterForm';
 import Sesion from './components/sesion';
 import EditarUsuario from './components/EditarUsuario';
 import Homeadmin from './components/Homeadmin';
+import HomeUsuario2 from './components/HomeUsuario2';
 import Usuarios from './components/Usuarios';
 import UsuarioDetalle from './components/UsuarioDetalle';
 import CrearUsuario from './components/CrearUsuario';
@@ -63,6 +64,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CrearUsuario />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/HomeUsuario2"
+          element={
+            <ProtectedRoute>
+              <HomeUsuario2 />
             </ProtectedRoute>
           }
         />

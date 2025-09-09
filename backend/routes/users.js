@@ -264,12 +264,12 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// Middleware para verificar si el usuario es Jefe
-function isJefe(req, res, next) {
+// Middleware para verificar si el usuario es Jefe o Usuario tipo 2
+function isJefeOUsuario2(req, res, next) {
   if (!req.user) return res.status(401).json({ error: 'No autenticado' });
-  if (req.user.rol !== 3) {
-    return res.status(403).json({ error: 'Acceso denegado: solo Jefe' });
-  }// Si es jefe, continuar
+  if (![2, 3].includes(req.user.rol)) {
+    return res.status(403).json({ error: 'Acceso denegado: solo Jefe o Usuario tipo 2' });
+  }
   next();
 }
 
@@ -331,7 +331,7 @@ router.post('/crear-jefe', async (req, res) => {
 });
 
 // 📌 Obtener usuarios por rol (solo Jefe)
-router.get('/rol/:rol', authenticateToken, isJefe, async (req, res) => {
+router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => {
   const { rol } = req.params;
 
   try { // consulta para obtener usuarios por rol

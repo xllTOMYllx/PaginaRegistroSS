@@ -86,7 +86,7 @@ function Miembros() {
     <div className="d-flex vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
-        <Navbar onBuscar={buscarUsuario} />
+  <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol === 2} />
         <div className="container py-4">
           <div className="row">
             {usuarios.map((usuario) => (
