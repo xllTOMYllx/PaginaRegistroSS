@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Componente Navbar con búsqueda y botones
-function Navbar({ onBuscar }) {
+function Navbar({ onBuscar, hideCrear }) {
   const [termino, setTermino] = useState("");
   const navigate = useNavigate();
 
@@ -78,18 +78,20 @@ function Navbar({ onBuscar }) {
           >
             🔔
           </button>
-          {/* Botón para navegar a crear usuario */}
-          <button
-            onClick={() => navigate("/CrearUsuario")}
-            className="btn btn-primary"
-            style={{
-              fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-              padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            ➕ Crear
-          </button>
+          {/* Botón para navegar a crear usuario, solo si hideCrear no está activo */}
+          {!hideCrear && (
+            <button
+              onClick={() => navigate("/CrearUsuario")}
+              className="btn btn-primary"
+              style={{
+                fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
+                padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              ➕ Crear
+            </button>
+          )}
         </div>
       </div>
       {/* Estilos responsivos */}
