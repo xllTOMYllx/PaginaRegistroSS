@@ -10,6 +10,20 @@ function UsuarioDetalle() {
   const [admin, setAdmin] = useState(null);
   const navigate = useNavigate();
 
+  // Depuración: Verificar si cerrarSesion se define
+  const cerrarSesion = () => {
+    try {
+      console.log("Ejecutando cerrarSesion en UsuarioDetalle.jsx");
+      localStorage.removeItem("usuario");
+      localStorage.removeItem("token");
+      setAdmin(null);
+      setUsuario(null);
+      navigate('/sesion', { replace: true });
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+
   useEffect(() => {
     const adminData = JSON.parse(localStorage.getItem("usuario"));
     setAdmin(adminData);
@@ -30,6 +44,7 @@ function UsuarioDetalle() {
     fetchUsuario();
   }, [id]);
 
+
   // Función para marcar un documento como cotejado
   const toggleCotejado = async (docId) => {
     try {
@@ -39,7 +54,7 @@ function UsuarioDetalle() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
+      
       // Actualizar estado local
       setUsuario(prev => ({
         ...prev,
@@ -73,14 +88,15 @@ function UsuarioDetalle() {
     return tipoA - tipoB;
   });
 
+
   return (
     <div className="d-flex flex-column flex-lg-row min-vh-100">
       <Sidebar admin={admin} />
       <main className="flex-grow-1 d-flex flex-column">
-  <Navbar hideCrear={admin?.rol === 2} />
+        <Navbar hideCrear={admin?.rol === 2} />
         <div className="container py-4">
           <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}
-            style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)"  }}>
+            style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
 
             ← Regresar
           </button>
@@ -97,9 +113,11 @@ function UsuarioDetalle() {
                 alt={usuario.nombre}
                 crossOrigin="use-credentials"
                 className="img-fluid mb-3"
-                style={{ width: "clamp(80px, 15vw, 100px)",
+                style={{
+                  width: "clamp(80px, 15vw, 100px)",
                   height: "clamp(80px, 15vw, 100px)",
-                  objectFit: "cover", }}
+                  objectFit: "cover",
+                }}
               />
               <div className="ms-md-4 text-center text-md-start">
                 <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
@@ -247,7 +265,7 @@ function UsuarioDetalle() {
           </div>
         </div>
       </main>
-      {/* Estilos responsivos
+      {/* style para responsividad */}
       <style>{`
         @media (max-width: 768px) {
           .card {
@@ -287,7 +305,7 @@ function UsuarioDetalle() {
           }
         }
       `}</style>
-      */}
+
     </div>
   );
 }
