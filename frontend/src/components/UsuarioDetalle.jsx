@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import '../css/UsuarioDetalle.css'
 
 function UsuarioDetalle() {
   const { id } = useParams();
@@ -54,7 +55,7 @@ function UsuarioDetalle() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       // Actualizar estado local
       setUsuario(prev => ({
         ...prev,
@@ -91,7 +92,7 @@ function UsuarioDetalle() {
 
   return (
     <div className="d-flex flex-column flex-lg-row min-vh-100">
-      <Sidebar admin={admin} />
+      <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
         <Navbar hideCrear={admin?.rol === 2} />
         <div className="container py-4">
@@ -265,46 +266,6 @@ function UsuarioDetalle() {
           </div>
         </div>
       </main>
-      {/* style para responsividad */}
-      <style>{`
-        @media (max-width: 768px) {
-          .card {
-            padding: 1rem !important;
-          }
-          .table-responsive {
-            font-size: clamp(0.75rem, 2vw, 0.85rem);
-          }
-          .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: clamp(0.7rem, 1.8vw, 0.8rem);
-          }
-          .img-fluid {
-            width: clamp(60px, 12vw, 80px) !important;
-            height: clamp(60px, 12vw, 80px) !important;
-          }
-          .d-flex.flex-column.flex-md-row {
-            flex-direction: column !important;
-            align-items: center;
-          }
-          .ms-md-4 {
-            margin-left: 0 !important;
-            margin-top: 1rem;
-          }
-          .text-md-start {
-            text-align: center !important;
-          }
-        }
-        @media (max-width: 576px) {
-          .container {
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
-          }
-          .table th,
-          .table td {
-            padding: 0.5rem;
-          }
-        }
-      `}</style>
 
     </div>
   );
