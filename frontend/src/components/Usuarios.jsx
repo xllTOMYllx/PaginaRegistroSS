@@ -4,6 +4,8 @@ import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
+import '../css/Usuarios.css'
+import { FaUser, FaUserShield } from 'react-icons/fa';
 
 function Miembros() {
   const [usuarios, setUsuarios] = useState([]);
@@ -82,12 +84,16 @@ function Miembros() {
     fetchUsuarios();
   }, []);
 
+  // Pagina Principal
   return (
     <div className="d-flex vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
-  <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol === 2} />
+        <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol === 2} />
         <div className="container py-4">
+          {usuarios.length === 0 && (
+            <div className="text-center py-4">Cargando usuarios...</div>
+          )}
           <div className="row">
             {usuarios.map((usuario) => (
               <div key={usuario.id_personal} className="col-md-4 mb-4">
@@ -116,6 +122,15 @@ function Miembros() {
                     <h6 className="card-title">
                       {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
                     </h6>
+                    <span
+                      className="user-status"
+                      style={{
+                        backgroundColor: usuario.rol === 2 ? '#4A2C2A' : '#8B6F47',
+                      }}
+                    >
+                      {usuario.rol === 2 ? <FaUserShield className="me-1" /> : <FaUser className="me-1" />}
+                      {usuario.rol === 2 ? 'Admin' : 'Usuario'}
+                    </span>
 
                     <p className="mb-1">
                       <strong>CURP:</strong> {usuario.curp || "No disponible"}

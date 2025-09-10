@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import '../css/Navbar.css'
 
 // Componente Navbar con búsqueda y botones
 function Navbar({ onBuscar, hideCrear }) {
@@ -94,54 +95,7 @@ function Navbar({ onBuscar, hideCrear }) {
           )}
         </div>
       </div>
-      {/* Estilos responsivos */}
-      <style>{`
-        @media (min-width: 768px) {
-          .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          }
-          .container-fluid {
-            flex-wrap: nowrap;
-          }
-          .d-flex.align-items-center.ms-auto {
-            flex-wrap: nowrap;
-          }
-        }
-        @media (max-width: 767px) {
-          .navbar {
-            padding-left: clamp(2.5rem, 6vw, 3.5rem) !important;
-            padding-right: clamp(0.5rem, 2vw, 0.75rem) !important;
-          }
-          .container-fluid {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-          }
-          .d-flex.align-items-center.ms-auto {
-            width: 100%;
-            justify-content: flex-end;
-            gap: 1rem;
-          }
-          .form-control {
-            width: 100% !important;
-          }
-          .btn {
-            padding: clamp(0.3rem, 1vw, 0.4rem);
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-          }
-        }
-        @media (max-width: 576px) {
-          .navbar {
-            padding-top: clamp(0.4rem, 1.2vw, 0.6rem) !important;
-            padding-bottom: clamp(0.4rem, 1.2vw, 0.6rem) !important;
-          }
-          .d-flex.align-items-center.ms-auto {
-            gap: 0.5rem;
-          }
-        }
-      `}</style>
+
     </nav>
   );
 }
