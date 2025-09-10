@@ -32,7 +32,7 @@ function Sidebar({ admin, cerrarSesion }) {
         className={`bg-dark text-white p-3 d-flex flex-column justify-content-between ${isOpen ? "d-block" : "d-none"
           } d-lg-flex`}
         style={{
-          width: "clamp(200px, 20vw, 250px)",
+          width: "clamp(180px, 20vw, 250px)",
           minHeight: "100vh",
           position: "fixed",
           top: 0,
