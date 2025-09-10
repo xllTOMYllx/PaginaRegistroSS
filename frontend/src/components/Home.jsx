@@ -447,6 +447,9 @@ function Home() {
                       >
                         Ver documento
                       </a>
+                      <span className={`badge ms-2 ${documentoExistente.cotejado ? "bg-success" : "bg-warning text-dark"}`}>
+                      {documentoExistente.cotejado ? "Cotejado" : "Pendiente"}
+                      </span>
                       <button
                         className="btn btn-sm"
                         style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
@@ -520,6 +523,9 @@ function Home() {
                 >
                   Ver
                 </a>
+                <span className={`badge ms-2 ${doc.cotejado ? "bg-success" : "bg-warning text-dark"}`}>
+      {doc.cotejado ? "Cotejado" : "Pendiente"}
+    </span>
                 <button
                   className="btn btn-sm"
                   style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}

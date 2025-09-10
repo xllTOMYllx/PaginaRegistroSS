@@ -108,7 +108,7 @@ router.post('/subir-academico', authenticateToken, upload.single('archivo'), asy
 router.get('/mis-documentos', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, tipo, archivo, fecha_subida
+      `SELECT id, tipo, archivo, cotejado, fecha_subida
        FROM documentos_academicos
        WHERE id_personal = $1`,
       [req.user.id_personal]
