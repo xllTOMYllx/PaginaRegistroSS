@@ -1,46 +1,198 @@
 /* Navbar.css */
-        @media (min-width: 768px) {
-          .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          }
-          .container-fluid {
-            flex-wrap: nowrap;
-          }
-          .d-flex.align-items-center.ms-auto {
-            flex-wrap: nowrap;
-          }
-        }
-        @media (max-width: 767px) {
-          .navbar {
-            padding-left: clamp(2.5rem, 6vw, 3.5rem) !important;
-            padding-right: clamp(0.5rem, 2vw, 0.75rem) !important;
-          }
-          .container-fluid {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-          }
-          .d-flex.align-items-center.ms-auto {
-            width: 100%;
-            justify-content: flex-end;
-            gap: 1rem;
-          }
-          .form-control {
-            width: 100% !important;
-          }
-          .btn {
-            padding: clamp(0.3rem, 1vw, 0.4rem);
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-          }
-        }
-        @media (max-width: 576px) {
-          .navbar {
-            padding-top: clamp(0.4rem, 1.2vw, 0.6rem) !important;
-            padding-bottom: clamp(0.4rem, 1.2vw, 0.6rem) !important;
-          }
-          .d-flex.align-items-center.ms-auto {
-            gap: 0.5rem;
-          }
-        }
+
+/* Base navbar styling */
+.navbar.navbar-light.bg-white.shadow-sm {
+  background-color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: 'Roboto', sans-serif;
+  width: 100%; /* Full width of main */
+  margin: 0; /* Remove any inherited margins */
+}
+
+/* Container to align with main content */
+.container-fluid {
+  max-width: 1200px; /* Match Usuarios.css container */
+  width: 100%;
+  padding: 0 clamp(0.5rem, 1.5vw, 0.75rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Search form */
+.d-flex.align-items-center.flex-grow-0 {
+  max-width: clamp(300px, 40vw, 300px); /* Match Navbar.jsx maxWidth */
+  width: 100%;
+  gap: 0.5rem;
+}
+
+/* Search input */
+.form-control {
+  border: 1px solid #8B6F47; /* Light brown border */
+  border-radius: 8px;
+  padding: clamp(0.3rem, 1vw, 0.4rem); /* Match Navbar.jsx padding */
+  font-size: clamp(0.85rem, 2.2vw, 0.95rem); /* Match Navbar.jsx fontSize */
+  background-color: #F9F9F9; /* Light gray input background */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #4A2C2A; /* Dark brown on focus */
+  box-shadow: 0 0 6px rgba(74, 44, 42, 0.2);
+  background-color: #FFFFFF;
+  outline: none;
+}
+
+/* Clear search button */
+.btn-outline-secondary {
+  border: 1px solid #8B6F47; /* Light brown border */
+  background-color: #F9F9F9;
+  color: #4A2C2A; /* Dark brown text */
+  border-radius: 8px;
+  padding: clamp(0.25rem, 0.8vw, 0.35rem); /* Match Navbar.jsx padding */
+  font-size: clamp(0.8rem, 2vw, 0.9rem); /* Match Navbar.jsx fontSize */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6B4E31; /* Medium brown on hover */
+  color: #FFFFFF;
+  transform: scale(1.05); /* Subtle zoom effect */
+}
+
+.btn-outline-secondary:focus {
+  outline: 2px solid #4A2C2A; /* Dark brown focus outline */
+  outline-offset: 2px;
+}
+
+/* Notification and Create buttons */
+.d-flex.align-items-center.ms-auto {
+  gap: clamp(0.5rem, 1.5vw, 0.75rem); /* Consistent spacing */
+}
+
+.d-flex.align-items-center.ms-auto .btn-light,
+.d-flex.align-items-center.ms-auto .btn-primary {
+  border-radius: 8px;
+  padding: clamp(0.25rem, 0.8vw, 0.35rem); /* Match Navbar.jsx padding */
+  font-size: clamp(0.85rem, 2.2vw, 0.95rem); /* Match Navbar.jsx fontSize */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-light {
+  background-color: #F9F9F9; /* Light gray background */
+  border: 1px solid #8B6F47; /* Light brown border */
+  color: #4A2C2A; /* Dark brown text */
+}
+
+.btn-light:hover {
+  background-color: #6B4E31; /* Medium brown on hover */
+  color: #FFFFFF;
+  transform: scale(1.05); /* Subtle zoom effect */
+}
+
+.btn-primary {
+  background-color: #4A2C2A; /* Dark brown */
+  border-color: #4A2C2A;
+  color: #FFFFFF;
+}
+
+.btn-primary:hover {
+  background-color: #6B4E31; /* Medium brown on hover */
+  border-color: #6B4E31;
+  color: #FFFFFF;
+  transform: scale(1.05); /* Subtle zoom effect */
+}
+
+.btn-light:focus,
+.btn-primary:focus {
+  outline: 2px solid #4A2C2A; /* Dark brown focus outline */
+  outline-offset: 2px;
+}
+
+/* Emoji alignment */
+.btn-light::before,
+.btn-outline-secondary::before,
+.btn-primary::before {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .container-fluid {
+    flex-wrap: nowrap;
+  }
+
+  .d-flex.align-items-center.ms-auto {
+    flex-wrap: nowrap;
+    gap: clamp(0.75rem, 2vw, 1rem);
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar {
+    padding-left: clamp(0.5rem, 2vw, 0.75rem) !important; /* Adjusted for no sidebar offset */
+    padding-right: clamp(0.5rem, 2vw, 0.75rem) !important;
+  }
+
+  .container-fluid {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(0.75rem, 2vw, 1rem);
+  }
+
+  .d-flex.align-items-center.ms-auto {
+    width: 100%;
+    justify-content: flex-end;
+    gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  }
+
+  .form-control {
+    width: 100% !important;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    padding: clamp(0.25rem, 0.8vw, 0.35rem);
+  }
+
+  .btn {
+    padding: clamp(0.25rem, 0.8vw, 0.35rem);
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    padding-top: clamp(0.4rem, 1.2vw, 0.6rem) !important;
+    padding-bottom: clamp(0.4rem, 1.2vw, 0.6rem) !important;
+  }
+
+  .d-flex.align-items-center.ms-auto {
+    gap: clamp(0.4rem, 1.2vw, 0.5rem);
+  }
+
+  .form-control {
+    font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+    padding: clamp(0.25rem, 0.8vw, 0.35rem);
+  }
+
+  .btn {
+    font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+    padding: clamp(0.25rem, 0.8vw, 0.35rem);
+  }
+}

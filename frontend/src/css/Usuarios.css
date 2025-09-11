@@ -56,6 +56,7 @@ main.flex-grow-1.d-flex.flex-column {
 .card-title {
   color: #4A2C2A; /* Dark brown for name */
   font-size: 18px;
+  font-family: 'Roboto', sans-serif;
   font-weight: 600;
   margin-bottom: 10px;
   text-transform: capitalize;
@@ -67,6 +68,7 @@ main.flex-grow-1.d-flex.flex-column {
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
+  font-family: 'Roboto' sans-serif;
   display: inline-block; /* Ensure proper spacing */
   margin-bottom: 10px;
 }
@@ -79,6 +81,7 @@ main.flex-grow-1.d-flex.flex-column {
 /* Card text (CURP, RFC) */
 .card-body p {
   font-size: 14px;
+  font-family: 'Roboto', sans-serif;
   color: #000000; /* Medium brown for text */
   margin-bottom: 5px;
 }

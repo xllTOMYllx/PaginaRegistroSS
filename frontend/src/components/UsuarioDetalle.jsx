@@ -97,7 +97,7 @@ function UsuarioDetalle() {
         <Navbar hideCrear={admin?.rol === 2} />
         <div className="container py-4">
           <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}
-            style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+            style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
 
             ← Regresar
           </button>
@@ -121,32 +121,32 @@ function UsuarioDetalle() {
                 }}
               />
               <div className="ms-md-4 text-center text-md-start">
-                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>Nombre:</strong> {usuario.nombre}
                 </p>
-                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>Apellido Paterno:</strong> {usuario.apellido_paterno}
                 </p>
-                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>Apellido Materno:</strong> {usuario.apellido_materno}
                 </p>
-                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>Usuario:</strong> {usuario.usuario}
                 </p>
-                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>Correo:</strong> {usuario.correo}
                 </p>
-                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>CURP:</strong> {usuario.curp}
                 </p>
-                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>RFC:</strong> {usuario.rfc}
                 </p>
               </div>
             </div>
 
             {/* Documentos Académicos */}
-            <h5 className="mb-3" style={{ fontSize: "clamp(1.1rem, 3vw, 1.25rem)" }}>
+            <h5 className="mb-3" style={{ fontSize: "clamp(1.1rem, 3vw, 1.25rem)", fontFamily: "Roboto, sans-serif" }}>
               📚 Documentos Académicos
             </h5>
             {documentosAcademicosOrdenados.length > 0 ? (
@@ -154,22 +154,22 @@ function UsuarioDetalle() {
                 <table className="table table-striped table-bordered">
                   <thead className="table-dark">
                     <tr>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Tipo</th>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Archivo</th>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Fecha subida</th>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Cotejado</th>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Acciones</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Tipo</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Archivo</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Fecha subida</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Cotejado</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {documentosAcademicosOrdenados.map((doc) => (
                       <tr key={doc.id}>
-                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)" }}>{doc.tipo}</td>
-                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)" }}>{doc.archivo}</td>
-                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)" }}>
+                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}>{doc.tipo}</td>
+                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}>{doc.archivo}</td>
+                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}>
                           {new Date(doc.fecha_subida).toLocaleDateString()}
                         </td>
-                        <td className="text-center" style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)" }}>
+                        <td className="text-center" style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}>
                           {doc.cotejado ? "✅" : "❌"}
                         </td>
                         <td>
@@ -179,7 +179,7 @@ function UsuarioDetalle() {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="btn btn-sm btn-primary"
-                              style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)" }}
+                              style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)", fontFamily: "Roboto, sans-serif" }}
                             >
                               Ver PDF
                             </a>
@@ -187,7 +187,7 @@ function UsuarioDetalle() {
                               <button
                                 className="btn btn-sm btn-success"
                                 onClick={() => toggleCotejado(doc.id)}
-                                style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)" }}
+                                style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)", fontFamily: "Roboto, sans-serif" }}
                               >
                                 Marcar Cotejado
                               </button>
@@ -200,12 +200,12 @@ function UsuarioDetalle() {
                 </table>
               </div>
             ) : (
-              <p className="text-muted" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+              <p className="text-muted" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                 No hay documentos académicos registrados.
               </p>
             )}
 
-            <h5 className="mb-3 mt-4" style={{ fontSize: "clamp(1.1rem, 3vw, 1.25rem)" }}>
+            <h5 className="mb-3 mt-4" style={{ fontSize: "clamp(1.1rem, 3vw, 1.25rem)", fontFamily: "Roboto, sans-serif" }}>
               🎓 Certificados
             </h5>
             {certificados.length > 0 ? (
@@ -213,22 +213,22 @@ function UsuarioDetalle() {
                 <table className="table table-striped table-bordered">
                   <thead className="table-dark">
                     <tr>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Tipo</th>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Archivo</th>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Fecha subida</th>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Cotejado</th>
-                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}>Acciones</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Tipo</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Archivo</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Fecha subida</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Cotejado</th>
+                      <th scope="col" style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)", fontFamily: "Roboto, sans-serif" }}>Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {certificados.map((doc) => (
                       <tr key={doc.id}>
-                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)" }}>{doc.tipo}</td>
-                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)" }}>{doc.archivo}</td>
-                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)" }}>
+                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}>{doc.tipo}</td>
+                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}>{doc.archivo}</td>
+                        <td style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}>
                           {new Date(doc.fecha_subida).toLocaleDateString()}
                         </td>
-                        <td className="text-center" style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)" }}>
+                        <td className="text-center" style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}>
                           {doc.cotejado ? "✅" : "❌"}
                         </td>
                         <td>
@@ -238,7 +238,7 @@ function UsuarioDetalle() {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="btn btn-sm btn-primary"
-                              style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)" }}
+                              style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)", fontFamily: "Roboto, sans-serif" }}
                             >
                               Ver PDF
                             </a>
@@ -246,7 +246,7 @@ function UsuarioDetalle() {
                               <button
                                 className="btn btn-sm btn-success"
                                 onClick={() => toggleCotejado(doc.id)}
-                                style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)" }}
+                                style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)", fontFamily: "Roboto, sans-serif" }}
                               >
                                 Marcar Cotejado
                               </button>
@@ -259,7 +259,7 @@ function UsuarioDetalle() {
                 </table>
               </div>
             ) : (
-              <p className="text-muted" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)" }}>
+              <p className="text-muted" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                 No hay certificados registrados.
               </p>
             )}
