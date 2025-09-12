@@ -333,34 +333,38 @@ router.post('/crear-jefe', async (req, res) => {
 // 📌 Obtener usuarios por rol (solo Jefe)
 router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => {
   const { rol } = req.params;
+  let rolesPermitidos = [];
+  if (rol == 2) {
+    rolesPermitidos = [1]; // supervisor ve base
+  } else if (rol == 3) {
+    rolesPermitidos = [1, 2]; // admin ve base y supervisor
+  } else {
+    rolesPermitidos = [1]; // por defecto solo base
+  }
 
-  try { // consulta para obtener usuarios por rol
+  try {
     const query = `
       SELECT id_personal, nombre, apellido_paterno, apellido_materno,
              usuario, correo, curp, rfc, rol, foto_perfil
       FROM personal
-      WHERE rol = $1 
+      WHERE rol = ANY($1)
       ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
     `;
-    // Ejecutar consulta
-    const result = await pool.query(query, [rol]);
-    // Agregar documentos académicos a cada usuario
+    const result = await pool.query(query, [rolesPermitidos]);
     const usuariosConDocs = await Promise.all(result.rows.map(async (user) => {
       const docsQuery = `
         SELECT id, tipo, archivo, cotejado 
         FROM documentos_academicos 
         WHERE id_personal = $1
       `;
-      // Consulta para obtener documentos
       const docsResult = await pool.query(docsQuery, [user.id_personal]);
       return {
         ...user,
-        documentos: docsResult.rows // objetos con id, tipo, archivo, cotejado
+        documentos: docsResult.rows
       };
     }));
-    // Responder con usuarios y sus documentos
     res.json(usuariosConDocs);
-  } catch (error) {// Manejo de errores
+  } catch (error) {
     console.error('Error al obtener usuarios por rol:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
