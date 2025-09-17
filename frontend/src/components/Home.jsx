@@ -22,16 +22,16 @@ function Home() {
 
   // ✅ Función para cerrar sesión
   const cerrarSesion = () => {
-  localStorage.removeItem('token'); // Elimina el token
-  setUsuario(null); // Limpia el estado del usuario
-  setDocumentos([]); // Limpia los documentos
-  setNotificaciones([]); // Limpia las notificaciones
-  setSecundaria(null); // Limpia estado de secundaria
-  setBachillerato(null); // Limpia estado de bachillerato
-  setUniversidad(null); // Limpia estado de universidad
-  setCertificados(null); // Limpia estado de certificados
-  navigate('/sesion', { replace: true }); // Redirige sin guardar en historial
-};
+    localStorage.removeItem('token'); // Elimina el token
+    setUsuario(null); // Limpia el estado del usuario
+    setDocumentos([]); // Limpia los documentos
+    setNotificaciones([]); // Limpia las notificaciones
+    setSecundaria(null); // Limpia estado de secundaria
+    setBachillerato(null); // Limpia estado de bachillerato
+    setUniversidad(null); // Limpia estado de universidad
+    setCertificados(null); // Limpia estado de certificados
+    navigate('/sesion', { replace: true }); // Redirige sin guardar en historial
+  };
 
   // Obtener el usuario autenticado al cargar el componente
   useEffect(() => {
@@ -191,18 +191,19 @@ function Home() {
     <>
       {/* Barra de navegación superior */}
       <nav className="navbar navbar-light bg-white shadow-sm mb-4">
-        <div className="container-fluid d-flex justify-content-end align-items-center gap-3">
+        <div className="container-fluid d-flex justify-content-end align-items-center flex-nowrap gap-1">
 
           {/* Botón de Notificaciones */}
           <button
-            className="btn position-relative"
+            className="btn btn-sm position-relative"
+            style={{ padding: "4px 8px" }}
             onClick={() => setMostrarPanel(!mostrarPanel)}
           >
-            <FaBell size={20} />
+            <FaBell size={16} />
             {notificaciones.filter(n => !n.leido).length > 0 && (
               <span
                 className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style={{ fontSize: "0.7rem" }}
+                style={{ fontSize: "0.6rem", padding: "2px 4px" }}
               >
                 {notificaciones.filter(n => !n.leido).length}
               </span>
@@ -215,16 +216,34 @@ function Home() {
             style={{
               backgroundColor: "#ff4d4f",
               color: "white",
-              padding: "8px 16px",
+              padding: "6px 12px",
               border: "none",
               borderRadius: "20px",
               cursor: "pointer",
               fontWeight: "bold",
               boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+              fontSize: "0.875rem"
             }}
-            className="btn btn-danger btn-sm"
+            className="btn btn-danger btn-sm d-none d-sm-inline"
           >
-            Cerrar sesión
+            Cerrar Sesión
+          </button>
+          <button
+            onClick={cerrarSesion}
+            style={{
+              backgroundColor: "#ff4d4f",
+              color: "white",
+              padding: "4px 8px",
+              border: "none",
+              borderRadius: "16px",
+              cursor: "pointer",
+              fontWeight: "bold",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+              fontSize: "0.75rem"
+            }}
+            className="btn btn-danger btn-sm d-inline d-sm-none"
+          >
+            Salir
           </button>
         </div>
 
@@ -301,7 +320,7 @@ function Home() {
 
 
       {/* Contenedor principal */}
-      < main className="container mt-4" style={{ maxWidth: "800px"}
+      < main className="container mt-4" style={{ maxWidth: "800px" }
       }>
         {/* Contenedor unificado de usuario + foto */}
         < div className="card shadow mb-4 w-100" >
@@ -437,22 +456,49 @@ function Home() {
                       )}
                     </>
                   ) : (
-                    <div className="ms-auto d-flex align-items-center"> {/* Botones Ver y Eliminar */}
-                      <a href={`http://localhost:5000/uploads/academico/${usuario?.id_personal}/${documentoExistente.archivo}`}
-                        
+                    <div className="ms-auto d-flex align-items-center gap-2"> {/* Botones Ver y Eliminar */}
+                      <a
+                        href={`http://localhost:5000/uploads/academico/${usuario?.id_personal}/${documentoExistente.archivo}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-sm me-2"
-                        style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
+                        className="btn btn-sm"
+                        style={{
+                          backgroundColor: "#7A1737",
+                          color: "#fff",
+                          border: "none",
+                          padding: "6px 16px",
+                          fontSize: "0.875rem",
+                          borderRadius: "4px"
+                        }}
                       >
                         Ver documento
                       </a>
-                      <span className={`badge ms-2 ${documentoExistente.cotejado ? "bg-success" : "bg-warning text-dark"}`}>
-                      {documentoExistente.cotejado ? "Cotejado" : "Pendiente"}
+                      <span
+                        className={`badge ${documentoExistente.cotejado ? "bg-success" : "bg-warning text-dark"}`}
+                        style={{
+                          padding: "6px 16px",
+                          fontSize: "0.875rem",
+                          borderRadius: "4px",
+
+                          minHeight: "32px", // Altura mínima para igualar los botones
+                          display: "inline-flex", // Cambia a flex para mejor alineación
+                          alignItems: "center", // Centra el texto verticalmente
+                          justifyContent: "center", // Centra el texto horizontalmente
+                          lineHeight: "1.5" // Ajusta la altura de línea para consistencia
+                        }}
+                      >
+                        {documentoExistente.cotejado ? "Cotejado" : "Pendiente"}
                       </span>
                       <button
                         className="btn btn-sm"
-                        style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
+                        style={{
+                          backgroundColor: "#dc3545",
+                          color: "#fff",
+                          border: "none",
+                          padding: "6px 16px",
+                          fontSize: "0.875rem",
+                          borderRadius: "4px"
+                        }}
                         onClick={() => eliminarDocumento(documentoExistente.id)}
                       >
                         Eliminar
@@ -511,24 +557,50 @@ function Home() {
 
             {/* Lista de certificados subidos */}
             {usuario && documentos.filter(doc => doc.tipo === "certificados").map((doc, index) => (
-              <div key={doc.id} className="d-flex align-items-center mb-2">
+              <div key={doc.id} className="d-flex align-items-center mb-2 gap-2">
                 <i className="bi bi-file-earmark-text fs-5 me-3" style={{ color: "#7A1737" }}></i>
                 <span className="me-auto">{doc.nombre_original || doc.archivo} </span>
                 <a
                   href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-sm me-2"
-                  style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
+                  className="btn btn-sm" // Eliminamos me-2
+                  style={{
+                    backgroundColor: "#7A1737",
+                    color: "#fff",
+                    border: "none",
+                    padding: "6px 16px",
+                    fontSize: "0.875rem",
+                    borderRadius: "4px"
+                  }}
                 >
                   Ver
                 </a>
-                <span className={`badge ms-2 ${doc.cotejado ? "bg-success" : "bg-warning text-dark"}`}>
-      {doc.cotejado ? "Cotejado" : "Pendiente"}
-    </span>
+                <span
+                  className={`badge ${doc.cotejado ? "bg-success" : "bg-warning text-dark"}`} // Eliminamos ms-2
+                  style={{
+                    padding: "6px 16px",
+                    fontSize: "0.875rem",
+                    borderRadius: "4px",
+                    minHeight: "32px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    lineHeight: "1.5"
+                  }}
+                >
+                  {doc.cotejado ? "Cotejado" : "Pendiente"}
+                </span>
                 <button
                   className="btn btn-sm"
-                  style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "#fff",
+                    border: "none",
+                    padding: "6px 16px",
+                    fontSize: "0.875rem",
+                    borderRadius: "4px"
+                  }}
                   onClick={() => eliminarDocumento(doc.id)}
                 >
                   Eliminar
