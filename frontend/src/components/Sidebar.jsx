@@ -1,18 +1,15 @@
-// src/components/Sidebar.jsx
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import '../css/Sidebar.css'
 
-// Componente Sidebar con foto de perfil, nombre, botones de navegación y cerrar sesión
-function Sidebar({ admin, cerrarSesion }) {
+function Sidebar({ admin, Usuario2, cerrarSesion }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  // Función para alternar el estado del sidebar en pantallas pequeñas
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
-  // Renderizado del componente Sidebar
   return (
     <>
       <button
@@ -28,9 +25,9 @@ function Sidebar({ admin, cerrarSesion }) {
       >
         {isOpen ? "✖" : "☰"}
       </button>
+
       <aside
-        className={`bg-dark text-white p-3 d-flex flex-column justify-content-between ${isOpen ? "d-block" : "d-none"
-          } d-lg-flex`}
+        className={`bg-dark text-white p-3 d-flex flex-column justify-content-between ${isOpen ? "d-block" : "d-none"} d-lg-flex`}
         style={{
           width: "clamp(180px, 20vw, 250px)",
           minHeight: "100vh",
@@ -43,6 +40,7 @@ function Sidebar({ admin, cerrarSesion }) {
         }}
       >
         <div>
+          {/* Usuario admin */}
           {admin && (
             <div className="text-center mb-4">
               <img
@@ -60,32 +58,47 @@ function Sidebar({ admin, cerrarSesion }) {
                   height: "clamp(80px, 15vw, 100px)",
                 }}
               />
-              <h5
-                style={{
-                  fontSize: "clamp(1rem, 2.5vw, 1.1rem)",
-                }}
-              >
+              <h5 style={{ fontSize: "clamp(1rem, 2.5vw, 1.1rem)" }}>
                 {admin.nombre} {admin.apellido_paterno}
               </h5>
             </div>
           )}
 
+          {/* Usuario2 */}
+          {Usuario2 && (
+            <div className="text-center mb-4">
+              <img
+                src={
+                  Usuario2.foto_perfil
+                    ? `http://localhost:5000/uploads/fotos/${Usuario2.id_personal}/${Usuario2.foto_perfil}`
+                    : "http://localhost:5000/uploads/default-avatar.jpg"
+                }
+                alt="Foto de perfil"
+                crossOrigin="use-credentials"
+                className="img-fluid rounded-circle mb-3"
+                style={{
+                  objectFit: "cover",
+                  width: "clamp(80px, 15vw, 100px)",
+                  height: "clamp(80px, 15vw, 100px)",
+                }}
+              />
+              <h5 style={{ fontSize: "clamp(1rem, 2.5vw, 1.1rem)" }}>
+                {Usuario2.nombre} {Usuario2.apellido_paterno}
+              </h5>
+            </div>
+          )}
+
+          {/* Navegación */}
           <div className="nav flex-column">
             <button
-              onClick={() => {
-                navigate("/Usuarios");
-                setIsOpen(false);
-              }}
+              onClick={() => { navigate("/Usuarios"); setIsOpen(false); }}
               className="btn btn-outline-light text-start mb-2 w-100"
               style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}
             >
               👥 Miembros
             </button>
             <button
-              onClick={() => {
-                navigate("/documentos");
-                setIsOpen(false);
-              }}
+              onClick={() => { navigate("/documentos"); setIsOpen(false); }}
               className="btn btn-outline-light text-start w-100"
               style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}
             >
@@ -94,18 +107,15 @@ function Sidebar({ admin, cerrarSesion }) {
           </div>
         </div>
 
+        {/* Cerrar sesión */}
         <button
-          onClick={() => {
-            cerrarSesion();
-            setIsOpen(false);
-          }}
+          onClick={() => { cerrarSesion(); setIsOpen(false); }}
           className="btn btn-danger w-100 mt-3"
           style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}
         >
           🔒 Cerrar Sesión
         </button>
       </aside>
-
     </>
   );
 }
