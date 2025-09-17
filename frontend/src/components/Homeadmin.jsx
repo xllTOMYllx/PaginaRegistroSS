@@ -17,16 +17,27 @@ function HomeAdmin() {
 
   // Verificar autenticación al montar el componente
   useEffect(() => {
-    const adminData = JSON.parse(localStorage.getItem("usuario"));
     const token = localStorage.getItem("token");
-    if (!adminData || !token) {
+    if (!token) {
       navigate('/sesion', { replace: true });
       return;
     }
-    setAdmin(adminData);
 
-    // Obtener documentos del admin
-    fetchDocumentos(adminData.id_personal, token);
+    // Consulta los datos actualizados del usuario
+    const fetchAdmin = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setAdmin(res.data);
+        localStorage.setItem("usuario", JSON.stringify(res.data)); // Actualiza localStorage
+        fetchDocumentos(res.data.id_personal, token);
+      } catch (err) {
+        navigate('/sesion', { replace: true });
+      }
+    };
+
+    fetchAdmin();
   }, [navigate]);
 
   const fetchDocumentos = async (idAdmin, token) => {
@@ -62,10 +73,12 @@ function HomeAdmin() {
       await axios.post("http://localhost:5000/api/documentos/subir-foto", formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      // Consulta los datos actualizados del usuario después de subir la foto
       const res = await axios.get("http://localhost:5000/api/users/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAdmin(res.data);
+      localStorage.setItem("usuario", JSON.stringify(res.data)); // Actualiza localStorage
     } catch (err) {
       console.error("Error al subir foto:", err);
     }
@@ -139,6 +152,7 @@ function HomeAdmin() {
                     src={`http://localhost:5000/uploads/fotos/${admin.id_personal}/${admin.foto_perfil}`}
                     className="img-fluid mb-3 rounded-3"
                     alt="Foto administrador"
+                    crossOrigin="use-credentials"
                     style={{ width: "220px", height: "220px", objectFit: "cover", border: "2px solid #7A1737" }}
                   />
                 ) : <div className="text-muted mb-3">No hay foto</div>}
