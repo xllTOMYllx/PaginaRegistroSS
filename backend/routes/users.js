@@ -200,7 +200,7 @@ router.post('/login', async (req, res) => {
 
   // Proceso de login
   try { // consulta para obtener usuario
-    console.log('Buscando usuario:', USUARIO);
+    //console.log('Buscando usuario:', USUARIO);
     const query = 'SELECT * FROM personal WHERE USUARIO = $1';
     const result = await pool.query(query, [USUARIO]);
 
