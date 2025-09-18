@@ -1,0 +1,252 @@
+/* Ajustes para pantallas menores a 576px (móviles) */
+@media (max-width: 576px) {
+  .certificados-row .btn,
+  .certificados-row .badge {
+    padding: 4px 8px !important;
+    font-size: 0.7rem !important;
+    min-height: 24px !important;
+  }
+
+  .new-certification {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important; /* Alinea a la izquierda */
+  }
+
+  .new-certification .form-label {
+    font-size: 0.7rem !important;
+    min-width: 100px !important; /* Reduce el ancho mínimo */
+    margin-bottom: 0 !important;
+    margin-right: 4px !important;
+  }
+
+  .new-certification .form-control {
+    font-size: 0.7rem !important;
+    width: 200px !important; /* Ancho fijo más pequeño */
+    margin-right: 4px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .new-certification .btn {
+    font-size: 0.7rem !important;
+    padding: 4px 8px !important;
+    min-height: 24px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .new-certification .bi-cloud-arrow-up-fill {
+    font-size: 0.8rem !important; /* Reduce el tamaño del ícono dentro del botón */
+    margin-right: 2px !important;
+  }
+
+  .new-certification .small.text-muted {
+    font-size: 0.6rem !important;
+    max-width: 100px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .d-flex.align-items-center {
+    flex-wrap: wrap !important;
+  }
+
+  .document-info {
+    justify-content: flex-start !important; /* Alinea a la izquierda */
+  }
+
+  .document-info .me-auto {
+    font-size: 0.75rem !important;
+    max-width: 150px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .d-flex.align-items-center .btn,
+  .d-flex.align-items-center .badge {
+    margin-top: 4px !important;
+  }
+
+  .form-control {
+    width: 100% !important;
+    max-width: 300px !important;
+  }
+
+  .d-flex.flex-wrap .btn {
+    margin-right: 4px !important;
+  }
+
+  .academic-level {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-height: 40px !important; /* Ajusta la altura mínima para consistencia */
+  }
+
+  .academic-level .bi-mortarboard-fill {
+    font-size: 1rem !important;
+    margin-right: 8px !important;
+  }
+
+  .academic-level .form-label {
+    font-size: 0.8rem !important;
+    min-width: 100px !important;
+    margin-bottom: 0 !important;
+    margin-right: 4px !important;
+    
+  }
+
+  .academic-level .form-control {
+    font-size: 0.7rem !important;
+    width: 120px !important;
+    margin-right: 4px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .academic-level .btn {
+    font-size: 0.7rem !important;
+    padding: 4px 8px !important;
+    min-height: 24px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .academic-level .bi-cloud-arrow-up-fill {
+    font-size: 0.8rem !important;
+    margin-right: 2px !important;
+  }
+
+  .academic-level .small.text-muted {
+    font-size: 0.6rem !important;
+    max-width: 100px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .academic-level .ms-auto {
+    gap: 2px !important;
+    margin-left: auto !important; /* Asegura que se alinee a la derecha */
+    align-self: flex-end !important; /* Alinea al final verticalmente */
+  }
+
+  .academic-level .badge {
+    padding: 4px 8px !important;
+    font-size: 0.7rem !important;
+    min-height: 24px !important;
+  }
+}
+
+/* Ajustes específicos para pantallas muy estrechas (como iPhone 14 Pro Max vertical) */
+@media (max-width: 430px) {
+  .certificados-row {
+    flex-direction: column !important;
+    align-items: flex-start !important; /* Alinea todo a la izquierda */
+  }
+
+  .certificados-row .btn,
+  .certificados-row .badge {
+    width: 100% !important;
+    margin-bottom: 4px !important;
+    text-align: center !important;
+  }
+
+  .document-info {
+    justify-content: flex-start !important; /* Alinea a la izquierda */
+  }
+
+  .document-info .me-auto {
+    font-size: 0.7rem !important;
+    max-width: 120px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+   .new-certification {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .new-certification .bi-file-earmark-text-fill {
+    font-size: 0.9rem !important;
+  }
+
+  .new-certification .form-label {
+    font-size: 0.7rem !important;
+    min-width: 80px !important;
+  }
+
+  .new-certification .form-control {
+    font-size: 0.6rem !important;
+    width: 100px !important;
+  }
+
+  .new-certification .btn {
+    font-size: 0.6rem !important;
+    padding: 2px 6px !important;
+    min-height: 20px !important;
+  }
+
+  .new-certification .bi-cloud-arrow-up-fill {
+    font-size: 0.7rem !important;
+  }
+
+  .new-certification .small.text-muted {
+    font-size: 0.5rem !important;
+    max-width: 80px !important;
+  }
+
+  .academic-level {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-height: 40px !important;
+  }
+
+  .academic-level .bi-mortarboard-fill {
+    font-size: 0.9rem !important;
+  }
+
+  .academic-level .form-label {
+    font-size: 0.7rem !important;
+    min-width: 80px !important;
+  }
+
+  .academic-level .form-control {
+    font-size: 0.6rem !important;
+    width: 100px !important;
+  }
+
+  .academic-level .btn {
+    font-size: 0.6rem !important;
+    padding: 2px 6px !important;
+    min-height: 20px !important;
+  }
+
+  .academic-level .bi-cloud-arrow-up-fill {
+    font-size: 0.7rem !important;
+  }
+
+  .academic-level .small.text-muted {
+    font-size: 0.5rem !important;
+    max-width: 80px !important;
+  }
+
+  .academic-level .ms-auto {
+    gap: 1px !important;
+    margin-left: auto !important;
+    align-self: flex-end !important;
+  }
+
+  .academic-level .badge {
+    padding: 2px 6px !important;
+    font-size: 0.6rem !important;
+    min-height: 20px !important;
+  }
+}

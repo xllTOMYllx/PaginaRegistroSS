@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaBell } from "react-icons/fa";
+import '../css/Home.css'
 
 // función principal del componente Home
 function Home() {
@@ -350,7 +351,7 @@ function Home() {
           </div>
 
           {/* Cuerpo con dos columnas: info usuario + foto */}
-          <div className="row g-3 align-items-start">
+          <div className="row g-3 align-items-start flex-column flex-md-row">
             {/* Columna izquierda: info del usuario */}
             <div className="col-12 col-md-8">
               {usuario ? (
@@ -378,8 +379,8 @@ function Home() {
                   alt="Foto de usuario"
                   crossOrigin="use-credentials"
                   style={{
-                    width: "220px",
-                    height: "220px",
+                    width: "150px",
+                    height: "150px",
                     objectFit: "cover",
                     border: "2px solid #7A1737"
                   }}
@@ -393,7 +394,7 @@ function Home() {
                 type="file"
                 accept="image/jpeg,image/png,image/jpg"
                 className="form-control rounded-3 mb-2"
-                style={{ width: "90%" }}   // más ancho y alineado con la imagen
+                style={{ width: "100%", maxWidth: "200px" }}   // más ancho y alineado con la imagen
                 onChange={e => setFotoPerfil(e.target.files[0])}
               />
 
@@ -401,7 +402,7 @@ function Home() {
               <button
                 type="button"
                 className="btn mb-2"
-                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737", width: "90%" }} // mismo ancho que el input
+                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737", width: "100%", maxWidth: "200px" }} // mismo ancho que el input
                 onClick={subirFotoPerfil}
               >
                 <i className="bi bi-cloud-arrow-up-fill me-1"></i>
@@ -428,9 +429,10 @@ function Home() {
 
               {/* Renderizado de cada nivel académico */ }
               return (
-                <div key={nivel} className="d-flex flex-wrap align-items-center mb-3">
+                <div key={nivel} className="d-flex flex-wrap align-items-center mb-3 academic-level">
                   <i className="bi bi-mortarboard-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
                   <label className="form-label mb-2 me-2 flex-shrink-0" style={{ minWidth: 160 }}>{nivel}</label>
+                  <div className="d-flex flex-grow-1 align-items-center">
 
                   {!documentoExistente ? (
                     <>
@@ -506,13 +508,14 @@ function Home() {
                     </div>
                   )}
                 </div>
+                </div>
               );
             })}
           </div>
         </div >
 
         {/* Certificados */}
-        < div className="card shadow mb-4 w-100" >
+        <div className="card shadow mb-4 w-100">
           <div className="card-header bg-white border-0">
             <h4 className="mb-0" style={{ color: "#7A1737" }}>
               <i className="bi bi-award-fill me-2"></i>
@@ -520,51 +523,43 @@ function Home() {
             </h4>
           </div>
           <div className="card-body">
-            {/* Input para subir un nuevo certificado */}
-            <div className="row g-2 align-items-center">
-              <div className="col-12 col-md-auto">
-                <i className="bi bi-file-earmark-text-fill fs-4" style={{ color: "#7A1737" }}></i>
-              </div>
-              <div className="col-12 col-md-auto">
-                <label className="form-label mb-0">Nuevo certificado</label>
-              </div>
-              <div className="col col-md">
-                <input
-                  type="file"
-                  accept=".pdf"
-                  className="form-control rounded-3 mb-2 w-100"
-                  onChange={e => setCertificados(e.target.files[0])}
-                />
-              </div>
-              <div className="col-12 col-md-auto">
-                <button
-                  type="button"
-                  className="btn mb-2"
-                  style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-                  onClick={() => subirArchivo(Certificados, "certificados")}
-                >
-                  <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-                  Subir
-                </button>
-              </div>
-
+            {/* Nueva certificación */}
+            <div className="d-flex flex-wrap align-items-center mb-3 new-certification">
+              <i className="bi bi-file-earmark-text-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
+              <label className="form-label mb-2 me-2 flex-shrink-0" style={{ minWidth: 160 }}>Nuevo certificado</label>
+              <input
+                type="file"
+                accept=".pdf"
+                className="form-control mb-2 me-2 flex-grow-1"
+                style={{ flex: 1 }}
+                onChange={e => setCertificados(e.target.files[0])}
+              />
+              <button
+                type="button"
+                className="btn mb-2"
+                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                onClick={() => subirArchivo(Certificados, "certificados")}
+              >
+                <i className="bi bi-cloud-arrow-up-fill me-1"></i>
+                Subir
+              </button>
               {Certificados && (
-                <div className="col-12">
-                  <span className="small text-muted">{Certificados.name}</span>
-                </div>
+                <span className="ms-2 small text-muted">{Certificados.name}</span>
               )}
             </div>
 
             {/* Lista de certificados subidos */}
             {usuario && documentos.filter(doc => doc.tipo === "certificados").map((doc, index) => (
-              <div key={doc.id} className="d-flex align-items-center mb-2 gap-2">
-                <i className="bi bi-file-earmark-text fs-5 me-3" style={{ color: "#7A1737" }}></i>
-                <span className="me-auto">{doc.nombre_original || doc.archivo} </span>
+              <div key={doc.id} className="d-flex align-items-center mb-2 gap-1 certificados-row">
+                <div className="d-flex align-items-center flex-grow-1 document-info">
+                  <i className="bi bi-file-earmark-text fs-5 me-2" style={{ color: "#7A1737" }}></i>
+                  <span className="me-auto">{doc.nombre_original || doc.archivo}</span>
+                </div>
                 <a
                   href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-sm" // Eliminamos me-2
+                  className="btn btn-sm"
                   style={{
                     backgroundColor: "#7A1737",
                     color: "#fff",
@@ -577,7 +572,7 @@ function Home() {
                   Ver
                 </a>
                 <span
-                  className={`badge ${doc.cotejado ? "bg-success" : "bg-warning text-dark"}`} // Eliminamos ms-2
+                  className={`badge ${doc.cotejado ? "bg-success" : "bg-warning text-dark"}`}
                   style={{
                     padding: "6px 16px",
                     fontSize: "0.875rem",
@@ -608,7 +603,7 @@ function Home() {
               </div>
             ))}
           </div>
-        </div >
+        </div>
       </main >
     </>
   );

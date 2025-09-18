@@ -117,8 +117,8 @@ return (
               />
               {/* Icono para mostrar/ocultar contraseña */}
               <button
-                type="button mb-3"
-                className="btn btn-outline-secondary rounded-end"
+                type="button"
+                className="btn btn-outline-secondary rounded-end mb-3"
                 onClick={togglePasswordVisibility}
                 style={{ zIndex: 1, border:  'none'}}
               >
@@ -136,9 +136,12 @@ return (
         <button type="button" className="btn btn-primary w-100 rounded-3 mt-2" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737',fontFamily: "Roboto, sans-serif"  }} onClick={() => navigate('/')}>
           Registrarse
         </button>
+        
       </div>
     </div>
   );
 }
 
 export default Sesion;
+
+// Nota verificar el mensaje de error de la contraseña no se muestra :b
