@@ -192,7 +192,7 @@ function Home() {
     <>
       {/* Barra de navegación superior */}
       <nav className="navbar navbar-light bg-white shadow-sm mb-4">
-        <div className="container-fluid d-flex justify-content-end align-items-center flex-nowrap gap-1">
+        <div className="container-fluid d-flex justify-content-end align-items-center flex-nowrap gap-1 navbar-actions">
 
           {/* Botón de Notificaciones */}
           <button
@@ -234,7 +234,7 @@ function Home() {
             style={{
               backgroundColor: "#ff4d4f",
               color: "white",
-              padding: "4px 8px",
+              padding: "2px 4px",
               border: "none",
               borderRadius: "16px",
               cursor: "pointer",
@@ -325,7 +325,8 @@ function Home() {
       }>
         {/* Contenedor unificado de usuario + foto */}
         < div className="card shadow mb-4 w-100" >
-          <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+          <div className="card-header bg-white border-0 ">
+            <div className="d-flex align-items-center gap-2">
             <h4 className="mb-0" style={{ color: "#7A1737" }}>
               <i className="bi bi-person-circle me-2"></i>
               {/* Datos del usuario */}
@@ -333,6 +334,7 @@ function Home() {
             </h4>
             <button
               onClick={() => navigate('/editarUsuario', { state: { user: usuario } })}
+              className="btn edit-user-btn"
               style={{
                 backgroundColor: "#7A1737",
                 color: "#fff",
@@ -348,6 +350,7 @@ function Home() {
               <i className="bi bi-pencil-square me-1"></i>
               Editar
             </button>
+            </div>
           </div>
 
           {/* Cuerpo con dos columnas: info usuario + foto */}
@@ -355,7 +358,7 @@ function Home() {
             {/* Columna izquierda: info del usuario */}
             <div className="col-12 col-md-8">
               {usuario ? (
-                <table className="table table-borderless align-middle mb-0">
+                <table className="table table-borderless align-middle mb-0 user-info-table">
                   <tbody>
                     <tr><th>Nombre</th><td>{usuario.nombre || 'No disponible'}</td></tr>
                     <tr><th>Apellido Paterno</th><td>{usuario.apellido_paterno || 'No disponible'}</td></tr>
@@ -371,7 +374,7 @@ function Home() {
             </div>
 
             {/* Columna derecha: foto y botones */}
-            <div className="col-12 col-md-4 text-center d-flex flex-column align-items-center justify-content-start">
+            <div className="col-12 col-md-4 text-center d-flex flex-column align-items-center justify-content-start user-photo-section">
               {usuario?.foto_perfil ? (
                 <img
                   src={`http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`}
