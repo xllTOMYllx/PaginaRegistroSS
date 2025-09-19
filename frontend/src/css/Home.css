@@ -1,57 +1,136 @@
 /* Ajustes para pantallas menores a 576px (móviles) */
 @media (max-width: 576px) {
-  .certificados-row .btn,
-  .certificados-row .badge {
+
+  /* Ajustes para la navbar */
+  .navbar-actions {
+    flex-wrap: nowrap !important; /* Mantiene la línea horizontal */
+    overflow-x: auto; /* Permite scroll si desborda */
+    -webkit-overflow-scrolling: touch; /* Suaviza scroll en móviles */
+    gap: 0px !important; /* Elimina el gap para reducir espacio */
+    min-width: 0; /* Evita expansión innecesaria */
+  }
+
+  .navbar-actions .btn {
+    padding: 4px 6px !important; /* Reduce padding */
+    font-size: 0.7rem !important;
+    min-height: 22px !important;
+    white-space: nowrap; /* Evita que el texto se rompa */
+    margin: 0 !important; /* Elimina márgenes */
+  }
+
+  .navbar-actions .btn.btn-sm.d-inline.d-sm-none {
+    padding: 2px 4px !important; /* Más compacto para móviles */
+    font-size: 0.6rem !important;
+    min-height: 18px !important;
+    border-radius: 10px !important;
+    max-width: 50px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .navbar-actions .btn.btn-sm.d-none.d-sm-inline {
     padding: 4px 8px !important;
-    font-size: 0.7rem !important;
+    font-size: 0.75rem !important;
     min-height: 24px !important;
+    border-radius: 16px !important;
   }
 
-  .new-certification {
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: flex-start !important; /* Alinea a la izquierda */
+  .navbar-actions .btn.position-relative {
+    padding: 4px 6px !important;
+    min-width: 30px !important; /* Ancho mínimo para el ícono */
   }
 
-  .new-certification .form-label {
-    font-size: 0.7rem !important;
-    min-width: 100px !important; /* Reduce el ancho mínimo */
-    margin-bottom: 0 !important;
-    margin-right: 4px !important;
+  .navbar-actions .badge {
+    font-size: 0.6rem !important;
+    padding: 1px 3px !important;
+    min-height: 16px !important;
+    top: -4px !important;
+    right: -4px !important;
+    transform: translate(50%, -50%) !important;
   }
 
-  .new-certification .form-control {
-    font-size: 0.7rem !important;
-    width: 200px !important; /* Ancho fijo más pequeño */
-    margin-right: 4px !important;
-    margin-bottom: 0 !important;
+  /* Reducir tamaño del h4 en el header */
+  .card-header h4 {
+    font-size: 1.1rem !important;
   }
 
-  .new-certification .btn {
+  /* Ajuste para el nuevo contenedor de ícono, label y botón Editar */
+  .card-header .d-flex.align-items-center {
+    flex-wrap: nowrap !important; /* Fuerza una sola línea */
+    justify-content: flex-start !important;
+    overflow-x: auto; /* Permite scroll horizontal si desborda */
+    -webkit-overflow-scrolling: touch; /* Suaviza scroll en móviles */
+  }
+
+  .card-header .d-flex.align-items-center h4 {
+    margin-right: 8px !important; /* Espacio entre h4 y botón */
+    flex-shrink: 1; /* Permite que h4 se ajuste si es necesario */
+    min-width: 0; /* Evita desborde */
+    white-space: nowrap; /* Evita que el texto se rompa */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Trunca si es demasiado largo */
+    max-width: 70%; /* Limita el ancho del texto */
+  }
+
+  /* Ajuste para el botón Editar */
+  .edit-user-btn {
     font-size: 0.7rem !important;
     padding: 4px 8px !important;
     min-height: 24px !important;
-    margin-bottom: 0 !important;
+    letter-spacing: 0.5px !important; /* Reduce letter-spacing para mejor ajuste */
+    width: auto !important; /* Evita que ocupe todo el ancho en móviles */
+    max-width: 80px !important; /* Límite máximo para mantenerlo compacto */
   }
 
-  .new-certification .bi-cloud-arrow-up-fill {
-    font-size: 0.8rem !important; /* Reduce el tamaño del ícono dentro del botón */
+  .edit-user-btn .bi-pencil-square {
+    font-size: 0.8rem !important;
     margin-right: 2px !important;
   }
 
-  .new-certification .small.text-muted {
-    font-size: 0.6rem !important;
-    max-width: 100px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+  /* Ajuste para la Tabla de informacion del usuario */
+  .user-info-table {
+    font-size: 0.8rem !important; /* Tabla más pequeña */
   }
 
-  .d-flex.align-items-center {
-    flex-wrap: wrap !important;
+  .user-info-table th,
+  .user-info-table td {
+    padding: 4px 8px !important; /* Espaciado compacto como en .academic-level */
+    white-space: nowrap; /* Evita wraps en labels */
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
+  .card .row.flex-column.flex-md-row > .col-12.col-md-8 {
+    padding-right: 0; /* Reduce padding para más espacio */
+  }
+
+  /* Ajuste para la imagen del usuario */
+  .user-photo-section {
+    text-align: left !important; /* Alinea a izquierda como en certificados */
+    justify-content: flex-start !important;
+  }
+
+  .user-photo-section img {
+    width: 120px !important; /* Reduce foto de 150px */
+    height: 120px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .user-photo-section .form-control,
+  .user-photo-section .btn {
+    width: 100% !important; /* Full-width como en .new-certification */
+    max-width: none !important;
+    font-size: 0.7rem !important;
+    padding: 6px 12px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .user-photo-section .bi-cloud-arrow-up-fill {
+    font-size: 0.8rem !important; /* Consistente con otros botones */
+    margin-right: 2px !important;
+  }
+
+  /* Ajuste para el apartado de documentación academica */
   .document-info {
     justify-content: flex-start !important; /* Alinea a la izquierda */
   }
@@ -137,22 +216,127 @@
     font-size: 0.7rem !important;
     min-height: 24px !important;
   }
+
+  /* Ajuste para el apartado de certificados */
+  .certificados-row .btn,
+  .certificados-row .badge {
+    padding: 4px 8px !important;
+    font-size: 0.7rem !important;
+    min-height: 24px !important;
+  }
+
+  .new-certification {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important; /* Alinea a la izquierda */
+  }
+
+  .new-certification .form-label {
+    font-size: 0.7rem !important;
+    min-width: 100px !important; /* Reduce el ancho mínimo */
+    margin-bottom: 0 !important;
+    margin-right: 4px !important;
+  }
+
+  .new-certification .form-control {
+    font-size: 0.7rem !important;
+    width: 200px !important; /* Ancho fijo más pequeño */
+    margin-right: 4px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .new-certification .btn {
+    font-size: 0.7rem !important;
+    padding: 4px 8px !important;
+    min-height: 24px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .new-certification .bi-cloud-arrow-up-fill {
+    font-size: 0.8rem !important; /* Reduce el tamaño del ícono dentro del botón */
+    margin-right: 2px !important;
+  }
+
+  .new-certification .small.text-muted {
+    font-size: 0.6rem !important;
+    max-width: 100px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .d-flex.align-items-center {
+    flex-wrap: wrap !important;
+  }
 }
 
 /* Ajustes específicos para pantallas muy estrechas (como iPhone 14 Pro Max vertical) */
 @media (max-width: 430px) {
-  .certificados-row {
-    flex-direction: column !important;
-    align-items: flex-start !important; /* Alinea todo a la izquierda */
+
+  /* Ajustes para la navbar */
+  .navbar-actions .btn.d-inline.d-sm-none {
+    padding: 2px 3px !important;
+    font-size: 0.5rem !important;
+    min-height: 16px !important;
+    max-width: 45px !important;
   }
 
-  .certificados-row .btn,
-  .certificados-row .badge {
-    width: 100% !important;
-    margin-bottom: 4px !important;
-    text-align: center !important;
+  .navbar-actions .badge {
+    font-size: 0.4rem !important;
+    padding: 0px 2px !important;
+    min-height: 12px !important;
+    top: -3px !important;
+    right: -3px !important;
   }
 
+  /* Ajuste para el nuevo contenedor de ícono, label y botón Editar */
+  .card-header .d-flex.align-items-center h4 {
+    font-size: 1rem !important; /* Más pequeño en móviles estrechos */
+    margin-right: 4px !important;
+    max-width: 100% !important; /* Más restrictivo en móviles estrechos */
+  }
+
+  /* Ajuste para el botón Editar */
+  .edit-user-btn {
+    font-size: 0.6rem !important;
+    padding: 2px 6px !important;
+    min-height: 20px !important;
+    letter-spacing: 0.5px !important;
+    width: auto !important;
+    max-width: 70px !important; /* Más restrictivo en pantallas pequeñas */
+  }
+
+  .edit-user-btn .bi-pencil-square {
+    font-size: 0.7rem !important;
+    margin-right: 2px !important;
+  }
+
+  /* Ajuste para el apartado de la tabla de información del usuario */
+  .user-info-table {
+    font-size: 0.7rem !important;
+  }
+
+  .user-info-table th,
+  .user-info-table td {
+    padding: 2px 4px !important; /* Aún más compacto */
+    font-size: 0.7rem !important;
+  }
+
+  /* Ajuste para la sesion de la imagen de perfil */
+  .user-photo-section img {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .user-photo-section .form-control,
+  .user-photo-section .btn {
+    font-size: 0.6rem !important;
+    padding: 4px 8px !important;
+    min-height: 20px !important; /* Como en .academic-level */
+  }
+
+  /* Ajuste para la sesion de la documentacion del usuario */
   .document-info {
     justify-content: flex-start !important; /* Alinea a la izquierda */
   }
@@ -164,43 +348,7 @@
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
-
-   .new-certification {
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-  }
-
-  .new-certification .bi-file-earmark-text-fill {
-    font-size: 0.9rem !important;
-  }
-
-  .new-certification .form-label {
-    font-size: 0.7rem !important;
-    min-width: 80px !important;
-  }
-
-  .new-certification .form-control {
-    font-size: 0.6rem !important;
-    width: 100px !important;
-  }
-
-  .new-certification .btn {
-    font-size: 0.6rem !important;
-    padding: 2px 6px !important;
-    min-height: 20px !important;
-  }
-
-  .new-certification .bi-cloud-arrow-up-fill {
-    font-size: 0.7rem !important;
-  }
-
-  .new-certification .small.text-muted {
-    font-size: 0.5rem !important;
-    max-width: 80px !important;
-  }
-
+  /* Ajuste para la sesion de niveles academicos */
   .academic-level {
     flex-direction: row !important;
     flex-wrap: nowrap !important;
@@ -249,4 +397,55 @@
     font-size: 0.6rem !important;
     min-height: 20px !important;
   }
+
+  /* Ajuste para la sesion de certificados del usuario */
+  .certificados-row {
+    flex-direction: column !important;
+    align-items: flex-start !important; /* Alinea todo a la izquierda */
+    
+  }
+  
+  .certificados-row .btn,
+  .certificados-row .badge {
+    width: 100% !important;
+    margin-bottom: 4px !important;
+    text-align: center !important;
+  }
+
+   .new-certification {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .new-certification .bi-file-earmark-text-fill {
+    font-size: 0.9rem !important;
+  }
+
+  .new-certification .form-label {
+    font-size: 0.7rem !important;
+    min-width: 80px !important;
+  }
+
+  .new-certification .form-control {
+    font-size: 0.6rem !important;
+    width: 100px !important;
+  }
+
+  .new-certification .btn {
+    font-size: 0.6rem !important;
+    padding: 2px 6px !important;
+    min-height: 20px !important;
+  }
+
+  .new-certification .bi-cloud-arrow-up-fill {
+    font-size: 0.7rem !important;
+  }
+
+  .new-certification .small.text-muted {
+    font-size: 0.5rem !important;
+    max-width: 80px !important;
+  }
+
 }
