@@ -208,9 +208,17 @@ router.post('/login', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Credenciales inválidas. Verifica tu usuario.' });
     }
+    
 
     // Obtener el usuario encontrado
     const user = result.rows[0];
+
+
+    
+    // ✅ Verificar si el usuario está bloqueado
+    if (user.status === false) {
+      return res.status(403).json({ error: 'Usuario bloqueado. Contacta al administrador.' });
+    }
 
     // Comparar contraseñas
     const match = await bcrypt.compare(CONTRASENA, user.contrasena);
@@ -345,7 +353,7 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
   try {
     const query = `
       SELECT id_personal, nombre, apellido_paterno, apellido_materno,
-             usuario, correo, curp, rfc, rol, foto_perfil
+             usuario, correo, curp, rfc, rol, foto_perfil, status
       FROM personal
       WHERE rol = ANY($1)
       ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
@@ -378,7 +386,7 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
     // Obtener datos del usuario
     const userResult = await pool.query(
       `SELECT id_personal, nombre, apellido_paterno, apellido_materno,
-              usuario, correo, curp, rfc, rol, foto_perfil
+              usuario, correo, curp, rfc, rol, foto_perfil, status
        FROM personal
        WHERE id_personal = $1`,
       [id]
@@ -437,6 +445,63 @@ router.get("/buscar", async (req, res) => {
   } catch (error) {// Manejo de errores
     console.error("Error al buscar usuarios:", error);
     res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
+// Bloquear usuario (rol 1)
+router.put('/bloquear/:id', authenticateToken, isJefeOUsuario2, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Verificar que sea rol 1
+    const usuario = await pool.query(
+      "SELECT * FROM personal WHERE id_personal = $1 AND rol = 1",
+      [id]
+    );
+
+    if (usuario.rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado o no es de rol 1" });
+    }
+
+    // Bloquear al usuario
+    await pool.query(
+      "UPDATE personal SET status = false WHERE id_personal = $1",
+      [id]
+    );
+
+    res.json({ message: "Usuario bloqueado correctamente." });
+  } catch (error) {
+    console.error("Error al bloquear usuario:", error);
+    res.status(500).json({ error: "Error al bloquear el usuario." });
+  }
+});
+
+// Desbloquear usuario (rol 1)
+router.put('/desbloquear/:id', authenticateToken, isJefeOUsuario2, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Verificar que sea rol 1
+    const usuario = await pool.query(
+      "SELECT * FROM personal WHERE id_personal = $1 AND rol = 1",
+      [id]
+    );
+
+    if (usuario.rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado o no es de rol 1" });
+    }
+
+    // Desbloquear al usuario
+    await pool.query(
+      "UPDATE personal SET status = true WHERE id_personal = $1",
+      [id]
+    );
+
+    res.json({ message: "Usuario desbloqueado correctamente." });
+  } catch (error) {
+    console.error("Error al desbloquear usuario:", error);
+    res.status(500).json({ error: "Error al desbloquear el usuario." });
   }
 });
 

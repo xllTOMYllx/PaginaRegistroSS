@@ -98,11 +98,11 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
               👥 Miembros
             </button>
             <button
-              onClick={() => { navigate("/documentos"); setIsOpen(false); }}
+              onClick={() => { navigate("/Baja_user"); setIsOpen(false); }}
               className="btn btn-outline-light text-start w-100"
               style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}
             >
-              📑 Documentos Revisados
+               👥 Baja De Usuario
             </button>
           </div>
         </div>
