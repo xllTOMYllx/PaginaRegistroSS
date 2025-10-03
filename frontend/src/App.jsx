@@ -9,6 +9,7 @@ import Usuarios from './components/Usuarios';
 import UsuarioDetalle from './components/UsuarioDetalle';
 import CrearUsuario from './components/CrearUsuario';
 import ProtectedRoute from './components/ProtectedRoute';
+import Baja_user from './components/Baja_user';
 
 function App() {
   return (
@@ -73,6 +74,15 @@ function App() {
             <ProtectedRoute>
               <HomeUsuario2 />
             </ProtectedRoute>
+          }
+        />
+
+         <Route
+          path="/baja_user"
+          element={
+            <Baja_user>
+              <Baja_user />
+            </Baja_user>
           }
         />
       </Routes>
