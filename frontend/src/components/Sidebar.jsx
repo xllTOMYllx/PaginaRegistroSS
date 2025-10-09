@@ -104,6 +104,14 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
             >
                👥 Baja De Usuario
             </button>
+
+             <button
+              onClick={() => { navigate("/recuperarcuent"); setIsOpen(false); }}
+              className="btn btn-outline-light text-start w-100"
+              style={{ fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)" }}
+            >
+               👥 Recuperar Cuentas
+            </button>
           </div>
         </div>
 
