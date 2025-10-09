@@ -1,7 +1,6 @@
-// RecuperarPorNombreTemporal.jsx
+
 import { useState } from "react";
 import axios from "axios";
-
 
 function Recuperarcuent() {
   const [nombre, setNombre] = useState("");

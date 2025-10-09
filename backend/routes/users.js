@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
+const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
@@ -502,6 +503,75 @@ router.put('/desbloquear/:id', authenticateToken, isJefeOUsuario2, async (req, r
   } catch (error) {
     console.error("Error al desbloquear usuario:", error);
     res.status(500).json({ error: "Error al desbloquear el usuario." });
+  }
+});
+// Recuperar usuario y contraseña (solo rol 3)
+router.get('/recuperar/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Verificar que el usuario autenticado sea rol 3
+    if (req.user.rol !== 3) {
+      return res.status(403).json({ error: 'Acceso denegado: solo rol 3' });
+    }
+
+    // Buscar usuario por id
+    const result = await pool.query(
+      `SELECT USUARIO, CONTRASENA
+       FROM personal
+       WHERE id_personal = $1`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Devolver datos
+    res.json({
+      usuario: result.rows[0].usuario,
+      contrasena: result.rows[0].contrasena // ⚠️ Considera enviar solo la contraseña temporal o hasheada
+    });
+
+  } catch (error) {
+    console.error('Error al recuperar usuario/contraseña:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// Endpoint: generar contraseña temporal para un id (solo rol 3)
+router.post('/recuperar/generar-temporal/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Solo rol 3 puede usarlo
+    if (!req.user || req.user.rol !== 3) {
+      return res.status(403).json({ error: 'Acceso denegado: solo rol 3' });
+    }
+
+    // Verificar existencia del usuario
+    const uRes = await pool.query('SELECT id_personal, usuario FROM personal WHERE id_personal = $1', [id]);
+    if (uRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    const user = uRes.rows[0];
+
+    // Generar contraseña temporal
+    const tempPassword = crypto.randomBytes(6).toString('base64').replace(/\+/g,'A').replace(/\//g,'B'); // ~12 chars
+    const hashed = await bcrypt.hash(tempPassword, 10);
+
+    // Actualizar contraseña en DB
+    await pool.query('UPDATE personal SET contrasena = $1 WHERE id_personal = $2', [hashed, id]);
+
+    // Devolver contraseña temporal al admin
+    res.json({
+      usuario: user.usuario,
+      temporal: tempPassword
+    });
+
+  } catch (err) {
+    console.error('Error generando contraseña temporal:', err);
+    res.status(500).json({ error: 'Error interno al generar contraseña temporal' });
   }
 });
 
