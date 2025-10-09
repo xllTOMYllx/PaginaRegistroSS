@@ -10,7 +10,7 @@ import UsuarioDetalle from './components/UsuarioDetalle';
 import CrearUsuario from './components/CrearUsuario';
 import ProtectedRoute from './components/ProtectedRoute';
 import Baja_user from './components/Baja_user';
-
+import Recuperarcuent from './components/Recuperarcuent';
 function App() {
   return (
     <Router>
@@ -80,11 +80,21 @@ function App() {
          <Route
           path="/baja_user"
           element={
-            <Baja_user>
+            <ProtectedRoute>
               <Baja_user />
-            </Baja_user>
+            </ProtectedRoute>
           }
         />
+        
+         <Route
+          path="/Recuperarcuent"
+          element={
+            <ProtectedRoute>
+              <Recuperarcuent/>
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </Router>
   );
