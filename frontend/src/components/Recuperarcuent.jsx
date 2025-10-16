@@ -1,8 +1,9 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function Recuperarcuent() {
+  function Recuperarcuent() {
   const [nombre, setNombre] = useState("");
   const [usuarios, setUsuarios] = useState([]);
   const [error, setError] = useState("");
@@ -47,9 +48,18 @@ function Recuperarcuent() {
     }
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="container mt-4">
-      <h2>Recuperar / Generar Contraseña Temporal</h2>
+      <button
+        className="btn btn-regresar mb-3"
+        onClick={() => navigate(-1)}
+      >
+        ← Regresar
+      </button>
+
+      <h2 className="accent-header">Recuperar Contraseñas</h2>
 
       <div className="mb-3">
         <label className="form-label">Nombre completo (o parte)</label>
