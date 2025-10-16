@@ -178,6 +178,45 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Actualizar contraseña (usuario mismo o admin)
+router.put('/:id/password', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    // Obtener usuario
+    const userResult = await pool.query('SELECT id_personal, contrasena FROM personal WHERE id_personal = $1', [id]);
+    if (userResult.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
+    const user = userResult.rows[0];
+
+    // Permisos: el usuario puede cambiar su propia contraseña; rol 3 (Jefe) puede cambiar cualquiera
+    if (req.user.id_personal !== user.id_personal && req.user.rol !== 3) {
+      return res.status(403).json({ error: 'Acceso denegado' });
+    }
+
+    // Si no es admin (rol 3), se requiere currentPassword
+    if (req.user.rol !== 3) {
+      if (!currentPassword) return res.status(400).json({ error: 'Contraseña actual requerida' });
+      const match = await bcrypt.compare(currentPassword, user.contrasena);
+      if (!match) return res.status(401).json({ error: 'Contraseña actual incorrecta' });
+    }
+
+    // Validar nueva contraseña
+    if (!newPassword) return res.status(400).json({ error: 'Nueva contraseña requerida' });
+    const validar = validarPassword(newPassword);
+    if (validar) return res.status(400).json({ error: validar });
+
+    // Hashear y actualizar
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await pool.query('UPDATE personal SET contrasena = $1 WHERE id_personal = $2', [hashed, id]);
+
+    res.json({ message: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    console.error('Error al actualizar contraseña:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 // Login usuario
 router.post('/login', async (req, res) => {
   let { USUARIO, CONTRASENA } = req.body;
