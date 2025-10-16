@@ -42,20 +42,24 @@ function Baja_user() {
   return (
     <div className="container mt-4">
       <button
-        className="btn btn-secondary mb-3"
+        className="btn btn-regresar mb-3"
         onClick={() => navigate(-1)} // vuelve a la página anterior
       >
         ← Regresar
       </button>
 
-      <h2 className="mb-3">Usuarios con Rol 1</h2>
-      <table className="table table-bordered table-striped">
+      <h2 className="mb-3">Usuarios</h2>
+      <div className="table-responsive">
+        <table className="table table-bordered table-striped table-hover align-middle">
         <thead className="table-dark">
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Apellido</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Usuario</th>
             <th>Correo</th>
+            <th>RFC</th>
             <th>Estatus</th>
           </tr>
         </thead>
@@ -63,12 +67,13 @@ function Baja_user() {
           {usuarios.length > 0 ? (
             usuarios.map((u) => (
               <tr key={u.id_personal}>
-                <td>{u.id_personal}</td>
-                <td>{u.nombre}</td>
-                <td>
-                  {u.apellido_paterno} {u.apellido_materno}
-                </td>
-                <td>{u.correo}</td>
+                <td className="col-id">{u.id_personal}</td>
+                <td className="col-nombre truncate">{u.nombre}</td>
+                <td className="col-ap truncate">{u.apellido_paterno}</td>
+                <td className="col-am truncate">{u.apellido_materno}</td>
+                <td className="col-usuario truncate">{u.usuario || u.USUARIO}</td>
+                <td className="col-correo truncate">{u.correo}</td>
+                <td className="col-rfc">{u.rfc || u.RFC || 'No disponible'}</td>
                 <td>
                   <div className="form-check form-switch">
                     <input
@@ -90,13 +95,14 @@ function Baja_user() {
             ))
           ) : (
             <tr>
-              <td colSpan="5" className="text-center">
+              <td colSpan="8" className="text-center">
                 No hay usuarios con rol 1
               </td>
             </tr>
           )}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   );
 }

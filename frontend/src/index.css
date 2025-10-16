@@ -72,3 +72,79 @@ html, body, #root {
   margin: 0;
   padding: 0;
 }
+
+/* Sobrescribe solo el estilo usado por <thead class="table-dark"> */
+thead.table-dark {
+  background-color: #7A1737 !important; /* color solicitado */
+  color: #ffffff !important;
+}
+
+/* Asegura que los encabezados (th) mantengan contraste y borde adecuado */
+thead.table-dark th {
+  background-color: #7A1737 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Si algún otro lugar usa .table-dark en el thead, lo cubrimos también */
+.table-dark thead, .table-dark thead th {
+  background-color: #7A1737 !important;
+  color: #ffffff !important;
+}
+
+/* Estilo para el botón regresar en Baja_user.jsx */
+.btn-regresar {
+  background-color: #7A1737;
+  color: #ffffff;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+.btn-regresar:hover {
+  background-color: #8f2146;
+  color: #ffffff;
+}
+.btn-regresar:active {
+  background-color: #69132f;
+  color: #ffffff;
+}
+
+/* Estilos para mejorar la legibilidad y responsividad de tablas */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+.table thead th {
+  white-space: nowrap;
+}
+.table td, .table th {
+  vertical-align: middle;
+}
+/* Columnas específicas con anchos aproximados para mantener la tabla ordenada */
+.table td.col-id, .table th.col-id { width: 60px; }
+.table td.col-nombre, .table th.col-nombre { width: 160px; }
+.table td.col-ap { .table th.col-ap { width: 140px; } }
+.table td.col-am, .table th.col-am { width: 140px; }
+.table td.col-usuario, .table th.col-usuario { width: 140px; }
+.table td.col-correo, .table th.col-correo { width: 220px; }
+.table td.col-rfc, .table th.col-rfc { width: 120px; }
+.table td.col-estatus, .table th.col-estatus { width: 120px; }
+
+/* Truncado con ellipsis para textos largos */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  /* En pantallas pequeñas reducir padding y permitir scroll */
+  .table td, .table th {
+    padding: 0.45rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Encabezados/acento usado en Recuperarcuent.jsx */
+.accent-header {
+  color: #7A1737;
+  margin-bottom: 1rem;
+}
