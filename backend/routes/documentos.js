@@ -30,6 +30,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
+/*
 // Configuración Multer
 const fs = require('fs');
 
@@ -48,6 +49,47 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
+  }
+});*/
+
+const fs = require('fs');
+
+// Helper: sanitize filenames and avoid dangerous characters
+function sanitizeFileName(name) {
+  // Keep letters, numbers, dot, underscore and dash. Replace others with underscore
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
+// Configuración Multer con carpeta por usuario
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const userFolder = path.join(__dirname, '../uploads/academico', `${req.user.id_personal}`);
+
+    // Verifica si la carpeta existe, si no, la crea
+    if (!fs.existsSync(userFolder)) {
+      fs.mkdirSync(userFolder, { recursive: true });
+    }
+
+    cb(null, userFolder);
+  },
+  filename: (req, file, cb) => {
+    try {
+      const userFolder = path.join(__dirname, '../uploads/academico', `${req.user.id_personal}`);
+      const original = path.basename(file.originalname);
+      const sanitized = sanitizeFileName(original);
+      let finalName = sanitized;
+      // If a file with the same name exists, add a counter prefix to avoid overwrite
+      let counter = 0;
+      while (fs.existsSync(path.join(userFolder, finalName))) {
+        counter += 1;
+        finalName = `${counter}-${sanitized}`;
+      }
+      cb(null, finalName);
+    } catch (err) {
+      // Fallback to timestamped name if anything fails
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
+    }
   }
 });
 
