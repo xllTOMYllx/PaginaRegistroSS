@@ -19,6 +19,9 @@ function EditarUsuario() {
   // Estados para mensajes y errores
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState({});
+  const [pwdForm, setPwdForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  const [pwdMsg, setPwdMsg] = useState("");
+  const [showPwd, setShowPwd] = useState({ currentPassword: false, newPassword: false, confirmPassword: false });
 
   // Efecto para cargar los datos del usuario desde location.state
   useEffect(() => {
@@ -122,6 +125,39 @@ function EditarUsuario() {
     }
   };
 
+  // Manejo de cambio de contraseña
+  const handlePwdChange = (e) => {
+    const { name, value } = e.target;
+    setPwdForm((p) => ({ ...p, [name]: value }));
+    setPwdMsg("");
+  };
+
+  const toggleShow = (field) => {
+    setShowPwd((s) => ({ ...s, [field]: !s[field] }));
+  };
+
+  const handlePwdSubmit = async (e) => {
+    e.preventDefault();
+    setPwdMsg("");
+
+    // Validaciones básicas
+    if (!pwdForm.newPassword) return setPwdMsg('La nueva contraseña es requerida.');
+    if (pwdForm.newPassword !== pwdForm.confirmPassword) return setPwdMsg('Las contraseñas no coinciden.');
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.put(`http://localhost:5000/api/users/${formData.id_personal}/password`, {
+        currentPassword: pwdForm.currentPassword,
+        newPassword: pwdForm.newPassword
+      }, { headers: { Authorization: `Bearer ${token}` } });
+
+      setPwdMsg(res.data.message || 'Contraseña actualizada.');
+      setPwdForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      setPwdMsg(err.response?.data?.error || 'Error al actualizar la contraseña.');
+    }
+  };
+
 //pagina de edición de usuario
   return ( // Contenedor principal
     <div className="container py-5">
@@ -179,6 +215,41 @@ function EditarUsuario() {
             {/* Mensajes de éxito o error */}
             {mensaje && <div className="alert alert-success mt-3 text-center">{mensaje}</div>}
             {error.general && <div className="alert alert-danger mt-3 text-center">{error.general}</div>}
+          </form>
+
+          <hr className="my-4" />
+
+          <h5 className="mb-3 text-center" style={{ color: '#7A1737' }}>Cambiar contraseña</h5>
+          <form onSubmit={handlePwdSubmit}>
+            <div className="mb-2">
+              <label className="form-label">Contraseña actual</label>
+              <div className="d-flex align-items-center">
+                <input type={showPwd.currentPassword ? 'text' : 'password'} name="currentPassword" value={pwdForm.currentPassword} onChange={handlePwdChange} className="form-control" />
+                <button type="button" aria-label="Ver contraseña actual" className="btn btn-sm btn-outline-secondary ms-2" onClick={() => toggleShow('currentPassword')}>
+                  {showPwd.currentPassword ? 'Ocultar' : 'Ver'}
+                </button>
+              </div>
+            </div>
+            <div className="mb-2">
+              <label className="form-label">Nueva contraseña</label>
+              <div className="d-flex align-items-center">
+                <input type={showPwd.newPassword ? 'text' : 'password'} name="newPassword" value={pwdForm.newPassword} onChange={handlePwdChange} className="form-control" />
+                <button type="button" aria-label="Ver nueva contraseña" className="btn btn-sm btn-outline-secondary ms-2" onClick={() => toggleShow('newPassword')}>
+                  {showPwd.newPassword ? 'Ocultar' : 'Ver'}
+                </button>
+              </div>
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Confirmar nueva contraseña</label>
+              <div className="d-flex align-items-center">
+                <input type={showPwd.confirmPassword ? 'text' : 'password'} name="confirmPassword" value={pwdForm.confirmPassword} onChange={handlePwdChange} className="form-control" />
+                <button type="button" aria-label="Ver confirmar contraseña" className="btn btn-sm btn-outline-secondary ms-2" onClick={() => toggleShow('confirmPassword')}>
+                  {showPwd.confirmPassword ? 'Ocultar' : 'Ver'}
+                </button>
+              </div>
+            </div>
+            {pwdMsg && <div className="text-center mb-2" style={{ color: pwdMsg.includes('actualizada') ? 'green' : '#d9534f' }}>{pwdMsg}</div>}
+            <button type="submit" className="btn w-100" style={{ backgroundColor: '#7A1737', color: '#fff' }}>Actualizar contraseña</button>
           </form>
         </div>
       </div>
