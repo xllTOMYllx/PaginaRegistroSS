@@ -1,20 +1,31 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
 
 function Baja_user() {
   const [usuarios, setUsuarios] = useState([]);
-  const navigate = useNavigate(); // hook de navegación
+  const [admin, setAdmin] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const adminData = JSON.parse(localStorage.getItem("usuario"));
+    if (!token || !adminData) {
+      navigate('/sesion', { replace: true });
+      return;
+    }
+    setAdmin(adminData);
+
     fetch("http://localhost:5000/api/users/rol/1", {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => res.json())
       .then((data) => setUsuarios(data))
       .catch((err) => console.error(err));
-  }, []);
+  }, [navigate]);
 
   const toggleUsuario = async (id, status) => {
     const accion = status ? "bloquear" : "desbloquear";
@@ -39,70 +50,78 @@ function Baja_user() {
     }
   };
 
-  return (
-    <div className="container mt-4">
-      <button
-        className="btn btn-regresar mb-3"
-        onClick={() => navigate(-1)} // vuelve a la página anterior
-      >
-        ← Regresar
-      </button>
+  const cerrarSesion = () => {
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
+    setAdmin(null);
+    navigate('/sesion', { replace: true });
+  };
 
-      <h2 className="mb-3">Usuarios</h2>
-      <div className="table-responsive">
-        <table className="table table-bordered table-striped table-hover align-middle">
-        <thead className="table-dark">
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Apellido Paterno</th>
-            <th>Apellido Materno</th>
-            <th>Usuario</th>
-            <th>Correo</th>
-            <th>RFC</th>
-            <th>Estatus</th>
-          </tr>
-        </thead>
-        <tbody>
-          {usuarios.length > 0 ? (
-            usuarios.map((u) => (
-              <tr key={u.id_personal}>
-                <td className="col-id">{u.id_personal}</td>
-                <td className="col-nombre truncate">{u.nombre}</td>
-                <td className="col-ap truncate">{u.apellido_paterno}</td>
-                <td className="col-am truncate">{u.apellido_materno}</td>
-                <td className="col-usuario truncate">{u.usuario || u.USUARIO}</td>
-                <td className="col-correo truncate">{u.correo}</td>
-                <td className="col-rfc">{u.rfc || u.RFC || 'No disponible'}</td>
-                <td>
-                  <div className="form-check form-switch">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id={`switch-${u.id_personal}`}
-                      checked={u.status} // true = activo, false = bloqueado
-                      onChange={() => toggleUsuario(u.id_personal, u.status)}
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor={`switch-${u.id_personal}`}
-                    >
-                      {u.status ? "Activo" : "Bloqueado"}
-                    </label>
-                  </div>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" className="text-center">
-                No hay usuarios con rol 1
-              </td>
-            </tr>
-          )}
-        </tbody>
-        </table>
-      </div>
+  if (!admin) return null;
+
+  return (
+    <div className="d-flex vh-100">
+      <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
+      <main className="flex-grow-1 d-flex flex-column">
+        <Navbar />
+        <div className="container mt-4">
+          <h2 className="mb-3">Usuarios</h2>
+          <div className="table-responsive">
+            <table className="table table-bordered table-striped table-hover align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Apellido Paterno</th>
+                  <th>Apellido Materno</th>
+                  <th>Usuario</th>
+                  <th>Correo</th>
+                  <th>RFC</th>
+                  <th>Estatus</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usuarios.length > 0 ? (
+                  usuarios.map((u) => (
+                    <tr key={u.id_personal}>
+                      <td className="col-id">{u.id_personal}</td>
+                      <td className="col-nombre truncate">{u.nombre}</td>
+                      <td className="col-ap truncate">{u.apellido_paterno}</td>
+                      <td className="col-am truncate">{u.apellido_materno}</td>
+                      <td className="col-usuario truncate">{u.usuario || u.USUARIO}</td>
+                      <td className="col-correo truncate">{u.correo}</td>
+                      <td className="col-rfc">{u.rfc || u.RFC || 'No disponible'}</td>
+                      <td>
+                        <div className="form-check form-switch">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={`switch-${u.id_personal}`}
+                            checked={u.status}
+                            onChange={() => toggleUsuario(u.id_personal, u.status)}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`switch-${u.id_personal}`}
+                          >
+                            {u.status ? "Activo" : "Bloqueado"}
+                          </label>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No hay usuarios con rol 1
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

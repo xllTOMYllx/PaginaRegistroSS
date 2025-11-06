@@ -18,6 +18,11 @@
   },
   "homepage": "https://github.com/xllTOMYllx/PaginaRegistroServiciosdeSalud#readme",
   "dependencies": {
-    "bootstrap": "^5.3.7"
+    "@chakra-ui/react": "^3.28.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@sendgrid/mail": "^8.1.6",
+    "bootstrap": "^5.3.7",
+    "framer-motion": "^12.23.24"
   }
 }

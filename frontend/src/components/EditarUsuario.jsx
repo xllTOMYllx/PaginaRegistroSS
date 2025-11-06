@@ -78,8 +78,8 @@ function EditarUsuario() {
     
     //validacion de correo
     if (!formData.correo) newErrors.correo = "El correo es obligatorio.";
-    else if (!/^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/.test(formData.correo))
-      newErrors.correo = "El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.";
+    else if (!/^[^\s@]+@(gmail\.com)$/.test(formData.correo))
+      newErrors.correo = "El correo debe terminar en @gmail.com.";
 
     return newErrors;
   };
