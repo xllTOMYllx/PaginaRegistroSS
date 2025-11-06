@@ -1,15 +1,28 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
 
-  function Recuperarcuent() {
+function Recuperarcuent() {
+  const navigate = useNavigate();
   const [nombre, setNombre] = useState("");
   const [usuarios, setUsuarios] = useState([]);
   const [error, setError] = useState("");
-  const [info, setInfo] = useState(null); // para mostrar contraseña temporal
+  const [info, setInfo] = useState(null);
+  const [admin, setAdmin] = useState(null);
 
   const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const adminData = JSON.parse(localStorage.getItem("usuario"));
+    if (!token || !adminData) {
+      navigate('/sesion', { replace: true });
+      return;
+    }
+    setAdmin(adminData);
+  }, [navigate]);
 
   const handleBuscar = async () => {
     setError(""); setUsuarios([]); setInfo(null);
@@ -48,38 +61,65 @@ import axios from "axios";
     }
   };
 
-  const navigate = useNavigate();
+  const cerrarSesion = () => {
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
+    setAdmin(null);
+    navigate('/sesion', { replace: true });
+  };
+
+  if (!admin) return null;
 
   return (
-    <div className="container mt-4">
-      <button
-        className="btn btn-regresar mb-3"
-        onClick={() => navigate(-1)}
-      >
-        ← Regresar
-      </button>
+    <div className="d-flex vh-100">
+      <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
+      <main className="flex-grow-1 d-flex flex-column">
+        <Navbar />
+        <div className="container mt-4">
 
-      <h2 className="accent-header">Recuperar Contraseñas</h2>
+      <h2 className="mb-4" style={{ color: "#7A1737" }}>Recuperar Contraseñas</h2>
 
-      <div className="mb-3">
-        <label className="form-label">Nombre completo (o parte)</label>
-        <input className="form-control" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+      <div className="row mb-3">
+        <div className="col-md-8">
+          <div className="input-group">
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Ingrese el nombre del usuario"
+              value={nombre} 
+              onChange={(e) => setNombre(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleBuscar()}
+            />
+            <button 
+              className="btn" 
+              onClick={handleBuscar}
+              style={{ backgroundColor: "#7A1737", color: "#fff" }}
+            >
+              Buscar
+            </button>
+          </div>
+        </div>
       </div>
-
-      <button className="btn btn-primary mb-3" onClick={handleBuscar}>Buscar</button>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
       {usuarios.length > 0 && (
         <div className="list-group mb-3">
           {usuarios.map(u => (
-            <div key={u.id_personal} className="list-group-item d-flex justify-content-between align-items-center">
+            <div key={u.id_personal} className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: "rgba(122, 23, 55, 0.02)" }}>
               <div>
-                <div><strong>{u.nombre} {u.apellido_paterno} {u.apellido_materno}</strong></div>
-                <div className="text-muted">Usuario: {u.usuario} — Correo: {u.correo}</div>
+                <div style={{ fontSize: "1.1rem" }}><strong>{u.nombre} {u.apellido_paterno} {u.apellido_materno}</strong></div>
+                <div className="text-muted">
+                  <span className="me-3"><i className="fas fa-user me-1"></i>Usuario: {u.usuario}</span>
+                  <span><i className="fas fa-envelope me-1"></i>Correo: {u.correo}</span>
+                </div>
               </div>
               <div>
-                <button className="btn btn-warning btn-sm" onClick={() => handleGenerarTemporal(u.id_personal)}>
+                <button 
+                  className="btn btn-sm" 
+                  onClick={() => handleGenerarTemporal(u.id_personal)}
+                  style={{ backgroundColor: "#7A1737", color: "#fff" }}
+                >
                   Generar contraseña temporal
                 </button>
               </div>
@@ -89,12 +129,19 @@ import axios from "axios";
       )}
 
       {info && (
-        <div className="alert alert-info">
+        <div className="alert" style={{ backgroundColor: "rgba(122, 23, 55, 0.1)", border: "1px solid rgba(122, 23, 55, 0.2)", color: "#7A1737" }}>
+          <h5 className="mb-3">Contraseña Temporal Generada</h5>
           <p><strong>Usuario:</strong> {info.usuario}</p>
-          <p><strong>Contraseña temporal:</strong> <code>{info.temporal}</code></p>
-          <p className="small">Entrega esta contraseña al usuario de forma segura y pídele que la cambie en su próximo inicio de sesión.</p>
+          <p><strong>Contraseña temporal:</strong> <code style={{ backgroundColor: "rgba(122, 23, 55, 0.1)" }}>{info.temporal}</code></p>
+          <hr />
+          <p className="small mb-0">
+            <i className="fas fa-info-circle me-2"></i>
+            Entrega esta contraseña al usuario de forma segura y pídele que la cambie en su próximo inicio de sesión.
+          </p>
         </div>
       )}
+        </div>
+      </main>
     </div>
   );
 }

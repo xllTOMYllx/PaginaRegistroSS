@@ -87,14 +87,21 @@ router.post('/register', async (req, res) => {
   try {
     // Verificar si USUARIO, CORREO, CURP o RFC ya existen
     const checkQuery = `
-      SELECT 1 FROM personal
+      SELECT USUARIO, CORREO, CURP, RFC FROM personal
       WHERE USUARIO = $1 OR CORREO = $2 OR CURP = $3 OR RFC = $4
     `;
 
     // Consulta para verificar existencia
     const checkResult = await pool.query(checkQuery, [USUARIO, CORREO, CURP, RFC]);
     if (checkResult.rows.length > 0) {
-      return res.status(400).json({ error: 'Usuario, correo, CURP o RFC ya existen, intente con otros datos.' });
+      const row = checkResult.rows[0];
+      let mensaje = 'No se puede registrar porque ya existe:';
+      if (row.usuario === USUARIO) mensaje += ' el usuario,';
+      if (row.correo === CORREO) mensaje += ' el correo,';
+      if (row.curp === CURP) mensaje += ' la CURP,';
+      if (row.rfc === RFC) mensaje += ' el RFC,';
+      mensaje = mensaje.slice(0, -1) + '.'; // Quitar la última coma
+      return res.status(400).json({ error: mensaje });
     }
 
     // Hashear contraseña
@@ -131,6 +138,22 @@ RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORR
     res.status(201).json({ message: 'Usuario registrado', user });
   } catch (error) {
     console.error('Error al registrar usuario:', error);
+    
+    // Manejar errores de duplicación
+    if (error.code === '23505') { // Violación de restricción única
+      let mensaje = 'No se puede registrar porque ya existe';
+      if (error.constraint === 'personal_correo_key') {
+        mensaje = `El correo ${error.detail.match(/\((.*?)\)/)[1]} ya está registrado.`;
+      } else if (error.constraint === 'personal_usuario_key') {
+        mensaje = 'El nombre de usuario ya está registrado.';
+      } else if (error.constraint === 'personal_curp_key') {
+        mensaje = 'La CURP ya está registrada.';
+      } else if (error.constraint === 'personal_rfc_key') {
+        mensaje = 'El RFC ya está registrado.';
+      }
+      return res.status(400).json({ error: mensaje });
+    }
+    
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });

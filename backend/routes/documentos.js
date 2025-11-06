@@ -5,6 +5,7 @@ const { Pool } = require('pg');
 const multer = require('multer');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const { sendDocumentUploadedEmail, sendDocumentVerifiedEmail } = require('../utils/mailer');
 require('dotenv').config();
 
 // Config DB
@@ -122,18 +123,22 @@ router.post('/subir-academico', authenticateToken, upload.single('archivo'), asy
       [req.user.id_personal, tipo, req.file.filename]
     );
     // Obtener nombre del usuario desde la tabla personal
-    const userResult = await pool.query(
-      `SELECT usuario FROM personal WHERE id_personal = $1`,
-      [req.user.id_personal]
-    );
-    // Si no se encuentra el usuario, usar "Desconocido"
-    const nombreUsuario = userResult.rows[0]?.usuario || "Desconocido";
-    // Insertar notificación de subida
-    await pool.query(
-  `INSERT INTO notificaciones (id_personal, usuario, mensaje) 
-   VALUES ($1, $2, $3)`,
-  [req.user.id_personal, nombreUsuario, `Subiste un nuevo documento: ${tipo}`]
+// Obtener el email del usuario
+const userResult = await pool.query(
+  `SELECT usuario, correo FROM personal WHERE id_personal = $1`,
+  [req.user.id_personal]
 );
+const { usuario, correo } = userResult.rows[0];
+
+// Enviar correo de notificación
+if (correo) {
+  try {
+    await sendDocumentUploadedEmail(correo, usuario, tipo);
+  } catch (emailError) {
+    console.error('Error al enviar correo de notificación:', emailError);
+    // Continuamos con la ejecución aunque falle el envío del correo
+  }
+}
     // Mensaje de respuesta al cliente
     res.json({
       message: 'Documento académico subido correctamente',
@@ -346,14 +351,98 @@ router.delete('/notificaciones/:id', authenticateToken, async (req, res) => {
 
 router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
   const { id } = req.params;
+  const { emailPassword, fromEmail } = req.body;
+
+  if (!emailPassword || !fromEmail) {
+    return res.status(400).json({ error: 'Se requieren el correo y la contraseña de Gmail para enviar la notificación' });
+  }
 
   try {
-    await pool.query(
-      `UPDATE documentos_academicos
-       SET cotejado = TRUE
-       WHERE id = $1`,
+    // Obtener información del documento y su propietario
+    const docResult = await pool.query(
+      `SELECT d.tipo, d.id_personal, p.usuario, p.correo 
+       FROM documentos_academicos d
+       JOIN personal p ON d.id_personal = p.id_personal
+       WHERE d.id = $1`,
       [id]
     );
+
+    if (docResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
+    }
+
+    const { tipo, id_personal, usuario, correo } = docResult.rows[0];
+
+    // Obtener información del verificador
+    const verificadorResult = await pool.query(
+      `SELECT usuario, correo FROM personal WHERE id_personal = $1`,
+      [req.user.id_personal]
+    );
+    const verificadorData = verificadorResult.rows[0];
+
+  // Información del verificador para el correo
+  const verificadorInfo = {
+    nombre: verificadorData.usuario,
+    correo: verificadorData.correo
+  };
+
+    // Actualizar el estado del documento
+    await pool.query(
+      `UPDATE documentos_academicos
+       SET cotejado = TRUE,
+           verificado_por = $2,
+           fecha_verificacion = CURRENT_TIMESTAMP
+       WHERE id = $1`,
+      [id, req.user.id_personal]
+    );
+
+    // Insertar notificación en la base de datos
+    await pool.query(
+      `INSERT INTO notificaciones (id_personal, usuario, mensaje) 
+       VALUES ($1, $2, $3)`,
+      [
+        id_personal,
+        usuario,
+        `Tu documento "${tipo}" ha sido cotejado por ${verificadorData.usuario}`
+      ]
+    );
+
+    // Enviar notificación por correo
+    if (correo) {
+      try {
+        console.log('Intentando enviar correo con Gmail:', {
+          to: correo,
+          from: fromEmail
+        });
+
+        const emailResult = await sendDocumentVerifiedEmail(
+          correo,
+          usuario,
+          tipo,
+          verificadorInfo.nombre,
+          fromEmail,
+          emailPassword
+        );
+
+        if (!emailResult.success) {
+          console.error('Error al enviar correo:', emailResult.error);
+          return res.status(500).json({
+            error: `Error al enviar el correo: ${emailResult.error}`,
+            details: emailResult.error,
+            emailError: true
+          });
+        }
+
+        console.log('Correo enviado exitosamente');
+      } catch (emailError) {
+        console.error('Error en el envío de correo:', emailError);
+        return res.status(500).json({
+          error: `Error al enviar el correo: ${emailError.message}`,
+          details: emailError.message,
+          emailError: true
+        });
+      }
+    }
 
     res.json({ message: 'Documento marcado como cotejado correctamente' });
   } catch (error) {
