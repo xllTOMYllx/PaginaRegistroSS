@@ -5,7 +5,7 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import '../css/Usuarios.css'
-import { FaUser, FaUserShield } from 'react-icons/fa';
+import { FaUser, FaUserShield, FaArrowLeft } from 'react-icons/fa';
 
 function Miembros() {
   const [usuarios, setUsuarios] = useState([]);
@@ -92,6 +92,16 @@ function Miembros() {
       <main className="flex-grow-1 d-flex flex-column">
         <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol === 2} />
         <div className="container py-4">
+          <div className="mb-4">
+            <button 
+              className="btn" 
+              style={{ backgroundColor: "#7A1737", color: "#fff" }}
+              onClick={() => navigate('/homeadmin')}
+            >
+              <FaArrowLeft className="me-2" />
+              Regresar a Inicio
+            </button>
+          </div>
           {usuarios.length === 0 && (
             <div className="text-center py-4">Cargando usuarios...</div>
           )}

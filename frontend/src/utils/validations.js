@@ -36,7 +36,7 @@ export function getStrengthText(score) {
 // --- Regex generales ---
 const regexNombre = /^[A-ZÁÉÍÓÚÑ\s]+$/;
 const regexUsuario = /^[A-Z0-9_]{4,15}$/;
-const regexCorreo = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
+const regexCorreo = /^[^\s@]+@(gmail\.com)$/;
 const regexCURP = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/;
 const regexRFC = /^([A-ZÑ&]{3})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$|^([A-ZÑ&]{4})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$/;
 
@@ -113,7 +113,7 @@ export function validateForm(formData) {
   // Correo
   if (!formData.CORREO) newErrors.CORREO = 'El correo es obligatorio.';
   else if (!regexCorreo.test(formData.CORREO)) {
-    newErrors.CORREO = 'El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.';
+    newErrors.CORREO = 'El correo debe terminar en @gmail.com.';
   }
 
   // CURP

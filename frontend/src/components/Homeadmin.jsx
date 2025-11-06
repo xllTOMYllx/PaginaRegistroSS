@@ -13,6 +13,8 @@ function HomeAdmin() {
   const [universidad, setUniversidad] = useState(null);
   const [certificados, setCertificados] = useState(null);
   const [documentos, setDocumentos] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editData, setEditData] = useState({});
   const navigate = useNavigate();
 
   // Verificar autenticación al montar el componente
@@ -57,6 +59,39 @@ function HomeAdmin() {
     localStorage.removeItem("token");
     setAdmin(null);
     navigate('/sesion', { replace: true });
+  };
+
+  const handleEditClick = () => {
+    setEditData({
+      nombre: admin.nombre,
+      apellido_paterno: admin.apellido_paterno,
+      apellido_materno: admin.apellido_materno,
+      curp: admin.curp,
+      rfc: admin.rfc,
+      correo: admin.correo
+    });
+    setShowEditModal(true);
+  };
+
+  const handleSaveChanges = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      await axios.put(`http://localhost:5000/api/users/${admin.id_personal}`, editData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const res = await axios.get("http://localhost:5000/api/users/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAdmin(res.data);
+      localStorage.setItem("usuario", JSON.stringify(res.data));
+      setShowEditModal(false);
+    } catch (err) {
+      console.error("Error al actualizar datos:", err);
+      alert("Error al actualizar los datos");
+    }
   };
 
   // Subir foto de perfil
@@ -131,6 +166,13 @@ function HomeAdmin() {
           <div className="card shadow mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
               <h4 style={{ color: "#7A1737" }}>Datos Personales del Administrador</h4>
+              <button 
+                className="btn" 
+                style={{ backgroundColor: "#7A1737", color: "#fff" }}
+                onClick={handleEditClick}
+              >
+                Editar datos
+              </button>
             </div>
             <div className="row g-3 align-items-start p-3">
               <div className="col-12 col-md-8">
@@ -284,6 +326,93 @@ function HomeAdmin() {
           </div>
         </div>
       </main>
+
+      {/* Modal de edición */}
+      {showEditModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Editar datos del administrador</h5>
+                <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Nombre</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editData.nombre || ''}
+                    onChange={(e) => setEditData({...editData, nombre: e.target.value})}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Apellido Paterno</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editData.apellido_paterno || ''}
+                    onChange={(e) => setEditData({...editData, apellido_paterno: e.target.value})}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Apellido Materno</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editData.apellido_materno || ''}
+                    onChange={(e) => setEditData({...editData, apellido_materno: e.target.value})}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">CURP</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editData.curp || ''}
+                    onChange={(e) => setEditData({...editData, curp: e.target.value})}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">RFC</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={editData.rfc || ''}
+                    onChange={(e) => setEditData({...editData, rfc: e.target.value})}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Correo</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={editData.correo || ''}
+                    onChange={(e) => setEditData({...editData, correo: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="button" 
+                  className="btn" 
+                  style={{ backgroundColor: "#7A1737", color: "#fff" }}
+                  onClick={handleSaveChanges}
+                >
+                  Guardar cambios
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

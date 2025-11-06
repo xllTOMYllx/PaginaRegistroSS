@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import GmailCredentialsModal from "./GmailCredentialsModal";
 import '../css/UsuarioDetalle.css'
 
 function UsuarioDetalle() {
@@ -10,6 +11,8 @@ function UsuarioDetalle() {
   const [usuario, setUsuario] = useState(null);
   const [admin, setAdmin] = useState(null);
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDocId, setSelectedDocId] = useState(null);
 
   // Depuración: Verificar si cerrarSesion se define
   const cerrarSesion = () => {
@@ -46,15 +49,29 @@ function UsuarioDetalle() {
   }, [id]);
 
 
+  const handleCotejarClick = (docId) => {
+    setSelectedDocId(docId);
+    setIsModalOpen(true);
+  };
+
   // Función para marcar un documento como cotejado
-  const toggleCotejado = async (docId) => {
+  const toggleCotejado = async (docId, smtpData) => {
     try {
+      console.log('Enviando solicitud con:', { docId, smtpData });
       const token = localStorage.getItem("token");
-      await axios.patch(
+
+      const response = await axios.patch(
         `http://localhost:5000/api/documentos/${docId}/cotejado`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        smtpData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
+
+      console.log('Respuesta:', response.data);
 
       // Actualizar estado local
       setUsuario(prev => ({
@@ -63,8 +80,34 @@ function UsuarioDetalle() {
           doc.id === docId ? { ...doc, cotejado: true } : doc
         )
       }));
+
+      alert('El documento ha sido marcado como cotejado y se ha enviado la notificación por correo.');
     } catch (error) {
       console.error("Error al actualizar cotejado:", error);
+      
+      let errorMessage = 'Error al cotejar el documento';
+      
+      if (error.response?.data?.emailError) {
+        // Error específico del envío de correo
+        errorMessage = `Error en el envío del correo: ${error.response.data.details || 'Verifica las credenciales SMTP y la configuración del servidor de correo'}`;
+        
+        // Preguntar si desea continuar sin enviar correo
+        if (confirm('Hubo un error al enviar el correo electrónico. ¿Deseas marcar el documento como cotejado de todas formas?')) {
+          // TODO: Agregar lógica para marcar como cotejado sin enviar correo
+          setUsuario(prev => ({
+            ...prev,
+            documentos: prev.documentos.map(doc =>
+              doc.id === docId ? { ...doc, cotejado: true } : doc
+            )
+          }));
+          alert('Documento marcado como cotejado (sin notificación por correo)');
+          return;
+        }
+      } else {
+        errorMessage = error.response?.data?.error || 'Error al cotejar el documento';
+      }
+      
+      alert(errorMessage);
     }
   };
 
@@ -186,7 +229,7 @@ function UsuarioDetalle() {
                             {!doc.cotejado && (
                               <button
                                 className="btn btn-sm btn-success"
-                                onClick={() => toggleCotejado(doc.id)}
+                                onClick={() => handleCotejarClick(doc.id)}
                                 style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)", fontFamily: "Roboto, sans-serif" }}
                               >
                                 Marcar Cotejado
@@ -245,7 +288,7 @@ function UsuarioDetalle() {
                             {!doc.cotejado && (
                               <button
                                 className="btn btn-sm btn-success"
-                                onClick={() => toggleCotejado(doc.id)}
+                                onClick={() => handleCotejarClick(doc.id)}
                                 style={{ fontSize: "clamp(0.75rem, 2vw, 0.85rem)", fontFamily: "Roboto, sans-serif" }}
                               >
                                 Marcar Cotejado
@@ -267,6 +310,15 @@ function UsuarioDetalle() {
         </div>
       </main>
 
+      <GmailCredentialsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        defaultEmail={admin?.correo}
+        onSubmit={(smtpData) => {
+          toggleCotejado(selectedDocId, smtpData);
+          setIsModalOpen(false);
+        }}
+      />
     </div>
   );
 }

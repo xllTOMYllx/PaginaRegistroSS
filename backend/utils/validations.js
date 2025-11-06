@@ -5,7 +5,7 @@ const validator = require("validator");
 // --- Regex generales ---
 const regexNombre = /^[A-ZÁÉÍÓÚÑ\s]+$/;
 const regexUsuario = /^[A-Z0-9_]{4,15}$/;
-const regexCorreo = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
+const regexCorreo = /^[^\s@]+@(gmail\.com)$/;
 const regexCURP = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/;
 const regexRFC = /^([A-ZÑ&]{3})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$|^([A-ZÑ&]{4})(\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([A-Z\d]{2})([A\d])$/;
 
@@ -56,7 +56,7 @@ function validarUsuario(usuario) {
 // --- Validar correo ---
 function validarCorreo(correo) {
   if (!correo) return "El correo es obligatorio.";
-  if (!regexCorreo.test(correo)) return "El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com.";
+  if (!regexCorreo.test(correo)) return "El correo debe terminar en @gmail.com.";
   if (!validator.isEmail(correo)) return "Correo electrónico no válido.";
   return null;
 }
