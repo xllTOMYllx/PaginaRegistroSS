@@ -137,7 +137,7 @@ function UsuarioDetalle() {
     <div className="d-flex flex-column flex-lg-row min-vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
-        <Navbar hideCrear={admin?.rol === 2} />
+        <Navbar hideCrear={admin?.rol !== 3} />
         <div className="container py-4">
           <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}
             style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>

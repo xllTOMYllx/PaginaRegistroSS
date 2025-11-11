@@ -55,10 +55,43 @@ const storage = multer.diskStorage({
 
 const fs = require('fs');
 
-// Helper: sanitize filenames and avoid dangerous characters
+// Ayudante: sanitizar nombres de archivo y evitar caracteres peligrosos
 function sanitizeFileName(name) {
-  // Keep letters, numbers, dot, underscore and dash. Replace others with underscore
-  return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  // Preservar el nombre de archivo original exacto con acentos y caracteres especiales
+  // Solo eliminar caracteres verdaderamente peligrosos:
+  // - separadores de ruta (/ y \)
+  // - caracteres reservados de Windows: <>:"|?*
+  // - bytes nulos y caracteres de control (\x00-\x1F)
+  if (!name) return name;
+  
+  // Corregir mojibake: si el nombre se ve corrupto (texto UTF-8 mal interpretado como Latin-1),
+  // re-codificarlo correctamente. Patrón común: "Ã©" (mojibake) -> "é" (correcto)
+  let fixed = name;
+  try {
+    // Detectar patrones de mojibake: secuencias como Ã¡, Ã©, Ã­, Ã³, Ã¹, Ã±, Ã, etc.
+    // Estos son bytes UTF-8 interpretados como Latin-1
+    if (/Ã[¡-ÿ]|Ã‰|Ã¡|Ã©|Ã­|Ã³|Ã¹|Ã±/.test(name)) {
+      // Intentar corregir re-codificando: Latin-1 -> Buffer -> UTF-8
+      fixed = Buffer.from(name, 'latin1').toString('utf8');
+    }
+  } catch (e) {
+    // Si la codificación falla, mantener el original
+    fixed = name;
+  }
+  
+  let sanitized = fixed;
+  // Eliminar solo caracteres verdaderamente peligrosos
+  sanitized = sanitized.replace(/[<>:"/\\|?*\x00-\x1F]/g, '');
+  // Colapsar secuencias de puntos (evitar travesía de directorios ..)
+  sanitized = sanitized.replace(/\.{2,}/g, '.');
+  // Eliminar espacios en blanco al inicio y final
+  sanitized = sanitized.trim();
+  // Si está vacío después de sanitizar, usar timestamp + extensión original como respaldo
+  if (sanitized.length === 0) {
+    const ext = path.extname(name) || '';
+    return Date.now() + ext;
+  }
+  return sanitized;
 }
 
 // Configuración Multer con carpeta por usuario
@@ -78,16 +111,23 @@ const storage = multer.diskStorage({
       const userFolder = path.join(__dirname, '../uploads/academico', `${req.user.id_personal}`);
       const original = path.basename(file.originalname);
       const sanitized = sanitizeFileName(original);
-      let finalName = sanitized;
-      // If a file with the same name exists, add a counter prefix to avoid overwrite
-      let counter = 0;
-      while (fs.existsSync(path.join(userFolder, finalName))) {
-        counter += 1;
-        finalName = `${counter}-${sanitized}`;
+      const finalName = sanitized;
+      const finalPath = path.join(userFolder, finalName);
+      // Si existe un archivo con el mismo nombre, sobrescribir el antiguo
+      // para que el nombre almacenado sea exactamente el que subió el usuario
+      // Eliminamos el archivo existente antes de guardar el nuevo
+      if (fs.existsSync(finalPath)) {
+        try {
+          fs.unlinkSync(finalPath);
+        } catch (unlinkErr) {
+          // Si no podemos eliminar el archivo existente, usar nombre con timestamp como respaldo
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          return cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
+        }
       }
       cb(null, finalName);
     } catch (err) {
-      // Fallback to timestamped name if anything fails
+      // Respaldo: usar nombre con timestamp si algo falla
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
       cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
     }
@@ -103,6 +143,13 @@ const upload = multer({
     }
     cb(null, true);
   }
+});
+
+// Middleware para corregir encoding UTF-8 en los nombres de archivo
+router.use('/subir-academico', (req, res, next) => {
+  // Interceptamos en el middleware para corregir encoding si Multer lo procesa después
+  // Esta corrección real ocurre en sanitizeFileName
+  next();
 });
 
 // 📌 Ruta para subir documento académico
@@ -167,7 +214,7 @@ router.get('/mis-documentos', authenticateToken, async (req, res) => {
   }
 });
 
-//Eliminar documento
+// Eliminar documento
 router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
@@ -222,7 +269,7 @@ router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
 });
 
 
-//IMAGENES
+// IMÁGENES
 // Configuración Multer para imágenes
 const storageFoto = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -251,7 +298,7 @@ const uploadFoto = multer({
   }
 });
 
-//SUBIR FOTOS
+// Subir foto de perfil
 router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (req, res) => {
   try {
     if (!req.file) {
@@ -280,7 +327,7 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
       `UPDATE personal SET foto_perfil = $1 WHERE id_personal = $2`,
       [req.file.filename, req.user.id_personal]
     );
-    // mensaje de respuesta al cliente
+    // Mensaje de respuesta al cliente
     res.json({
       message: 'Foto de perfil subida correctamente',
       file: req.file.filename
@@ -348,7 +395,6 @@ router.delete('/notificaciones/:id', authenticateToken, async (req, res) => {
 
 
 // 📌 Marcar documento como cotejado
-
 router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { emailPassword, fromEmail } = req.body;
@@ -452,7 +498,5 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
 });
 
 
-
-
-
+module.exports = router;
 module.exports = router;
