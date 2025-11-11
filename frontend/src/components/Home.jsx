@@ -193,7 +193,7 @@ function Home() {
       {/* Imagen superior (usa encodeURI para manejar espacios en el nombre) */}
       <div className="top-image-container" style={{ textAlign: 'center', padding: '8px 0' }}>
         <img
-          src={encodeURI('/Imagen Sesver.png')}
+          src={encodeURI('/ImagenSesver.png')}
           alt="Imagen superior"
           style={{ maxWidth: '80%', height: '100%', display: 'block', margin: '0 auto' }}
         />
