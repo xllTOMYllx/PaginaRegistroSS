@@ -458,31 +458,49 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
 
 // Buscar usuarios por nombre o apellido
 router.get("/buscar", async (req, res) => {
-  const { nombre } = req.query;
+  const { nombre, rol } = req.query;
 
   if (!nombre || nombre.trim() === "") {
     return res.status(400).json({ error: "Falta el parámetro 'nombre'" });
   }
 
-  try {// consulta para buscar usuarios
-    const searchTerm = `%${nombre}%`;
+  try {
+    // Dividir el término en palabras individuales y eliminar espacios vacíos
+    const palabras = nombre.trim().split(/\s+/).filter(p => p.length > 0);
+    const userRol = rol ? parseInt(rol) : 1; // valor por defecto rol 1 si no se especifica
 
-    const result = await pool.query(
-      `SELECT * FROM PERSONAL
-   WHERE rol = 1 AND (
-     nombre ILIKE $1
-     OR apellido_paterno ILIKE $1
-     OR apellido_materno ILIKE $1
-     OR curp ILIKE $1
-     OR rfc ILIKE $1
-   )
-   ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
-   LIMIT 50`,
-      [searchTerm]
-    );
+    // Construir condiciones dinámicamente: cada palabra debe coincidir en alguno de los campos
+    // Por ejemplo, si buscas "juan gonzalez", ambas palabras deben coincidir en algún campo
+    let whereCondition = "rol = $1";
+    let params = [userRol];
+    let paramIndex = 2;
+
+    // Para cada palabra, agregar una condición OR que busque en todos los campos
+    palabras.forEach((palabra) => {
+      const searchTerm = `%${palabra}%`;
+      whereCondition += ` AND (
+        nombre ILIKE $${paramIndex}
+        OR apellido_paterno ILIKE $${paramIndex}
+        OR apellido_materno ILIKE $${paramIndex}
+        OR curp ILIKE $${paramIndex}
+        OR rfc ILIKE $${paramIndex}
+      )`;
+      params.push(searchTerm);
+      paramIndex++;
+    });
+
+    const query = `
+      SELECT * FROM PERSONAL
+      WHERE ${whereCondition}
+      ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
+      LIMIT 50
+    `;
+
+    const result = await pool.query(query, params);
     // Responder con resultados
     res.json(result.rows);
-  } catch (error) {// Manejo de errores
+  } catch (error) {
+    // Manejo de errores
     console.error("Error al buscar usuarios:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }

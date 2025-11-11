@@ -17,9 +17,16 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'CORS'],
   credentials: true
 }));
-// Configuración de seguridad
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+// Configuración de encoding UTF-8 global
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  next();
+});
+
+// Configuración de seguridad y encoding UTF-8
+app.use(express.json({ charset: 'utf-8' }));
+app.use(express.urlencoded({ extended: true, charset: 'utf-8' }));
 app.use(helmet());
 
 // Rutas API
@@ -27,12 +34,6 @@ app.use('/api/users', usersRoutes);
 app.use('/api/documentos', documentosRoutes);
 
 // Middleware personalizado para servir archivos estáticos con CORS
-/*
-app.use('/uploads', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-}, express.static(path.join(__dirname, 'uploads')));*/
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 

@@ -190,17 +190,27 @@ function Home() {
   // ---Diseño principal de la página--- //
   return (
     <>
+      {/* Imagen superior (usa encodeURI para manejar espacios en el nombre) */}
+      <div className="top-image-container" style={{ textAlign: 'center', padding: '8px 0' }}>
+        <img
+          src={encodeURI('/Imagen Sesver.png')}
+          alt="Imagen superior"
+          style={{ maxWidth: '80%', height: '100%', display: 'block', margin: '0 auto' }}
+        />
+      </div>
+
       {/* Barra de navegación superior */}
-      <nav className="navbar navbar-light bg-white shadow-sm mb-4">
+      <nav className="navbar navbar-light shadow-sm mb-4" style={{ backgroundColor: "#7A1737" }}>
         <div className="container-fluid d-flex justify-content-end align-items-center flex-nowrap gap-1 navbar-actions">
 
           {/* Botón de Notificaciones */}
+          <div>
           <button
             className="btn btn-sm position-relative"
             style={{ padding: "4px 8px" }}
             onClick={() => setMostrarPanel(!mostrarPanel)}
           >
-            <FaBell size={16} />
+            <FaBell size={16} color="white" />
             {notificaciones.filter(n => !n.leido).length > 0 && (
               <span
                 className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -225,27 +235,10 @@ function Home() {
               boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
               fontSize: "0.875rem"
             }}
-            className="btn btn-danger btn-sm d-none d-sm-inline"
           >
             Cerrar Sesión
           </button>
-          <button
-            onClick={cerrarSesion}
-            style={{
-              backgroundColor: "#ff4d4f",
-              color: "white",
-              padding: "2px 4px",
-              border: "none",
-              borderRadius: "16px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
-              fontSize: "0.75rem"
-            }}
-            className="btn btn-danger btn-sm d-inline d-sm-none"
-          >
-            Salir
-          </button>
+          </div>
         </div>
 
 
@@ -321,7 +314,7 @@ function Home() {
 
 
       {/* Contenedor principal */}
-      < main className="container mt-4" style={{ maxWidth: "800px" }
+      < main className="container mt-5" style={{ maxWidth: "800px" }
       }>
         {/* Contenedor unificado de usuario + foto */}
         < div className="card shadow mb-4 w-100" >
@@ -463,7 +456,7 @@ function Home() {
                   ) : (
                     <div className="ms-auto d-flex align-items-center gap-2"> {/* Botones Ver y Eliminar */}
                       <a
-                        href={`http://localhost:5000/uploads/academico/${usuario?.id_personal}/${documentoExistente.archivo}`}
+                        href={`http://localhost:5000/uploads/academico/${usuario?.id_personal}/${encodeURIComponent(documentoExistente.archivo)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-sm"
@@ -559,7 +552,7 @@ function Home() {
                   <span className="me-auto">{doc.nombre_original || doc.archivo}</span>
                 </div>
                 <a
-                  href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${doc.archivo}`}
+                  href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${encodeURIComponent(doc.archivo)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-sm"

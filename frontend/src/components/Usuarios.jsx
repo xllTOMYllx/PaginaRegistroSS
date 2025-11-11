@@ -90,7 +90,7 @@ function Miembros() {
     <div className="d-flex vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
-        <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol === 2} />
+        <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol !== 3} />
         <div className="container py-4">
           {usuarios.length === 0 && (
             <div className="text-center py-4">Cargando usuarios...</div>
