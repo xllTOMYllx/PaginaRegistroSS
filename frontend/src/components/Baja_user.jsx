@@ -27,6 +27,20 @@ function Baja_user() {
       .catch((err) => console.error(err));
   }, [navigate]);
 
+  // Buscar usuarios (usado por la barra de búsqueda superior)
+  const buscarUsuario = async (termino) => {
+    try {
+      const token = localStorage.getItem('token');
+      const q = termino?.trim() || '';
+      const url = q ? `http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(q)}&rol=1` : `http://localhost:5000/api/users/rol/1`;
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      setUsuarios(data);
+    } catch (err) {
+      console.error('Error al buscar usuarios:', err);
+    }
+  };
+
   const toggleUsuario = async (id, status) => {
     const accion = status ? "bloquear" : "desbloquear";
     try {
@@ -63,7 +77,7 @@ function Baja_user() {
     <div className="d-flex vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
-        <Navbar />
+        <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol !== 3} />
         <div className="container mt-4">
           <h2 className="mb-3">Usuarios</h2>
           <div className="table-responsive">

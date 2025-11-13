@@ -48,15 +48,15 @@ function Sesion() {
       if (usuario.rol === 1) {
         navigate('/Home', { state: { user: usuario } });
       }
-      
-      if (usuario.rol === 2) {
-        navigate('/HomeUsuario2', { state: { user: usuario } });
-      } 
 
-      if (usuario.rol === 3) {  
-       navigate('/Homeadmin', { state: { user: usuario } });
+      if (usuario.rol === 2) {
+        navigate('/Usuarios', { state: { user: usuario } });
       }
-    
+
+      if (usuario.rol === 3) {
+        navigate('/Usuarios', { state: { user: usuario } });
+      }
+
 
     } catch (error) {
       if (error.response) {
@@ -82,11 +82,11 @@ function Sesion() {
     setFormData({ ...formData, [name]: name === 'USUARIO' ? value.toUpperCase() : value });
     setError({ ...error, [name]: '' }); // Limpia el error al cambiar
   };
-// Pagina de inicio de sesión
-return (
+  // Pagina de inicio de sesión
+  return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
       <div className="p-4 rounded-4 shadow bg-white" style={{ width: '100%', maxWidth: '600px' }}>
-        <h4 className="text-center mb-3" style={{ color: '#7A1737', fontSize: '30px',  fontFamily: "Roboto, sans-serif" }}>INICIAR SESIÓN</h4>
+        <h4 className="text-center mb-3" style={{ color: '#7A1737', fontSize: '30px', fontFamily: "Roboto, sans-serif" }}>INICIAR SESIÓN</h4>
         <form onSubmit={handleSubmit}>
           {error.general && <div className="alert alert-danger mt-3 text-center">{error.general}</div>}
           {/* Campo de usuario */}
@@ -120,7 +120,7 @@ return (
                 type="button"
                 className="btn btn-outline-secondary rounded-end mb-3"
                 onClick={togglePasswordVisibility}
-                style={{ zIndex: 1, border:  'none'}}
+                style={{ zIndex: 1, border: 'none' }}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -128,15 +128,15 @@ return (
             {error.CONTRASENA && <div className="text-danger small mt-1">{error.CONTRASENA}</div>}
           </div>
           {/* Botón de inicio de sesión */}
-          <button type="submit" className="btn btn-primary w-100 rounded-3" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737',  fontFamily: "Roboto, sans-serif" }}>
+          <button type="submit" className="btn btn-primary w-100 rounded-3" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737', fontFamily: "Roboto, sans-serif" }}>
             Iniciar Sesión
           </button>
           <p className="text-center mt-3">¿No tienes una cuenta?</p>
         </form>
-        <button type="button" className="btn btn-primary w-100 rounded-3 mt-2" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737',fontFamily: "Roboto, sans-serif"  }} onClick={() => navigate('/')}>
+        <button type="button" className="btn btn-primary w-100 rounded-3 mt-2" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737', fontFamily: "Roboto, sans-serif" }} onClick={() => navigate('/')}>
           Registrarse
         </button>
-        
+
       </div>
     </div>
   );

@@ -1,38 +1,41 @@
 /* Estilos responsivos */
 
 /* Base sidebar styling */
-aside.bg-dark.text-white {
-    background-color: #4A2C2A;
-    /* Dark brown background */
+.app-sidebar {
+    background-color: #7A1737;
+    /* color principal */
     color: #FFFFFF;
-    padding: 1.5rem;
+    padding: 1.25rem;
     font-family: 'Roboto', sans-serif;
     width: clamp(160px, 16vw, 200px);
-    /* Narrower sidebar */
     min-height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1040;
-    transition: transform 0.3s ease-in-out;
+    transition: width 0.25s ease-in-out, transform 0.3s ease-in-out;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+    overflow: visible;
+    /* permitir que botones posicionados parcialmente fuera no queden recortados */
+}
+
+.app-sidebar.collapsed {
+    width: 80px;
 }
 
 /* Profile section */
 .text-center.mb-4 {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #6B4E31;
-    /* Medium brown divider */
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .text-center.mb-4 img {
     border-radius: 50%;
-    border: 2px solid #8B6F47;
-    /* Light brown border */
+    border: 2px solid rgba(255, 255, 255, 0.14);
     object-fit: cover;
     width: clamp(70px, 12vw, 90px);
-    /* Slightly smaller profile image */
     height: clamp(70px, 12vw, 90px);
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, width 0.2s ease, height 0.2s ease;
 }
 
 .text-center.mb-4 img:hover {
@@ -48,59 +51,102 @@ aside.bg-dark.text-white {
 }
 
 /* Navigation buttons */
-.nav.flex-column .btn-outline-light {
+.nav.flex-column .sidebar-btn {
     color: #FFFFFF;
-    border-color: #8B6F47;
-    /* Light brown border */
+    border-color: rgba(255, 255, 255, 0.12);
     background-color: transparent;
     border-radius: 8px;
     padding: 0.5rem 1rem;
-    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
     text-align: left;
     margin-bottom: 0.5rem;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.nav.flex-column .btn-outline-light:hover {
-    background-color: #6B4E31;
-    /* Medium brown on hover */
-    color: #FFFFFF;
-    transform: translateX(5px);
+.nav.flex-column .sidebar-btn:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    transform: translateX(4px);
 }
 
-.nav.flex-column .btn-outline-light:focus {
-    outline: 2px solid #FFFFFF;
-    outline-offset: 2px;
+.app-sidebar.collapsed .nav.flex-column .sidebar-btn {
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.sidebar-btn .icon {
+    display: inline-block;
+    font-size: 1.15rem;
+}
+
+.sidebar-btn .label {
+    display: inline-block;
+}
+
+.app-sidebar.collapsed .sidebar-btn .label {
+    display: none;
+    /* ocultar etiqueta cuando colapsado */
+}
+
+/* Asegurar que el botón de colapso no quede recortado */
+.sidebar-collapse-btn {
+    overflow: visible;
+    z-index: 1060;
+    /* encima del sidebar */
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 12px 0;
+    /* separacion debajo del boton antes del perfil */
+    background: transparent;
+    /* quitar contorno blanco */
+    border: none;
+    /* sin borde */
+    position: absolute;
+    /* dentro del sidebar */
+    right: 12px;
+    top: 12px;
+    color: #fff;
+}
+
+/* Asegurar que el texto del botón de cerrar sesión sea blanco */
+.logout-btn,
+.logout-btn * {
+    color: #fff !important;
 }
 
 /* Logout button */
-.btn-danger {
-    background-color: #D32F2F;
-    /* Red for logout */
-    border-color: #D32F2F;
+.logout-btn {
+    background-color: #B71C1C;
+    /* Rojo oscuro */
+    border-color: rgba(255, 255, 255, 0.14);
     border-radius: 8px;
     padding: 0.5rem 1rem;
     font-size: clamp(0.8rem, 2vw, 0.9rem);
     font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    color: #fff;
+    transition: background-color 0.12s ease, transform 0.12s ease;
 }
 
-.btn-danger:hover {
-    background-color: #B71C1C;
-    /* Darker red on hover */
+.logout-btn:hover {
+    background-color: #8e1414;
     transform: translateY(-2px);
 }
 
-.btn-danger:focus {
-    outline: 2px solid #FFFFFF;
-    outline-offset: 2px;
+.app-sidebar.collapsed .logout-btn {
+    padding: 0.5rem;
+    text-align: center;
 }
 
 /* Toggle button for mobile */
 .btn.btn-dark.d-lg-none {
-    background-color: #4A2C2A;
-    /* Dark brown */
-    border-color: #4A2C2A;
+    background-color: #7A1737;
+    border-color: #7A1737;
     border-radius: 8px;
     padding: 0.5rem;
     font-size: clamp(0.9rem, 2.5vw, 1rem);
@@ -108,12 +154,41 @@ aside.bg-dark.text-white {
     top: 10px;
     left: 10px;
     z-index: 1050;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.18s ease;
 }
 
 .btn.btn-dark.d-lg-none:hover {
-    background-color: #6B4E31;
-    /* Medium brown on hover */
+    background-color: #5e1130;
+}
+
+/* Hamburger icon for mobile toggle */
+.hamburger {
+    display: inline-block;
+    width: 22px;
+    height: 16px;
+    position: relative;
+}
+
+.hamburger span {
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    background: #fff;
+    left: 0;
+    transition: all 0.2s ease;
+}
+
+.hamburger span:nth-child(1) {
+    top: 0;
+}
+
+.hamburger span:nth-child(2) {
+    top: 7px;
+}
+
+.hamburger span:nth-child(3) {
+    top: 14px;
 }
 
 @media (min-width: 992px) {
@@ -126,13 +201,14 @@ aside.bg-dark.text-white {
     .d-lg-none {
         display: none !important;
     }
-    
+
 }
 
 @media (max-width: 991px) {
     aside.d-block {
         transform: translateX(0);
-        width: clamp(160px, 60vw, 200px); /* Consistent with desktop width */
+        width: clamp(160px, 60vw, 200px);
+        /* Consistent with desktop width */
     }
 
     main {
@@ -146,16 +222,16 @@ aside.bg-dark.text-white {
     }
 
     .btn {
-    padding: 0.4rem 0.8rem;
-    font-size: clamp(0.75rem, 1.8vw, 0.85rem);
-  }
+        padding: 0.4rem 0.8rem;
+        font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+    }
 
-  .text-center.mb-4 img {
-    width: clamp(50px, 10vw, 70px);
-    height: clamp(50px, 10vw, 70px);
-  }
+    .text-center.mb-4 img {
+        width: clamp(50px, 10vw, 70px);
+        height: clamp(50px, 10vw, 70px);
+    }
 
-  .text-center.mb-4 h5 {
-    font-size: clamp(0.85rem, 2vw, 0.95rem);
-  }
+    .text-center.mb-4 h5 {
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+    }
 }

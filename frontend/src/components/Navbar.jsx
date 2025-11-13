@@ -7,6 +7,15 @@ import '../css/Navbar.css'
 function Navbar({ onBuscar, hideCrear }) {
   const [termino, setTermino] = useState("");
   const navigate = useNavigate();
+  // Si no se pasa la prop `hideCrear`, inferirla desde el usuario almacenado
+  const usuarioStored = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('usuario'));
+    } catch (e) {
+      return null;
+    }
+  })();
+  const shouldHideCrear = typeof hideCrear === 'boolean' ? hideCrear : (usuarioStored?.rol !== 3);
 
   // ⏳ Debounce: espera 500ms después de que el usuario deja de escribir
   useEffect(() => {
@@ -21,82 +30,94 @@ function Navbar({ onBuscar, hideCrear }) {
   // ⏳ Fin Debounce
 
   return (// Navbar con estilos responsivos
-    <nav
-      className="navbar navbar-light bg-white shadow-sm px-3 px-md-4"
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
-        paddingTop: "clamp(0.5rem, 1.5vw, 0.75rem)",
-        paddingBottom: "clamp(0.5rem, 1.5vw, 0.75rem)",
-      }}
-    > {/* Contenedor principal */}
-      <div className="container-fluid d-flex align-items-center flex-nowrap">
-        <form
-          className="d-flex align-items-center flex-grow-0"
-          onSubmit={(e) => e.preventDefault()}
-          style={{
-            maxWidth: "clamp(300px, 40vw, 300px)",
-            width: "100%",
-          }}
-        > {/* Formulario de búsqueda */}
-          <input
-            className="form-control me-2"
-            type="search"
-            placeholder="Buscar..."
-            aria-label="Buscar"
-            value={termino}
-            onChange={(e) => setTermino(e.target.value)}
-            style={{
-              fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-              padding: "clamp(0.3rem, 1vw, 0.4rem)",
-            }}
-          /> {/* Botón para limpiar búsqueda */}
-          <button
-            className="btn btn-outline-secondary"
-            type="button"
-            onClick={() => setTermino("")}
-            style={{
-              fontSize: "clamp(0.8rem, 2vw, 0.9rem)",
-              padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            🧹
-          </button>
-        </form>
-        {/* Contenedor de botones a la derecha */}
-        <div
-          className="d-flex align-items-center ms-auto gap-2"
-          style={{ flexShrink: 0 }}
-        > {/* Botones de notificaciones y crear usuario */}
-          <button
-            className="btn btn-light"
-            style={{
-              fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-              padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
-            }}
-          >
-            🔔
-          </button>
-          {/* Botón para navegar a crear usuario, solo si hideCrear no está activo */}
-          {!hideCrear && (
+    <>
+      <div className="top-image-container" style={{ textAlign: 'center', padding: '8px 0' }}>
+        <img
+          src={encodeURI('/ImagenSesver.png')}
+          alt="Imagen superior"
+          style={{ maxWidth: '80%', height: '100%', display: 'block', margin: '0 auto' }}
+        />
+      </div>
+
+      <nav
+        className="navbar shadow-sm px-3 px-md-4 app-navbar"
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1000,
+          paddingTop: "clamp(0.5rem, 1.5vw, 0.75rem)",
+          paddingBottom: "clamp(0.5rem, 1.5vw, 0.75rem)",
+        }}
+      > {/* Contenedor principal */}
+        <div className="container-fluid d-flex align-items-center flex-nowrap">
+          {typeof onBuscar === 'function' && (
+            <form
+              className="d-flex align-items-center flex-grow-0"
+              onSubmit={(e) => e.preventDefault()}
+              style={{
+                maxWidth: "clamp(300px, 40vw, 300px)",
+                width: "100%",
+              }}
+            > {/* Formulario de búsqueda */}
+              <input
+                className="form-control me-2"
+                type="search"
+                placeholder="Buscar..."
+                aria-label="Buscar"
+                value={termino}
+                onChange={(e) => setTermino(e.target.value)}
+                style={{
+                  fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
+                  padding: "clamp(0.3rem, 1vw, 0.4rem)",
+                }}
+              /> {/* Botón para limpiar búsqueda */}
+              <button
+                className="btn btn-outline-secondary"
+                type="button"
+                onClick={() => setTermino("")}
+                style={{
+                  fontSize: "clamp(0.8rem, 2vw, 0.9rem)",
+                  padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                🧹
+              </button>
+            </form>
+          )}
+          {/* Contenedor de botones a la derecha */}
+          <div
+            className="d-flex align-items-center ms-auto gap-2"
+            style={{ flexShrink: 0 }}
+          > {/* Botones de notificaciones y crear usuario */}
             <button
-              onClick={() => navigate("/CrearUsuario")}
-              className="btn btn-primary"
+              className="btn btn-light"
               style={{
                 fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
                 padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
-                whiteSpace: "nowrap",
               }}
             >
-              ➕ Crear
+              🔔
             </button>
-          )}
+            {/* Botón para navegar a crear usuario, solo si hideCrear no está activo */}
+            {!shouldHideCrear && (
+              <button
+                onClick={() => navigate("/CrearUsuario")}
+                className="btn btn-primary"
+                style={{
+                  fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
+                  padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                ➕ Crear
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-    </nav>
+      </nav>
+    </>
   );
 }
 
