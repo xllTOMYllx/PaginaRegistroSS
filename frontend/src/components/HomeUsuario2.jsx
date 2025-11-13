@@ -124,13 +124,13 @@ function HomeUsuario2() {
     <div className="d-flex vh-100">
       <Sidebar Usuario2={Usuario2} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
-        <Navbar />
+        <Navbar hideCrear={Usuario2?.rol !== 3} />
 
         <div className="container mt-4" style={{ maxWidth: "800px" }}>
           {/* Datos personales */}
           <div className="card shadow mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
-              <h4 style={{ color: "#7A1737" }}>Datos Personales del Administrador</h4>
+              <h4 style={{ color: "#7A1737" }}>Datos Personales del Supervisor</h4>
             </div>
             <div className="row g-3 align-items-start p-3">
               <div className="col-12 col-md-8">
@@ -139,10 +139,10 @@ function HomeUsuario2() {
                     <tr><th>Nombre</th><td>{Usuario2.nombre}</td></tr>
                     <tr><th>Apellido Paterno</th><td>{Usuario2.apellido_paterno}</td></tr>
                     <tr><th>Apellido Materno</th><td>{Usuario2.apellido_materno}</td></tr>
-                     <tr><th>CURP</th><td>{Usuario2.curp}</td></tr>
+                    <tr><th>CURP</th><td>{Usuario2.curp}</td></tr>
                     <tr><th>RFC</th><td>{Usuario2.rfc}</td></tr>
                     <tr><th>Correo</th><td>{Usuario2.correo}</td></tr>
-                    
+
                   </tbody>
                 </table>
               </div>

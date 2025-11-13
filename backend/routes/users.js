@@ -138,7 +138,7 @@ RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORR
     res.status(201).json({ message: 'Usuario registrado', user });
   } catch (error) {
     console.error('Error al registrar usuario:', error);
-    
+
     // Manejar errores de duplicación
     if (error.code === '23505') { // Violación de restricción única
       let mensaje = 'No se puede registrar porque ya existe';
@@ -153,7 +153,7 @@ RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORR
       }
       return res.status(400).json({ error: mensaje });
     }
-    
+
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -271,13 +271,13 @@ router.post('/login', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Credenciales inválidas. Verifica tu usuario.' });
     }
-    
+
 
     // Obtener el usuario encontrado
     const user = result.rows[0];
 
 
-    
+
     // ✅ Verificar si el usuario está bloqueado
     if (user.status === false) {
       return res.status(403).json({ error: 'Usuario bloqueado. Contacta al administrador.' });
@@ -406,9 +406,9 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
   const { rol } = req.params;
   let rolesPermitidos = [];
   if (rol == 2) {
-    rolesPermitidos = [1]; // supervisor ve base
+    rolesPermitidos = [1]; // supervisor (rol 2) ve solo base (rol 1)
   } else if (rol == 3) {
-    rolesPermitidos = [1, 2]; // admin ve base y supervisor
+    rolesPermitidos = [1, 2]; // admin (rol 3) ve base (rol 1) y supervisores (rol 2)
   } else {
     rolesPermitidos = [1]; // por defecto solo base
   }
@@ -637,7 +637,7 @@ router.post('/recuperar/generar-temporal/:id', authenticateToken, async (req, re
     const user = uRes.rows[0];
 
     // Generar contraseña temporal
-    const tempPassword = crypto.randomBytes(6).toString('base64').replace(/\+/g,'A').replace(/\//g,'B'); // ~12 chars
+    const tempPassword = crypto.randomBytes(6).toString('base64').replace(/\+/g, 'A').replace(/\//g, 'B'); // ~12 chars
     const hashed = await bcrypt.hash(tempPassword, 10);
 
     // Actualizar contraseña en DB

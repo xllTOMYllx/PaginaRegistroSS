@@ -7,7 +7,6 @@ import Navbar from "./Navbar";
 
 function Recuperarcuent() {
   const navigate = useNavigate();
-  const [nombre, setNombre] = useState("");
   const [usuarios, setUsuarios] = useState([]);
   const [error, setError] = useState("");
   const [info, setInfo] = useState(null);
@@ -24,12 +23,14 @@ function Recuperarcuent() {
     setAdmin(adminData);
   }, [navigate]);
 
-  const handleBuscar = async () => {
+  // Buscar usuarios desde la barra superior (onBuscar)
+  const handleBuscar = async (q) => {
+    const termino = typeof q === 'string' ? q : '';
     setError(""); setUsuarios([]); setInfo(null);
-    if (!nombre.trim()) { setError("Ingresa un nombre"); return; }
+    if (!termino.trim()) { setError("Ingresa un nombre, CURP O RFC para buscar"); return; }
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(nombre)}`, {
+      const res = await axios.get(`http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(termino)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsuarios(res.data);
@@ -74,72 +75,50 @@ function Recuperarcuent() {
     <div className="d-flex vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
-        <Navbar />
+        <Navbar onBuscar={handleBuscar} hideCrear={admin?.rol !== 3} />
         <div className="container mt-4">
 
-      <h2 className="mb-4" style={{ color: "#7A1737" }}>Recuperar Contraseñas</h2>
+          <h2 className="mb-4" style={{ color: "#7A1737" }}>Recuperar Contraseñas</h2>
 
-      <div className="row mb-3">
-        <div className="col-md-8">
-          <div className="input-group">
-            <input 
-              type="text" 
-              className="form-control" 
-              placeholder="Ingrese el nombre del usuario"
-              value={nombre} 
-              onChange={(e) => setNombre(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleBuscar()}
-            />
-            <button 
-              className="btn" 
-              onClick={handleBuscar}
-              style={{ backgroundColor: "#7A1737", color: "#fff" }}
-            >
-              Buscar
-            </button>
-          </div>
-        </div>
-      </div>
+          {error && <div className="alert alert-danger">{error}</div>}
 
-      {error && <div className="alert alert-danger">{error}</div>}
-
-      {usuarios.length > 0 && (
-        <div className="list-group mb-3">
-          {usuarios.map(u => (
-            <div key={u.id_personal} className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: "rgba(122, 23, 55, 0.02)" }}>
-              <div>
-                <div style={{ fontSize: "1.1rem" }}><strong>{u.nombre} {u.apellido_paterno} {u.apellido_materno}</strong></div>
-                <div className="text-muted">
-                  <span className="me-3"><i className="fas fa-user me-1"></i>Usuario: {u.usuario}</span>
-                  <span><i className="fas fa-envelope me-1"></i>Correo: {u.correo}</span>
+          {usuarios.length > 0 && (
+            <div className="list-group mb-3">
+              {usuarios.map(u => (
+                <div key={u.id_personal} className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: "rgba(122, 23, 55, 0.02)" }}>
+                  <div>
+                    <div style={{ fontSize: "1.1rem" }}><strong>{u.nombre} {u.apellido_paterno} {u.apellido_materno}</strong></div>
+                    <div className="text-muted">
+                      <span className="me-3"><i className="fas fa-user me-1"></i>Usuario: {u.usuario}</span>
+                      <span><i className="fas fa-envelope me-1"></i>Correo: {u.correo}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      className="btn btn-sm"
+                      onClick={() => handleGenerarTemporal(u.id_personal)}
+                      style={{ backgroundColor: "#7A1737", color: "#fff" }}
+                    >
+                      Generar contraseña temporal
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <button 
-                  className="btn btn-sm" 
-                  onClick={() => handleGenerarTemporal(u.id_personal)}
-                  style={{ backgroundColor: "#7A1737", color: "#fff" }}
-                >
-                  Generar contraseña temporal
-                </button>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          )}
 
-      {info && (
-        <div className="alert" style={{ backgroundColor: "rgba(122, 23, 55, 0.1)", border: "1px solid rgba(122, 23, 55, 0.2)", color: "#7A1737" }}>
-          <h5 className="mb-3">Contraseña Temporal Generada</h5>
-          <p><strong>Usuario:</strong> {info.usuario}</p>
-          <p><strong>Contraseña temporal:</strong> <code style={{ backgroundColor: "rgba(122, 23, 55, 0.1)" }}>{info.temporal}</code></p>
-          <hr />
-          <p className="small mb-0">
-            <i className="fas fa-info-circle me-2"></i>
-            Entrega esta contraseña al usuario de forma segura y pídele que la cambie en su próximo inicio de sesión.
-          </p>
-        </div>
-      )}
+          {info && (
+            <div className="alert" style={{ backgroundColor: "rgba(122, 23, 55, 0.1)", border: "1px solid rgba(122, 23, 55, 0.2)", color: "#7A1737" }}>
+              <h5 className="mb-3">Contraseña Temporal Generada</h5>
+              <p><strong>Usuario:</strong> {info.usuario}</p>
+              <p><strong>Contraseña temporal:</strong> <code style={{ backgroundColor: "rgba(122, 23, 55, 0.1)" }}>{info.temporal}</code></p>
+              <hr />
+              <p className="small mb-0">
+                <i className="fas fa-info-circle me-2"></i>
+                Entrega esta contraseña al usuario de forma segura y pídele que la cambie en su próximo inicio de sesión.
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </div>

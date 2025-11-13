@@ -81,7 +81,7 @@ function HomeAdmin() {
       await axios.put(`http://localhost:5000/api/users/${admin.id_personal}`, editData, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       const res = await axios.get("http://localhost:5000/api/users/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -159,15 +159,15 @@ function HomeAdmin() {
     <div className="d-flex vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
       <main className="flex-grow-1 d-flex flex-column">
-        <Navbar />
+        <Navbar hideCrear={admin?.rol !== 3} />
 
         <div className="container mt-4" style={{ maxWidth: "800px" }}>
           {/* Datos personales */}
           <div className="card shadow mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
               <h4 style={{ color: "#7A1737" }}>Datos Personales del Administrador</h4>
-              <button 
-                className="btn" 
+              <button
+                className="btn"
                 style={{ backgroundColor: "#7A1737", color: "#fff" }}
                 onClick={handleEditClick}
               >
@@ -181,10 +181,10 @@ function HomeAdmin() {
                     <tr><th>Nombre</th><td>{admin.nombre}</td></tr>
                     <tr><th>Apellido Paterno</th><td>{admin.apellido_paterno}</td></tr>
                     <tr><th>Apellido Materno</th><td>{admin.apellido_materno}</td></tr>
-                     <tr><th>CURP</th><td>{admin.curp}</td></tr>
+                    <tr><th>CURP</th><td>{admin.curp}</td></tr>
                     <tr><th>RFC</th><td>{admin.rfc}</td></tr>
                     <tr><th>Correo</th><td>{admin.correo}</td></tr>
-                    
+
                   </tbody>
                 </table>
               </div>
@@ -343,7 +343,7 @@ function HomeAdmin() {
                     type="text"
                     className="form-control"
                     value={editData.nombre || ''}
-                    onChange={(e) => setEditData({...editData, nombre: e.target.value})}
+                    onChange={(e) => setEditData({ ...editData, nombre: e.target.value })}
                   />
                 </div>
                 <div className="mb-3">
@@ -352,7 +352,7 @@ function HomeAdmin() {
                     type="text"
                     className="form-control"
                     value={editData.apellido_paterno || ''}
-                    onChange={(e) => setEditData({...editData, apellido_paterno: e.target.value})}
+                    onChange={(e) => setEditData({ ...editData, apellido_paterno: e.target.value })}
                   />
                 </div>
                 <div className="mb-3">
@@ -361,7 +361,7 @@ function HomeAdmin() {
                     type="text"
                     className="form-control"
                     value={editData.apellido_materno || ''}
-                    onChange={(e) => setEditData({...editData, apellido_materno: e.target.value})}
+                    onChange={(e) => setEditData({ ...editData, apellido_materno: e.target.value })}
                   />
                 </div>
                 <div className="mb-3">
@@ -370,7 +370,7 @@ function HomeAdmin() {
                     type="text"
                     className="form-control"
                     value={editData.curp || ''}
-                    onChange={(e) => setEditData({...editData, curp: e.target.value})}
+                    onChange={(e) => setEditData({ ...editData, curp: e.target.value })}
                   />
                 </div>
                 <div className="mb-3">
@@ -379,7 +379,7 @@ function HomeAdmin() {
                     type="text"
                     className="form-control"
                     value={editData.rfc || ''}
-                    onChange={(e) => setEditData({...editData, rfc: e.target.value})}
+                    onChange={(e) => setEditData({ ...editData, rfc: e.target.value })}
                   />
                 </div>
                 <div className="mb-3">
@@ -388,21 +388,21 @@ function HomeAdmin() {
                     type="email"
                     className="form-control"
                     value={editData.correo || ''}
-                    onChange={(e) => setEditData({...editData, correo: e.target.value})}
+                    onChange={(e) => setEditData({ ...editData, correo: e.target.value })}
                   />
                 </div>
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-secondary"
                   onClick={() => setShowEditModal(false)}
                 >
                   Cancelar
                 </button>
-                <button 
-                  type="button" 
-                  className="btn" 
+                <button
+                  type="button"
+                  className="btn"
                   style={{ backgroundColor: "#7A1737", color: "#fff" }}
                   onClick={handleSaveChanges}
                 >

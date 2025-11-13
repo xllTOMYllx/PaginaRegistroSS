@@ -5,14 +5,27 @@ import '../css/Sidebar.css'
 function Sidebar({ admin, Usuario2, cerrarSesion }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Persistir el estado de colapso en localStorage para que no se pierda al navegar
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('sidebarCollapsed') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
   const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
+    const next = !isCollapsed;
+    setIsCollapsed(next);
+    try {
+      localStorage.setItem('sidebarCollapsed', next ? 'true' : 'false');
+    } catch (e) {
+      // ignore
+    }
   };
 
   return (
@@ -28,11 +41,15 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
           fontSize: "clamp(0.9rem, 2.5vw, 1rem)",
         }}
       >
-        {isOpen ? "✖" : "☰"}
+        <span className="hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
       </button>
 
       <aside
-        className={`text-white p-3 d-flex flex-column justify-content-between ${isOpen ? "d-block" : "d-none"} d-lg-flex`}
+        className={`app-sidebar text-white p-3 d-flex flex-column justify-content-between ${isOpen ? "d-block" : "d-none"} d-lg-flex ${isCollapsed ? 'collapsed' : ''}`}
         style={{
           width: isCollapsed ? "80px" : "clamp(180px, 20vw, 250px)",
           minHeight: "100vh",
@@ -40,30 +57,24 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
           top: 0,
           left: 0,
           zIndex: 1040,
-          transition: "all 0.3s ease-in-out",
+          transition: "all 0.25s ease-in-out",
           transform: isOpen ? "translateX(0)" : "translateX(-100%)",
-          background: "linear-gradient(135deg, #7A1737 0%, #ffffff 400%)",
-          boxShadow: "2px 0 10px rgba(0,0,0,0.1)"
         }}
       >
-        <button
-          className="btn btn-outline-light d-none d-lg-block"
-          onClick={toggleCollapse}
-          style={{
-            position: "absolute",
-            right: "-15px",
-            top: "20px",
-            borderRadius: "50%",
-            width: "30px",
-            height: "30px",
-            padding: "0",
-            zIndex: 1041,
-            backgroundColor: "#7A1737",
-            border: "2px solid white"
-          }}
-        >
-          {isCollapsed ? "→" : "←"}
-        </button>
+        {/* Collapse button placed inside the sidebar, above the profile */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <button
+            className="d-none d-lg-block sidebar-collapse-btn"
+            onClick={toggleCollapse}
+            aria-label={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
+          >
+            <span className="hamburger" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+        </div>
         <div>
           {/* Usuario admin */}
           {admin && (
@@ -86,7 +97,7 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
                 }}
               />
               {!isCollapsed && (
-                <h5 style={{ 
+                <h5 style={{
                   fontSize: "clamp(1rem, 2.5vw, 1.1rem)",
                   color: "white",
                   textShadow: "1px 1px 2px rgba(0,0,0,0.2)"
@@ -124,13 +135,22 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
           {/* Navegación */}
           <div className="nav flex-column">
             <button
-              onClick={() => { navigate("/Usuarios"); setIsOpen(false); }}
-              className="btn mb-2 w-100 sidebar-btn"
-              style={{ 
+              onClick={() => { navigate('/homeadmin'); if (window.innerWidth < 992) setIsOpen(false); }}
+              className="btn mb-3 w-100 sidebar-btn"
+              style={{
                 fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                color: "white",
+                textAlign: isCollapsed ? "center" : "left",
+                padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
+                transition: "all 0.3s ease"
+              }}
+            >
+              {isCollapsed ? '🏠' : '🏠 Inicio'}
+            </button>
+            <button
+              onClick={() => { navigate("/Usuarios"); if (window.innerWidth < 992) setIsOpen(false); }}
+              className="btn mb-2 w-100 sidebar-btn"
+              style={{
+                fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
                 textAlign: isCollapsed ? "center" : "left",
                 padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
                 transition: "all 0.3s ease"
@@ -140,54 +160,46 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
               {isCollapsed ? "👥" : "👥 Miembros"}
             </button>
             <button
-              onClick={() => { navigate("/Baja_user"); setIsOpen(false); }}
+              onClick={() => { navigate("/Baja_user"); if (window.innerWidth < 992) setIsOpen(false); }}
               className="btn mb-2 w-100 sidebar-btn"
-              style={{ 
+              style={{
                 fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                color: "white",
                 textAlign: isCollapsed ? "center" : "left",
                 padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
                 transition: "all 0.3s ease"
               }}
               title="Bloquear usuario"
             >
-              {isCollapsed ? "�" : "🚫 Bloquear usuario"}
+              {isCollapsed ? "🚫" : "🚫 Bloquear usuario"}
             </button>
             <button
-              onClick={() => { navigate("/recuperarcuent"); setIsOpen(false); }}
+              onClick={() => { navigate("/recuperarcuent"); if (window.innerWidth < 992) setIsOpen(false); }}
               className="btn mb-2 w-100 sidebar-btn"
-              style={{ 
+              style={{
                 fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                color: "white",
                 textAlign: isCollapsed ? "center" : "left",
                 padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
                 transition: "all 0.3s ease"
               }}
               title="Recuperar Cuentas"
             >
-              {isCollapsed ? "🔄" : "� Recuperar Cuentas"}
+              {isCollapsed ? "🔄" : "🔄 Recuperar Cuentas"}
             </button>
           </div>
         </div>
 
         {/* Cerrar sesión */}
         <button
-          onClick={() => { cerrarSesion(); setIsOpen(false); }}
-          className="btn w-100 mt-3"
-          style={{ 
+          onClick={() => { cerrarSesion(); if (window.innerWidth < 992) setIsOpen(false); }}
+          className={`btn w-100 mt-3 logout-btn`}
+          style={{
             fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-            backgroundColor: "#7A1737",
-            color: "white",
-            border: "1px solid rgba(255, 255, 255, 0.3)",
             textAlign: isCollapsed ? "center" : "left",
             padding: isCollapsed ? "0.5rem" : "0.5rem 1rem"
           }}
         >
-          🔒 Cerrar Sesión
+          🔒
+          Cerrar Sesión
         </button>
       </aside>
     </>

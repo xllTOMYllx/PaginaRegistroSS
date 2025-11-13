@@ -93,6 +93,7 @@ function Miembros() {
         <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol !== 3} />
         <div className="container py-4">
           <div className="mb-4">
+            {/* Botón para regresar a la página de inicio del admin 
             <button 
               className="btn" 
               style={{ backgroundColor: "#7A1737", color: "#fff" }}
@@ -101,6 +102,7 @@ function Miembros() {
               <FaArrowLeft className="me-2" />
               Regresar a Inicio
             </button>
+            */}
           </div>
           {usuarios.length === 0 && (
             <div className="text-center py-4">Cargando usuarios...</div>

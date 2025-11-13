@@ -19,10 +19,9 @@ app.use(cors({
 }));
 
 // Configuración de encoding UTF-8 global
-app.use((req, res, next) => {
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  next();
-});
+// Nota: no establecer Content-Type globalmente aquí porque puede interferir
+// con la entrega de archivos estáticos (PDF, imágenes). Los endpoints JSON
+// deben establecer su propio Content-Type cuando sea necesario.
 
 // Configuración de seguridad y encoding UTF-8
 app.use(express.json({ charset: 'utf-8' }));
@@ -34,7 +33,21 @@ app.use('/api/users', usersRoutes);
 app.use('/api/documentos', documentosRoutes);
 
 // Middleware personalizado para servir archivos estáticos con CORS
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Añadimos setHeaders para PDFs para sugerir apertura inline en el navegador
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, filePath) => {
+    try {
+      const ext = path.extname(filePath).toLowerCase();
+      if (ext === '.pdf') {
+        // Asegurar Content-Type correcto y sugerir apertura inline en el navegador
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="${path.basename(filePath)}"`);
+      }
+    } catch (e) {
+      // silenciar cualquier error al establecer cabeceras
+    }
+  }
+}));
 
 
 // Ruta raíz
