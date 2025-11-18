@@ -402,13 +402,14 @@ router.post('/crear-jefe', async (req, res) => {
 });
 
 // 📌 Obtener usuarios por rol (solo Jefe)
+// Nota: ignora el parámetro rol en la URL; usa req.user.rol para determinar qué roles puede ver
 router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => {
-  const { rol } = req.params;
   let rolesPermitidos = [];
-  if (rol == 2) {
-    rolesPermitidos = [1]; // supervisor (rol 2) ve solo base (rol 1)
-  } else if (rol == 3) {
+  // Determinar qué roles puede ver basándose SOLO en el usuario autenticado
+  if (req.user.rol == 3) {
     rolesPermitidos = [1, 2]; // admin (rol 3) ve base (rol 1) y supervisores (rol 2)
+  } else if (req.user.rol == 2) {
+    rolesPermitidos = [1]; // supervisor (rol 2) ve solo base (rol 1)
   } else {
     rolesPermitidos = [1]; // por defecto solo base
   }
@@ -480,8 +481,8 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
 });
 
 // Buscar usuarios por nombre o apellido
-router.get("/buscar", async (req, res) => {
-  const { nombre, rol } = req.query;
+router.get("/buscar", authenticateToken, async (req, res) => {
+  const { nombre } = req.query;
 
   if (!nombre || nombre.trim() === "") {
     return res.status(400).json({ error: "Falta el parámetro 'nombre'" });
@@ -490,12 +491,21 @@ router.get("/buscar", async (req, res) => {
   try {
     // Dividir el término en palabras individuales y eliminar espacios vacíos
     const palabras = nombre.trim().split(/\s+/).filter(p => p.length > 0);
-    const userRol = rol ? parseInt(rol) : 1; // valor por defecto rol 1 si no se especifica
+
+    // Determinar qué roles puede ver el usuario autenticado (no confiar en params del cliente)
+    let rolesPermitidos = [];
+    if (req.user.rol == 3) {
+      rolesPermitidos = [1, 2]; // rol 3 ve roles 1 y 2
+    } else if (req.user.rol == 2) {
+      rolesPermitidos = [1]; // rol 2 ve solo rol 1
+    } else {
+      rolesPermitidos = [1]; // por defecto rol 1 ve solo rol 1
+    }
 
     // Construir condiciones dinámicamente: cada palabra debe coincidir en alguno de los campos
-    // Por ejemplo, si buscas "juan gonzalez", ambas palabras deben coincidir en algún campo
-    let whereCondition = "rol = $1";
-    let params = [userRol];
+    // Empezamos con rol = ANY($1) y pasamos rolesPermitidos como primer parámetro
+    let whereCondition = "rol = ANY($1)";
+    let params = [rolesPermitidos];
     let paramIndex = 2;
 
     // Para cada palabra, agregar una condición OR que busque en todos los campos
@@ -513,7 +523,7 @@ router.get("/buscar", async (req, res) => {
     });
 
     const query = `
-      SELECT * FROM PERSONAL
+      SELECT * FROM personal
       WHERE ${whereCondition}
       ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
       LIMIT 50

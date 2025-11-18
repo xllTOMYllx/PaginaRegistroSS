@@ -50,7 +50,7 @@ function Miembros() {
       const adminData = JSON.parse(localStorage.getItem("usuario"));
       const rol = adminData?.rol || 1;
       const url = termino.trim()
-        ? `http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(termino)}&rol=${rol}`
+        ? `http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(termino)}`
         : `http://localhost:5000/api/users/rol/${rol}`;
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },

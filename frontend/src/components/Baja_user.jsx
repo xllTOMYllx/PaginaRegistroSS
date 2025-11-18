@@ -31,8 +31,8 @@ function Baja_user() {
   const buscarUsuario = async (termino) => {
     try {
       const token = localStorage.getItem('token');
-      const q = termino?.trim() || '';
-      const url = q ? `http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(q)}&rol=1` : `http://localhost:5000/api/users/rol/1`;
+        const q = termino?.trim() || '';
+        const url = q ? `http://localhost:5000/api/users/buscar?nombre=${encodeURIComponent(q)}` : `http://localhost:5000/api/users/rol/1`;
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setUsuarios(data);
