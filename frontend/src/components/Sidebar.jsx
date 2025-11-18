@@ -1,9 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import '../css/Sidebar.css'
+import { useAuth } from '../context/AuthContext';
 
 function Sidebar({ admin, Usuario2, cerrarSesion }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  // Prefer the user from context; fall back to prop or localStorage if needed.
+  let currentAdmin = user || admin;
+  if (!currentAdmin) {
+    try {
+      const stored = localStorage.getItem('usuario');
+      if (stored) currentAdmin = JSON.parse(stored);
+    } catch (e) {
+      currentAdmin = admin;
+    }
+  }
   const [isOpen, setIsOpen] = useState(true);
   // Persistir el estado de colapso en localStorage para que no se pierda al navegar
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -77,12 +89,12 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
         </div>
         <div>
           {/* Usuario admin */}
-          {admin && (
+          {currentAdmin && (
             <div className="text-center mb-4">
               <img
                 src={
-                  admin.foto_perfil
-                    ? `http://localhost:5000/uploads/fotos/${admin.id_personal}/${admin.foto_perfil}`
+                  currentAdmin.foto_perfil
+                    ? `http://localhost:5000/uploads/fotos/${currentAdmin.id_personal}/${currentAdmin.foto_perfil}`
                     : "http://localhost:5000/uploads/default-avatar.jpg"
                 }
                 alt="Foto de perfil"
@@ -102,7 +114,7 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
                   color: "white",
                   textShadow: "1px 1px 2px rgba(0,0,0,0.2)"
                 }}>
-                  {admin.nombre} {admin.apellido_paterno}
+                  {currentAdmin.nombre} {currentAdmin.apellido_paterno}
                 </h5>
               )}
             </div>
@@ -147,7 +159,7 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
               {isCollapsed ? '🏠' : '🏠 Inicio'}
             </button>
             <button
-              onClick={() => { navigate("/Usuarios"); if (window.innerWidth < 992) setIsOpen(false); }}
+              onClick={() => { navigate("/usuarios"); if (window.innerWidth < 992) setIsOpen(false); }}
               className="btn mb-2 w-100 sidebar-btn"
               style={{
                 fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
@@ -159,8 +171,26 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
             >
               {isCollapsed ? "👥" : "👥 Miembros"}
             </button>
+            {/* Botón Crear (solo visible para rol 3 - Jefe) */}
+            {currentAdmin && currentAdmin.rol === 3 && (
+              <button
+                onClick={() => { navigate('/crearUsuario'); if (window.innerWidth < 992) setIsOpen(false); }}
+                className="btn mb-2 w-100 sidebar-btn"
+                style={{
+                  fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
+                  textAlign: isCollapsed ? "center" : "left",
+                  padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
+                  transition: "all 0.3s ease",
+                  backgroundColor: "#7A1737",
+                  color: "#ffffff"
+                }}
+                title="Crear Usuario"
+              >
+                {isCollapsed ? '➕' : '➕ Crear Usuario'}
+              </button>
+            )}
             <button
-              onClick={() => { navigate("/Baja_user"); if (window.innerWidth < 992) setIsOpen(false); }}
+              onClick={() => { navigate("/baja_user"); if (window.innerWidth < 992) setIsOpen(false); }}
               className="btn mb-2 w-100 sidebar-btn"
               style={{
                 fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
@@ -173,7 +203,7 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
               {isCollapsed ? "🚫" : "🚫 Bloquear usuario"}
             </button>
             <button
-              onClick={() => { navigate("/recuperarcuent"); if (window.innerWidth < 992) setIsOpen(false); }}
+              onClick={() => { navigate("/Recuperarcuent"); if (window.innerWidth < 992) setIsOpen(false); }}
               className="btn mb-2 w-100 sidebar-btn"
               style={{
                 fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
@@ -195,7 +225,8 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
           style={{
             fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
             textAlign: isCollapsed ? "center" : "left",
-            padding: isCollapsed ? "0.5rem" : "0.5rem 1rem"
+            padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
+            fontSize: isCollapsed ? "clamp(0.55rem, 1.1vw, 0.7rem)" : undefined
           }}
         >
           🔒

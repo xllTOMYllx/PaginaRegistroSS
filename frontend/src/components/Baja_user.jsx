@@ -84,7 +84,7 @@ function Baja_user() {
             <table className="table table-bordered table-striped table-hover align-middle">
               <thead className="table-dark">
                 <tr>
-                  <th>ID</th>
+                  {/*<th>ID</th>*/}
                   <th>Nombre</th>
                   <th>Apellido Paterno</th>
                   <th>Apellido Materno</th>
@@ -98,7 +98,7 @@ function Baja_user() {
                 {usuarios.length > 0 ? (
                   usuarios.map((u) => (
                     <tr key={u.id_personal}>
-                      <td className="col-id">{u.id_personal}</td>
+                      {/*<td className="col-id">{u.id_personal}</td>*/}
                       <td className="col-nombre truncate">{u.nombre}</td>
                       <td className="col-ap truncate">{u.apellido_paterno}</td>
                       <td className="col-am truncate">{u.apellido_materno}</td>

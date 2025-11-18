@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 //import '../css/sesion.css'
+import { useAuth } from '../context/AuthContext';
 
 // función principal del componente Sesion
 function Sesion() {
@@ -15,6 +16,7 @@ function Sesion() {
   // Estado para mostrar/ocultar la contraseña
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   // Validación del formulario
   const validateForm = () => {
     const newErrors = {};
@@ -44,6 +46,12 @@ function Sesion() {
       const { token, usuario } = response.data;
       localStorage.setItem('token', token);
       localStorage.setItem('usuario', JSON.stringify(usuario));
+      // update global auth context so all components see the user immediately
+      try {
+        setUser(usuario);
+      } catch (e) {
+        // ignore if context not available
+      }
 
       if (usuario.rol === 1) {
         navigate('/Home', { state: { user: usuario } });

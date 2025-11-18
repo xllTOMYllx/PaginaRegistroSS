@@ -143,6 +143,11 @@
     text-align: center;
 }
 
+/* Reducir ligeramente el tamaño de la letra cuando el sidebar está colapsado */
+.app-sidebar.collapsed .logout-btn {
+    font-size: clamp(0.55rem, 1.1vw, 0.7rem);
+}
+
 /* Toggle button for mobile */
 .btn.btn-dark.d-lg-none {
     background-color: #7A1737;
