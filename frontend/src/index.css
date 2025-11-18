@@ -53,6 +53,43 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Global button behavior - inverted colors:
+   - Por defecto: botones muestran el color principal de fondo y texto blanco.
+   - Hover/focus: fondo blanco, texto y borde en el color principal.
+   - Se usan variables CSS (`--btn-color`) para permitir variantes si es necesario.
+   - `!important` se aplica para sobrescribir estilos inline existentes en componentes.
+*/
+.btn {
+  --btn-color: #7A1737;
+  background-color: var(--btn-color) !important;
+  color: #ffffff !important;
+  border: 1px solid #ffffff !important;
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 120ms ease;
+}
+
+.btn:hover, .btn:focus {
+  background-color: #ffffff !important;
+  color: var(--btn-color) !important;
+  border-color: var(--btn-color) !important;
+}
+
+/* Mantener legibilidad para variantes secundarias/claro: no forzamos inversión fuerte */
+.btn.btn-secondary, .btn.btn-light {
+  --btn-color: #6c757d;
+  background-color: #6c757d !important;
+  color: #ffffff !important;
+}
+.btn.btn-secondary:hover, .btn.btn-light:hover {
+  background-color: #f1f1f1 !important;
+  color: #212529 !important;
+  border-color: #ffffff !important;
+}
+
+/* Opciones rápidas para variantes temáticas si necesitas un color diferente */
+.btn--danger { --btn-color: #dc3545; }
+.btn--success { --btn-color: #198754; }
+.btn--primary { --btn-color: #7A1737; }
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

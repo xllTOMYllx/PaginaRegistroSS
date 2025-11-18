@@ -99,20 +99,6 @@ function Navbar({ onBuscar, hideCrear }) {
             >
               🔔
             </button>
-            {/* Botón para navegar a crear usuario, solo si hideCrear no está activo */}
-            {!shouldHideCrear && (
-              <button
-                onClick={() => navigate("/CrearUsuario")}
-                className="btn btn-primary"
-                style={{
-                  fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-                  padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                ➕ Crear
-              </button>
-            )}
           </div>
         </div>
 
