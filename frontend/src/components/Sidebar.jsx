@@ -199,7 +199,7 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
           }}
         >
           🔒
-          Cerrar Sesión
+          Salir
         </button>
       </aside>
     </>
