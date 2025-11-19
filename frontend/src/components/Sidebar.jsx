@@ -222,15 +222,9 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
         <button
           onClick={() => { cerrarSesion(); if (window.innerWidth < 992) setIsOpen(false); }}
           className={`btn w-100 mt-3 logout-btn`}
-          style={{
-            fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-            textAlign: isCollapsed ? "center" : "left",
-            padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
-            fontSize: isCollapsed ? "clamp(0.55rem, 1.1vw, 0.7rem)" : undefined
-          }}
         >
           🔒
-          Salir
+          Cerrar Sesión
         </button>
       </aside>
     </>

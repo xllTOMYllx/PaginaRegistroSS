@@ -200,11 +200,6 @@ function CrearUsuario() {
                 {error.general && <div className="alert alert-danger mt-3 text-center">{error.general}</div>}
               </form>
             </div>
-            <div className="card-footer bg-white">
-              <button type="button" className="btn btn-secondary" onClick={() => navigate(-1)}>
-                ← Regresar
-              </button>
-            </div>
           </div>
         </div>
       </main>
