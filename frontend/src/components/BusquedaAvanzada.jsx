@@ -245,46 +245,54 @@ function BusquedaAvanzada() {
                     No se encontraron usuarios que coincidan con los criterios de búsqueda.
                   </div>
                 ) : (
-                  <div className="row g-3">
-                    {usuarios.map((usuario) => (
-                      <div key={usuario.id_personal} className="col-md-6 col-lg-4">
-                        <div className="card h-100 border-0 shadow-sm usuario-card">
-                          <div className="card-body">
-                            <div className="d-flex align-items-center mb-3">
-                              <img
-                                src={
-                                  usuario.foto_perfil
-                                    ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
-                                    : "http://localhost:5000/uploads/default-avatar.jpg"
-                                }
-                                alt="Foto de perfil"
-                                className="rounded-circle me-3"
-                                style={{ width: "60px", height: "60px", objectFit: "cover" }}
-                                crossOrigin="use-credentials"
-                              />
-                              <div>
-                                <h6 className="mb-0">
-                                  {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
-                                </h6>
-                                <small className="text-muted">@{usuario.usuario}</small>
+                  <div className="table-responsive">
+                    <table className="table table-hover align-middle">
+                      <thead className="table-light">
+                        <tr>
+                          <th scope="col">Usuario</th>
+                          <th scope="col">Nombre Completo</th>
+                          <th scope="col" className="text-center">Total Docs</th>
+                          <th scope="col" className="text-center">Certificados</th>
+                          <th scope="col" className="text-center">Verificados</th>
+                          <th scope="col">Tipos de Documentos</th>
+                          <th scope="col" className="text-center">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {usuarios.map((usuario) => (
+                          <tr key={usuario.id_personal}>
+                            <td>
+                              <div className="d-flex align-items-center">
+                                <img
+                                  src={
+                                    usuario.foto_perfil
+                                      ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
+                                      : "http://localhost:5000/uploads/default-avatar.jpg"
+                                  }
+                                  alt="Foto de perfil"
+                                  className="rounded-circle me-2"
+                                  style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                                  crossOrigin="use-credentials"
+                                />
+                                <span className="text-muted small">@{usuario.usuario}</span>
                               </div>
-                            </div>
-
-                            <div className="mb-2">
-                              <small className="text-muted d-block">
-                                <strong>Total documentos:</strong> {usuario.total_documentos || 0}
-                              </small>
-                              <small className="text-muted d-block">
-                                <strong>Certificados:</strong> {usuario.num_certificados || 0}
-                              </small>
-                              <small className="text-muted d-block">
-                                <strong>Verificados:</strong> {usuario.num_documentos_verificados || 0}
-                              </small>
-                            </div>
-
-                            {usuario.tipos_documentos && usuario.tipos_documentos.length > 0 && (
-                              <div className="mb-3">
-                                <small className="text-muted d-block mb-1"><strong>Documentos:</strong></small>
+                            </td>
+                            <td>
+                              <strong>
+                                {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
+                              </strong>
+                            </td>
+                            <td className="text-center">
+                              <span className="badge bg-info">{usuario.total_documentos || 0}</span>
+                            </td>
+                            <td className="text-center">
+                              <span className="badge bg-success">{usuario.num_certificados || 0}</span>
+                            </td>
+                            <td className="text-center">
+                              <span className="badge bg-primary">{usuario.num_documentos_verificados || 0}</span>
+                            </td>
+                            <td>
+                              {usuario.tipos_documentos && usuario.tipos_documentos.length > 0 ? (
                                 <div className="d-flex flex-wrap gap-1">
                                   {usuario.tipos_documentos.slice(0, 3).map((tipo, idx) => (
                                     <span key={idx} className="badge bg-secondary" style={{ fontSize: "0.7rem" }}>
@@ -297,19 +305,23 @@ function BusquedaAvanzada() {
                                     </span>
                                   )}
                                 </div>
-                              </div>
-                            )}
-
-                            <button
-                              className="btn btn-sm btn-primary w-100"
-                              onClick={() => verDetalleUsuario(usuario.id_personal)}
-                            >
-                              Ver Detalles
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                              ) : (
+                                <span className="text-muted small">Sin documentos</span>
+                              )}
+                            </td>
+                            <td className="text-center">
+                              <button
+                                className="btn btn-sm btn-primary"
+                                onClick={() => verDetalleUsuario(usuario.id_personal)}
+                              >
+                                <FaUser className="me-1" />
+                                Ver Detalles
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </div>
