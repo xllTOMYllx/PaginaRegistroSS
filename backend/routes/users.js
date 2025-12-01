@@ -555,7 +555,7 @@ router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res)
   try {
     // Determinar qué roles puede ver el usuario autenticado
     let rolesPermitidos = [];
-    if (req.user.rol == 3 || req.user.rol == 4) {
+    if (req.user.rol === 3 || req.user.rol === 4) {
       rolesPermitidos = [1, 2]; // rol 3 y 4 ven roles 1 y 2
     } else {
       return res.status(403).json({ error: 'Acceso denegado' });

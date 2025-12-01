@@ -4,7 +4,8 @@ import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
-import { FaSearch, FaUser, FaFileAlt, FaCertificate, FaCheckCircle } from 'react-icons/fa';
+import { FaSearch, FaUser, FaFileAlt, FaCertificate, FaCheckCircle, FaInfoCircle } from 'react-icons/fa';
+import API_ENDPOINTS from '../utils/config';
 import '../css/BusquedaAvanzada.css';
 
 function BusquedaAvanzada() {
@@ -65,7 +66,7 @@ function BusquedaAvanzada() {
       }
 
       const response = await axios.get(
-        `http://localhost:5000/api/users/buscar-avanzado?${params.toString()}`,
+        `${API_ENDPOINTS.BUSCAR_AVANZADO}?${params.toString()}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -240,7 +241,7 @@ function BusquedaAvanzada() {
                 
                 {usuarios.length === 0 ? (
                   <div className="alert alert-info">
-                    <i className="bi bi-info-circle me-2"></i>
+                    <FaInfoCircle className="me-2" />
                     No se encontraron usuarios que coincidan con los criterios de búsqueda.
                   </div>
                 ) : (
