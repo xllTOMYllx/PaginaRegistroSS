@@ -410,8 +410,7 @@ router.post('/crear-jefe', async (req, res) => {
   }
 });
 
-// 📌 Obtener usuarios por rol (solo Jefe)
-// Nota: ignora el parámetro rol en la URL; usa req.user.rol para determinar qué roles puede ver
+// 📌 Obtener usuarios por rol (solo Jefe y Supervisor)
 router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => {
   let rolesPermitidos = [];
   // Determinar qué roles puede ver basándose SOLO en el usuario autenticado
@@ -424,14 +423,33 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
   }
 
   try {
-    const query = `
-      SELECT id_personal, nombre, apellido_paterno, apellido_materno,
-             usuario, correo, curp, rfc, rol, foto_perfil, status
-      FROM personal
-      WHERE rol = ANY($1)
-      ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
-    `;
-    const result = await pool.query(query, [rolesPermitidos]);
+    let query, queryParams;
+
+    // Si es supervisor (rol 2), solo ver miembros de su grupo
+    if (req.user.rol === 2) {
+      query = `
+        SELECT DISTINCT p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
+               p.usuario, p.correo, p.curp, p.rfc, p.rol, p.foto_perfil, p.status
+        FROM personal p
+        INNER JOIN grupo_miembros gm ON p.id_personal = gm.id_personal
+        INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+        WHERE g.id_supervisor = $1 AND p.rol = ANY($2)
+        ORDER BY p.apellido_paterno ASC, p.apellido_materno ASC, p.nombre ASC
+      `;
+      queryParams = [req.user.id_personal, rolesPermitidos];
+    } else {
+      // Admin ve todos
+      query = `
+        SELECT id_personal, nombre, apellido_paterno, apellido_materno,
+               usuario, correo, curp, rfc, rol, foto_perfil, status
+        FROM personal
+        WHERE rol = ANY($1)
+        ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
+      `;
+      queryParams = [rolesPermitidos];
+    }
+
+    const result = await pool.query(query, queryParams);
     const usuariosConDocs = await Promise.all(result.rows.map(async (user) => {
       const docsQuery = `
         SELECT id, tipo, archivo, cotejado 
@@ -456,6 +474,21 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Si es supervisor (rol 2), verificar que el usuario pertenece a su grupo
+    if (req.user.rol === 2) {
+      const grupoCheck = await pool.query(
+        `SELECT COUNT(*) as count
+         FROM grupo_miembros gm
+         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+         WHERE gm.id_personal = $1 AND g.id_supervisor = $2`,
+        [id, req.user.id_personal]
+      );
+      
+      if (grupoCheck.rows[0].count == 0) {
+        return res.status(403).json({ error: 'No tienes acceso a este usuario' });
+      }
+    }
+
     // Obtener datos del usuario
     const userResult = await pool.query(
       `SELECT id_personal, nombre, apellido_paterno, apellido_materno,
@@ -531,12 +564,27 @@ router.get("/buscar", authenticateToken, async (req, res) => {
       paramIndex++;
     });
 
-    const query = `
-      SELECT * FROM personal
-      WHERE ${whereCondition}
-      ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
-      LIMIT 50
-    `;
+    let query;
+    // Si es supervisor (rol 2), solo buscar en su grupo
+    if (req.user.rol === 2) {
+      query = `
+        SELECT DISTINCT p.* FROM personal p
+        INNER JOIN grupo_miembros gm ON p.id_personal = gm.id_personal
+        INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+        WHERE g.id_supervisor = $${paramIndex} AND ${whereCondition}
+        ORDER BY p.apellido_paterno ASC, p.apellido_materno ASC, p.nombre ASC
+        LIMIT 50
+      `;
+      params.push(req.user.id_personal);
+    } else {
+      // Admin busca en todos
+      query = `
+        SELECT * FROM personal
+        WHERE ${whereCondition}
+        ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
+        LIMIT 50
+      `;
+    }
 
     const result = await pool.query(query, params);
     // Responder con resultados
