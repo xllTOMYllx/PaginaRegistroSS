@@ -1,0 +1,121 @@
+/* src/css/AdminLayout.css - Shared layout styles for all admin pages */
+
+/* Container classes for different admin pages */
+.homeadmin-container,
+.busqueda-avanzada-container,
+.usuario-detalle-container,
+.usuarios-container,
+.crear-usuario-container,
+.baja-user-container,
+.recuperar-cuenta-container {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: #F5F5F5;
+}
+
+/* Main content area - responsive margins for sidebar */
+.homeadmin-container .main-content,
+.busqueda-avanzada-container .main-content,
+.usuario-detalle-container .main-content,
+.usuarios-container .main-content,
+.crear-usuario-container .main-content,
+.baja-user-container .main-content,
+.recuperar-cuenta-container .main-content {
+  margin-left: 0;
+  width: 100%;
+  transition: margin-left 0.3s ease;
+  background-color: #FFFFFF;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Desktop: Add margin for fixed sidebar */
+@media (min-width: 992px) {
+  .homeadmin-container .main-content,
+  .busqueda-avanzada-container .main-content,
+  .usuario-detalle-container .main-content,
+  .usuarios-container .main-content,
+  .crear-usuario-container .main-content,
+  .baja-user-container .main-content,
+  .recuperar-cuenta-container .main-content {
+    margin-left: clamp(180px, 20vw, 250px);
+  }
+  
+  /* When sidebar is collapsed, reduce margin - uses ~ to be more flexible */
+  .app-sidebar.collapsed ~ main.main-content {
+    margin-left: 80px !important;
+  }
+}
+
+/* Mobile and tablet: No margin needed as sidebar overlays */
+@media (max-width: 991px) {
+  .homeadmin-container .main-content,
+  .busqueda-avanzada-container .main-content,
+  .usuario-detalle-container .main-content,
+  .usuarios-container .main-content,
+  .crear-usuario-container .main-content,
+  .baja-user-container .main-content,
+  .recuperar-cuenta-container .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Responsive container adjustments */
+.main-content .container,
+.main-content .container-fluid {
+  padding-left: clamp(1rem, 2vw, 1.5rem);
+  padding-right: clamp(1rem, 2vw, 1.5rem);
+}
+
+@media (max-width: 768px) {
+  .main-content .container,
+  .main-content .container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .main-content .card {
+    margin-bottom: 1rem !important;
+  }
+  
+  .main-content .card-body {
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content .container,
+  .main-content .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .main-content .card-body {
+    padding: 0.75rem !important;
+  }
+  
+  /* Stack flex elements on mobile */
+  .main-content .d-flex.align-items-center:not(.flex-nowrap) {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .main-content .d-flex.align-items-center:not(.flex-nowrap) > * {
+    width: 100% !important;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Ensure buttons and inputs are mobile-friendly */
+@media (max-width: 576px) {
+  .main-content .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .main-content .form-control,
+  .main-content .form-select {
+    font-size: clamp(0.875rem, 3vw, 1rem);
+  }
+}

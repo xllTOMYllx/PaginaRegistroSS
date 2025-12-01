@@ -1,4 +1,7 @@
 /* UsuarioDetalle.css */
+/* Note: General layout styles are in AdminLayout.css */
+
+/* Specific styles for UsuarioDetalle page */
 
 @media (max-width: 768px) {
     .card {

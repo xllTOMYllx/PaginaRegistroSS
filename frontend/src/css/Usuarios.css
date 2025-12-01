@@ -1,14 +1,9 @@
 /* General layout */
-.d-flex.vh-100 {
-  background-color: #F5F5F5; /* Light gray background for the entire page */
-  overflow: auto; /* Changed from hidden to auto to enable scrolling */
-  min-height: 100vh; /* Ensure it takes at least full viewport height */
-}
+/* Note: General layout styles are in AdminLayout.css */
 
-main.flex-grow-1.d-flex.flex-column {
-  background-color: #FFFFFF; /* White background for main content */
+/* Specific styles for Usuarios page */
+.usuarios-container .main-content {
   padding: 20px;
-  overflow-y: auto; /* Allow vertical scrolling within main */
 }
 
 /* Container styling */

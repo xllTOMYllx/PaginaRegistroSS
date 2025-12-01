@@ -74,9 +74,9 @@ function Baja_user() {
   if (!admin) return null;
 
   return (
-    <div className="d-flex vh-100">
+    <div className="d-flex vh-100 baja-user-container">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column">
+      <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol !== 3} />
         <div className="container mt-4">
           <h2 className="mb-3">Usuarios</h2>

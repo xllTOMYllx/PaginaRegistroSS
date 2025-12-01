@@ -7,7 +7,7 @@
     color: #FFFFFF;
     padding: 1.25rem;
     font-family: 'Roboto', sans-serif;
-    width: clamp(160px, 16vw, 200px);
+    width: clamp(180px, 20vw, 250px);
     min-height: 100vh;
     position: fixed;
     top: 0;
@@ -15,7 +15,8 @@
     z-index: 1040;
     transition: width 0.25s ease-in-out, transform 0.3s ease-in-out;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
-    overflow: visible;
+    overflow-y: auto;
+    overflow-x: visible;
     /* permitir que botones posicionados parcialmente fuera no queden recortados */
 }
 
@@ -149,9 +150,9 @@
 }
 
 /* Toggle button for mobile */
-.btn.btn-dark.d-lg-none {
-    background-color: #7A1737;
-    border: 2px solid #7A1737;
+.mobile-menu-btn {
+    background-color: #7A1737 !important;
+    border: 2px solid #7A1737 !important;
     border-radius: 8px;
     padding: 0.5rem;
     font-size: clamp(0.9rem, 2.5vw, 1rem);
@@ -160,10 +161,35 @@
     left: 10px;
     z-index: 1050;
     transition: background-color 0.18s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.btn.btn-dark.d-lg-none:hover {
-    background-color: #5e1130;
+.mobile-menu-btn:hover,
+.mobile-menu-btn:focus {
+    background-color: #5e1130 !important;
+    border-color: #5e1130 !important;
+}
+
+/* Backdrop for mobile sidebar */
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1039;
+    transition: opacity 0.3s ease;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* Hamburger icon for mobile toggle */
@@ -197,27 +223,26 @@
 }
 
 @media (min-width: 992px) {
-    aside {
+    .app-sidebar {
         transform: translateX(0) !important;
-        position: sticky !important;
+        position: fixed !important;
         top: 0;
+        display: flex !important;
     }
 
     .d-lg-none {
         display: none !important;
     }
-
 }
 
 @media (max-width: 991px) {
-    aside.d-block {
-        transform: translateX(0);
-        width: clamp(160px, 60vw, 200px);
-        /* Consistent with desktop width */
+    .app-sidebar {
+        width: clamp(200px, 70vw, 280px);
+        transform: translateX(-100%);
     }
-
-    main {
-        margin-left: 0 !important;
+    
+    .app-sidebar.d-block {
+        transform: translateX(0);
     }
 }
 

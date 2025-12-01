@@ -44,12 +44,12 @@ function Navbar({ onBuscar, hideCrear }) {
         style={{
           position: "sticky",
           top: 0,
-          zIndex: 1000,
+          zIndex: 1030,
           paddingTop: "clamp(0.5rem, 1.5vw, 0.75rem)",
           paddingBottom: "clamp(0.5rem, 1.5vw, 0.75rem)",
         }}
       > {/* Contenedor principal */}
-        <div className="container-fluid d-flex align-items-center flex-nowrap">
+        <div className="container-fluid d-flex align-items-center flex-wrap flex-md-nowrap">
           {typeof onBuscar === 'function' && (
             <form
               className="d-flex align-items-center flex-grow-0"

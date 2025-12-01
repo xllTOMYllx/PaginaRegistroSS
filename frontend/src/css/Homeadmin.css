@@ -1,0 +1,37 @@
+/* src/css/Homeadmin.css */
+/* Note: General layout styles are in AdminLayout.css */
+
+/* Specific styles for Homeadmin page */
+
+@media (max-width: 768px) {
+  .homeadmin-container .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .homeadmin-container .card {
+    margin-bottom: 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .homeadmin-container .container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .homeadmin-container .card-body {
+    padding: 0.75rem !important;
+  }
+  
+  /* Stack form controls on mobile */
+  .homeadmin-container .d-flex.align-items-center {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .homeadmin-container .d-flex.align-items-center > * {
+    width: 100% !important;
+    margin-bottom: 0.5rem;
+  }
+}

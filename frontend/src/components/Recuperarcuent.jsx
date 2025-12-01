@@ -72,9 +72,9 @@ function Recuperarcuent() {
   if (!admin) return null;
 
   return (
-    <div className="d-flex vh-100">
+    <div className="d-flex vh-100 recuperar-cuenta-container">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column">
+      <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar onBuscar={handleBuscar} hideCrear={admin?.rol !== 3} />
         <div className="container mt-4">
 
