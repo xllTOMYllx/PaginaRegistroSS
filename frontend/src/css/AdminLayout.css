@@ -45,7 +45,7 @@
   }
   
   /* When sidebar is collapsed, reduce margin */
-  .app-sidebar.collapsed ~ .main-content {
+  .app-sidebar.collapsed + main.main-content {
     margin-left: 80px !important;
   }
 }

@@ -19,8 +19,8 @@
     margin-left: clamp(180px, 20vw, 250px);
   }
   
-  .app-sidebar.collapsed + .main-content {
-    margin-left: 80px;
+  .app-sidebar.collapsed + main.main-content {
+    margin-left: 80px !important;
   }
 }
 
