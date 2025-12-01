@@ -242,6 +242,19 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
             >
               {isCollapsed ? "🔄" : "🔄 Recuperar Cuentas"}
             </button>
+            <button
+              onClick={() => { navigate("/grupos"); if (window.innerWidth < 992) setIsOpen(false); }}
+              className="btn mb-2 w-100 sidebar-btn"
+              style={{
+                fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
+                textAlign: isCollapsed ? "center" : "left",
+                padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
+                transition: "all 0.3s ease"
+              }}
+              title="Gestionar Grupos"
+            >
+              {isCollapsed ? "👥" : "👥 Grupos"}
+            </button>
           </div>
         </div>
 

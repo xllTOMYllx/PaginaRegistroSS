@@ -419,6 +419,21 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
 
     const { tipo, id_personal, usuario, correo } = docResult.rows[0];
 
+    // Si es supervisor (rol 2), verificar que el usuario pertenece a su grupo
+    if (req.user.rol === 2) {
+      const grupoCheck = await pool.query(
+        `SELECT COUNT(*) as count
+         FROM grupo_miembros gm
+         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+         WHERE gm.id_personal = $1 AND g.id_supervisor = $2`,
+        [id_personal, req.user.id_personal]
+      );
+      
+      if (grupoCheck.rows[0].count == 0) {
+        return res.status(403).json({ error: 'No tienes permiso para cotejar documentos de este usuario' });
+      }
+    }
+
     // Obtener información del verificador
     const verificadorResult = await pool.query(
       `SELECT usuario, correo FROM personal WHERE id_personal = $1`,

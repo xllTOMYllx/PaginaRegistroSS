@@ -12,6 +12,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Baja_user from './components/Baja_user';
 import Recuperarcuent from './components/Recuperarcuent';
 import BusquedaAvanzada from './components/BusquedaAvanzada';
+import Grupos from './components/Grupos';
+import GrupoMiembros from './components/GrupoMiembros';
 function App() {
   return (
     <Router>
@@ -101,6 +103,24 @@ function App() {
           element={
             <ProtectedRoute>
               <BusquedaAvanzada />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/grupos"
+          element={
+            <ProtectedRoute>
+              <Grupos />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/grupos/:id/miembros"
+          element={
+            <ProtectedRoute>
+              <GrupoMiembros />
             </ProtectedRoute>
           }
         />
