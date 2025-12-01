@@ -103,9 +103,9 @@ function CrearUsuario() {
   };
 
   return (
-    <div className="d-flex vh-100">
+    <div className="d-flex vh-100 crear-usuario-container">
       <Sidebar admin={user} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column">
+      <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar hideCrear={user?.rol !== 3} />
 
         <div className="container mt-4" style={{ maxWidth: "800px" }}>

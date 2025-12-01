@@ -42,9 +42,28 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
 
   return (
     <>
+      {/* Mobile backdrop overlay */}
+      {isOpen && (
+        <div 
+          className="sidebar-backdrop d-lg-none"
+          onClick={toggleSidebar}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1039,
+            transition: "opacity 0.3s ease"
+          }}
+        />
+      )}
+      
       <button
-        className="btn btn-dark d-lg-none p-2"
+        className="btn btn-dark d-lg-none p-2 mobile-menu-btn"
         onClick={toggleSidebar}
+        aria-label="Toggle sidebar"
         style={{
           position: "fixed",
           top: "10px",
