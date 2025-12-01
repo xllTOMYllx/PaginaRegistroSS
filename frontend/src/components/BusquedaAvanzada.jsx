@@ -110,9 +110,9 @@ function BusquedaAvanzada() {
   };
 
   return (
-    <div className="d-flex vh-100">
+    <div className="d-flex vh-100 busqueda-avanzada-container">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column" style={{ marginLeft: "250px" }}>
+      <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar hideCrear={true} hideBuscar={true} />
         
         <div className="container-fluid py-4 px-4">

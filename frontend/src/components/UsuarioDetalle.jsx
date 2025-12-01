@@ -134,9 +134,9 @@ function UsuarioDetalle() {
 
 
   return (
-    <div className="d-flex flex-column flex-lg-row min-vh-100">
+    <div className="d-flex min-vh-100 usuario-detalle-container">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column">
+      <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar hideCrear={admin?.rol !== 3} />
         <div className="container py-4">
           <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}

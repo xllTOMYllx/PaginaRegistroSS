@@ -87,9 +87,9 @@ function Miembros() {
 
   // Pagina Principal
   return (
-    <div className="d-flex vh-100">
+    <div className="d-flex vh-100 usuarios-container">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column">
+      <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar onBuscar={buscarUsuario} hideCrear={admin?.rol !== 3} />
         <div className="container py-4">
           <div className="mb-4">

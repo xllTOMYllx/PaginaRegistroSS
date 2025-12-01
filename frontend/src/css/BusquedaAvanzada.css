@@ -1,5 +1,36 @@
 /* src/css/BusquedaAvanzada.css */
 
+/* Main container for BusquedaAvanzada */
+.busqueda-avanzada-container {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Main content area - responsive margins for sidebar */
+.busqueda-avanzada-container .main-content {
+  margin-left: 0;
+  width: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+/* Desktop: Add margin for fixed sidebar */
+@media (min-width: 992px) {
+  .busqueda-avanzada-container .main-content {
+    margin-left: clamp(180px, 20vw, 250px);
+  }
+  
+  .app-sidebar.collapsed + .main-content {
+    margin-left: 80px;
+  }
+}
+
+/* Mobile and tablet: No margin needed as sidebar overlays */
+@media (max-width: 991px) {
+  .busqueda-avanzada-container .main-content {
+    margin-left: 0 !important;
+  }
+}
+
 .usuario-card {
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
@@ -35,4 +66,32 @@
 
 .card-body {
   padding: 1.5rem;
+}
+
+/* Responsive adjustments for container */
+.container-fluid {
+  padding-left: clamp(1rem, 2vw, 2rem);
+  padding-right: clamp(1rem, 2vw, 2rem);
+}
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-body {
+    padding: 0.75rem;
+  }
+  
+  .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }

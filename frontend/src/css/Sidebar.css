@@ -7,7 +7,7 @@
     color: #FFFFFF;
     padding: 1.25rem;
     font-family: 'Roboto', sans-serif;
-    width: clamp(160px, 16vw, 200px);
+    width: clamp(180px, 20vw, 250px);
     min-height: 100vh;
     position: fixed;
     top: 0;
@@ -15,7 +15,8 @@
     z-index: 1040;
     transition: width 0.25s ease-in-out, transform 0.3s ease-in-out;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
-    overflow: visible;
+    overflow-y: auto;
+    overflow-x: visible;
     /* permitir que botones posicionados parcialmente fuera no queden recortados */
 }
 
@@ -197,27 +198,26 @@
 }
 
 @media (min-width: 992px) {
-    aside {
+    .app-sidebar {
         transform: translateX(0) !important;
-        position: sticky !important;
+        position: fixed !important;
         top: 0;
+        display: flex !important;
     }
 
     .d-lg-none {
         display: none !important;
     }
-
 }
 
 @media (max-width: 991px) {
-    aside.d-block {
-        transform: translateX(0);
-        width: clamp(160px, 60vw, 200px);
-        /* Consistent with desktop width */
+    .app-sidebar {
+        width: clamp(200px, 70vw, 280px);
+        transform: translateX(-100%);
     }
-
-    main {
-        margin-left: 0 !important;
+    
+    .app-sidebar.d-block {
+        transform: translateX(0);
     }
 }
 

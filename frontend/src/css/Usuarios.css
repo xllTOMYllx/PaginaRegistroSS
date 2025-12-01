@@ -1,14 +1,36 @@
 /* General layout */
-.d-flex.vh-100 {
+.usuarios-container {
   background-color: #F5F5F5; /* Light gray background for the entire page */
-  overflow: auto; /* Changed from hidden to auto to enable scrolling */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   min-height: 100vh; /* Ensure it takes at least full viewport height */
 }
 
-main.flex-grow-1.d-flex.flex-column {
+/* Main content area - responsive margins for sidebar */
+.usuarios-container .main-content {
   background-color: #FFFFFF; /* White background for main content */
   padding: 20px;
   overflow-y: auto; /* Allow vertical scrolling within main */
+  margin-left: 0;
+  width: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+/* Desktop: Add margin for fixed sidebar */
+@media (min-width: 992px) {
+  .usuarios-container .main-content {
+    margin-left: clamp(180px, 20vw, 250px);
+  }
+  
+  .app-sidebar.collapsed + .main-content {
+    margin-left: 80px;
+  }
+}
+
+/* Mobile and tablet: No margin needed as sidebar overlays */
+@media (max-width: 991px) {
+  .usuarios-container .main-content {
+    margin-left: 0 !important;
+  }
 }
 
 /* Container styling */
