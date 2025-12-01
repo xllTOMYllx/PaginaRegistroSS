@@ -1,37 +1,7 @@
 /* UsuarioDetalle.css */
+/* Note: General layout styles are in AdminLayout.css */
 
-/* Main container for UsuarioDetalle */
-.usuario-detalle-container {
-  min-height: 100vh;
-  overflow-x: hidden;
-  background-color: #F5F5F5;
-}
-
-/* Main content area - responsive margins for sidebar */
-.usuario-detalle-container .main-content {
-  margin-left: 0;
-  width: 100%;
-  transition: margin-left 0.3s ease;
-  background-color: #FFFFFF;
-}
-
-/* Desktop: Add margin for fixed sidebar */
-@media (min-width: 992px) {
-  .usuario-detalle-container .main-content {
-    margin-left: clamp(180px, 20vw, 250px);
-  }
-  
-  .app-sidebar.collapsed + main.main-content {
-    margin-left: 80px !important;
-  }
-}
-
-/* Mobile and tablet: No margin needed as sidebar overlays */
-@media (max-width: 991px) {
-  .usuario-detalle-container .main-content {
-    margin-left: 0 !important;
-  }
-}
+/* Specific styles for UsuarioDetalle page */
 
 @media (max-width: 768px) {
     .card {

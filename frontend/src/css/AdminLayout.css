@@ -6,7 +6,6 @@
 .usuario-detalle-container,
 .usuarios-container,
 .crear-usuario-container,
-.editar-usuario-container,
 .baja-user-container,
 .recuperar-cuenta-container {
   min-height: 100vh;
@@ -20,7 +19,6 @@
 .usuario-detalle-container .main-content,
 .usuarios-container .main-content,
 .crear-usuario-container .main-content,
-.editar-usuario-container .main-content,
 .baja-user-container .main-content,
 .recuperar-cuenta-container .main-content {
   margin-left: 0;
@@ -38,14 +36,13 @@
   .usuario-detalle-container .main-content,
   .usuarios-container .main-content,
   .crear-usuario-container .main-content,
-  .editar-usuario-container .main-content,
   .baja-user-container .main-content,
   .recuperar-cuenta-container .main-content {
     margin-left: clamp(180px, 20vw, 250px);
   }
   
-  /* When sidebar is collapsed, reduce margin */
-  .app-sidebar.collapsed + main.main-content {
+  /* When sidebar is collapsed, reduce margin - uses ~ to be more flexible */
+  .app-sidebar.collapsed ~ main.main-content {
     margin-left: 80px !important;
   }
 }
@@ -57,7 +54,6 @@
   .usuario-detalle-container .main-content,
   .usuarios-container .main-content,
   .crear-usuario-container .main-content,
-  .editar-usuario-container .main-content,
   .baja-user-container .main-content,
   .recuperar-cuenta-container .main-content {
     margin-left: 0 !important;

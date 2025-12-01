@@ -1,43 +1,7 @@
 /* src/css/Homeadmin.css */
+/* Note: General layout styles are in AdminLayout.css */
 
-/* Main container for Homeadmin */
-.homeadmin-container {
-  min-height: 100vh;
-  overflow-x: hidden;
-  background-color: #F5F5F5;
-}
-
-/* Main content area - responsive margins for sidebar */
-.homeadmin-container .main-content {
-  margin-left: 0;
-  width: 100%;
-  transition: margin-left 0.3s ease;
-  background-color: #FFFFFF;
-}
-
-/* Desktop: Add margin for fixed sidebar */
-@media (min-width: 992px) {
-  .homeadmin-container .main-content {
-    margin-left: clamp(180px, 20vw, 250px);
-  }
-  
-  .app-sidebar.collapsed + main.main-content {
-    margin-left: 80px !important;
-  }
-}
-
-/* Mobile and tablet: No margin needed as sidebar overlays */
-@media (max-width: 991px) {
-  .homeadmin-container .main-content {
-    margin-left: 0 !important;
-  }
-}
-
-/* Responsive container adjustments */
-.homeadmin-container .container {
-  padding-left: clamp(1rem, 2vw, 1.5rem);
-  padding-right: clamp(1rem, 2vw, 1.5rem);
-}
+/* Specific styles for Homeadmin page */
 
 @media (max-width: 768px) {
   .homeadmin-container .container {
