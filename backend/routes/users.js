@@ -344,6 +344,15 @@ function isJefeOUsuario2(req, res, next) {
   next();
 }
 
+// Middleware para verificar si el usuario es Jefe (rol 3) o Admin (rol 4)
+function isJefeOAdmin(req, res, next) {
+  if (!req.user) return res.status(401).json({ error: 'No autenticado' });
+  if (![3, 4].includes(req.user.rol)) {
+    return res.status(403).json({ error: 'Acceso denegado: solo Jefe (rol 3) o Administrador (rol 4)' });
+  }
+  next();
+}
+
 // Ruta para obtener datos del usuario autenticado
 router.get('/me', authenticateToken, async (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -535,6 +544,122 @@ router.get("/buscar", authenticateToken, async (req, res) => {
   } catch (error) {
     // Manejo de errores
     console.error("Error al buscar usuarios:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// Búsqueda avanzada de usuarios por habilidades/documentos (solo rol 3 y 4)
+router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res) => {
+  const { nombre, tipoDocumento, soloCertificados, soloVerificados } = req.query;
+
+  try {
+    // Determinar qué roles puede ver el usuario autenticado
+    let rolesPermitidos = [];
+    if (req.user.rol == 3 || req.user.rol == 4) {
+      rolesPermitidos = [1, 2]; // rol 3 y 4 ven roles 1 y 2
+    } else {
+      return res.status(403).json({ error: 'Acceso denegado' });
+    }
+
+    // Construir la consulta base con JOIN a documentos_academicos
+    let baseQuery = `
+      SELECT DISTINCT 
+        p.id_personal, 
+        p.nombre, 
+        p.apellido_paterno, 
+        p.apellido_materno,
+        p.usuario, 
+        p.correo, 
+        p.curp, 
+        p.rfc, 
+        p.rol, 
+        p.foto_perfil, 
+        p.status,
+        ARRAY_AGG(DISTINCT d.tipo) FILTER (WHERE d.tipo IS NOT NULL) as tipos_documentos,
+        COUNT(DISTINCT CASE WHEN d.es_certificado = true THEN d.id END) as num_certificados,
+        COUNT(DISTINCT CASE WHEN d.cotejado = true THEN d.id END) as num_documentos_verificados,
+        COUNT(DISTINCT d.id) as total_documentos
+      FROM personal p
+      LEFT JOIN documentos_academicos d ON p.id_personal = d.id_personal
+      WHERE p.rol = ANY($1)
+    `;
+    
+    let params = [rolesPermitidos];
+    let paramIndex = 2;
+
+    // Filtrar por nombre si se proporciona
+    if (nombre && nombre.trim() !== "") {
+      const palabras = nombre.trim().split(/\s+/).filter(p => p.length > 0);
+      palabras.forEach((palabra) => {
+        const searchTerm = `%${palabra}%`;
+        baseQuery += ` AND (
+          p.nombre ILIKE $${paramIndex}
+          OR p.apellido_paterno ILIKE $${paramIndex}
+          OR p.apellido_materno ILIKE $${paramIndex}
+          OR p.curp ILIKE $${paramIndex}
+          OR p.rfc ILIKE $${paramIndex}
+        )`;
+        params.push(searchTerm);
+        paramIndex++;
+      });
+    }
+
+    // Filtrar por tipo de documento si se proporciona
+    if (tipoDocumento && tipoDocumento.trim() !== "") {
+      baseQuery += ` AND EXISTS (
+        SELECT 1 FROM documentos_academicos d2 
+        WHERE d2.id_personal = p.id_personal 
+        AND d2.tipo ILIKE $${paramIndex}
+      )`;
+      params.push(`%${tipoDocumento}%`);
+      paramIndex++;
+    }
+
+    // Filtrar solo usuarios con certificados
+    if (soloCertificados === 'true') {
+      baseQuery += ` AND EXISTS (
+        SELECT 1 FROM documentos_academicos d3 
+        WHERE d3.id_personal = p.id_personal 
+        AND d3.es_certificado = true
+      )`;
+    }
+
+    // Filtrar solo usuarios con documentos verificados
+    if (soloVerificados === 'true') {
+      baseQuery += ` AND EXISTS (
+        SELECT 1 FROM documentos_academicos d4 
+        WHERE d4.id_personal = p.id_personal 
+        AND d4.cotejado = true
+      )`;
+    }
+
+    baseQuery += `
+      GROUP BY p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
+               p.usuario, p.correo, p.curp, p.rfc, p.rol, p.foto_perfil, p.status
+      ORDER BY p.apellido_paterno ASC, p.apellido_materno ASC, p.nombre ASC
+      LIMIT 100
+    `;
+
+    const result = await pool.query(baseQuery, params);
+    
+    // Obtener los documentos de cada usuario para información detallada
+    const usuariosConDocs = await Promise.all(result.rows.map(async (user) => {
+      const docsQuery = `
+        SELECT id, tipo, archivo, cotejado, es_certificado, fecha_subida 
+        FROM documentos_academicos 
+        WHERE id_personal = $1
+        ORDER BY fecha_subida DESC
+      `;
+      const docsResult = await pool.query(docsQuery, [user.id_personal]);
+      return {
+        ...user,
+        documentos: docsResult.rows
+      };
+    }));
+
+    res.json(usuariosConDocs);
+  } catch (error) {
+    console.error("Error en búsqueda avanzada:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });

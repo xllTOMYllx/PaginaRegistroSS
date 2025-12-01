@@ -189,6 +189,24 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
                 {isCollapsed ? '➕' : '➕ Crear Usuario'}
               </button>
             )}
+            {/* Botón Búsqueda Avanzada (solo visible para rol 3 y 4) */}
+            {currentAdmin && [3, 4].includes(currentAdmin.rol) && (
+              <button
+                onClick={() => { navigate('/busqueda-avanzada'); if (window.innerWidth < 992) setIsOpen(false); }}
+                className="btn mb-2 w-100 sidebar-btn"
+                style={{
+                  fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
+                  textAlign: isCollapsed ? "center" : "left",
+                  padding: isCollapsed ? "0.5rem" : "0.5rem 1rem",
+                  transition: "all 0.3s ease",
+                  backgroundColor: "#7A1737",
+                  color: "#ffffff"
+                }}
+                title="Búsqueda Avanzada"
+              >
+                {isCollapsed ? '🔍' : '🔍 Búsqueda Avanzada'}
+              </button>
+            )}
             <button
               onClick={() => { navigate("/baja_user"); if (window.innerWidth < 992) setIsOpen(false); }}
               className="btn mb-2 w-100 sidebar-btn"

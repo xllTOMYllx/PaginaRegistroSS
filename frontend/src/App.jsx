@@ -11,6 +11,7 @@ import CrearUsuario from './components/CrearUsuario';
 import ProtectedRoute from './components/ProtectedRoute';
 import Baja_user from './components/Baja_user';
 import Recuperarcuent from './components/Recuperarcuent';
+import BusquedaAvanzada from './components/BusquedaAvanzada';
 function App() {
   return (
     <Router>
@@ -91,6 +92,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Recuperarcuent/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/busqueda-avanzada"
+          element={
+            <ProtectedRoute>
+              <BusquedaAvanzada />
             </ProtectedRoute>
           }
         />
