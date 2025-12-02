@@ -1,83 +1,104 @@
-/* src/css/BusquedaAvanzada.css */
-/* Note: General layout styles are in AdminLayout.css */
-
-/* Table styling for search results */
-.table-responsive {
-  max-width: 100%;
-  overflow-x: auto;
+/* --- Layout principal: sidebar + contenido --- */
+.layout {
+  display: flex;
+  min-height: 100vh;
 }
 
-.table {
-  margin-bottom: 0;
+/* Nota: la sidebar se renderiza como <aside class="app-sidebar"> y está posicionada fixed.
+   Evitamos que el aside tape el contenido empujando .main-content con margin-left.
+*/
+
+/* Antes se usaba .layout > div:first-child para reservar espacio, pero como la sidebar es fixed
+   eso no evita el solapamiento. En su lugar aplicamos el desplazamiento al .main-content
+   en función del ancho de la sidebar y su estado 'collapsed'. */
+
+/* Asegurar desplazamiento del contenido cuando la sidebar está visible */
+.app-sidebar + .main-content,
+.app-sidebar.d-block + .main-content {
+  margin-left: clamp(180px, 20vw, 250px);
+  transition: margin-left 0.25s ease-in-out;
 }
 
-.table thead {
-  position: sticky;
-  top: 0;
-  z-index: 10;
+/* Si la sidebar tiene la clase 'collapsed' (ancho reducido) aplicamos menor margin */
+.app-sidebar.collapsed + .main-content {
+  margin-left: 80px;
+}
+
+/* Contenido principal fluido */
+.main-content {
+  /* fallback si el selector anterior no toma efecto */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   background-color: #f8f9fa;
 }
 
-.table tbody tr {
-  transition: background-color 0.2s;
+/* Container interno para el contenido */
+.main-content .container {
+  max-width: 100%; /* para ocupar todo el ancho restante */
 }
 
-.table tbody tr:hover {
-  background-color: #f8f9fa;
-  cursor: pointer;
+/* Estilos para el título / sección */
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 0.25rem;
 }
 
-.btn-primary {
-  background-color: #7A1737;
-  border-color: #7A1737;
+.section-title + p {
+  margin-top: 0;
+  font-size: 1rem;
 }
 
-.btn-primary:hover {
-  background-color: #5a1029;
-  border-color: #5a1029;
-}
-
-.form-check-input:checked {
-  background-color: #7A1737;
-  border-color: #7A1737;
-}
-
-.badge.bg-secondary {
-  background-color: #6c757d !important;
-}
-
+/* Cards (filtros y resultados) */
 .card {
-  border-radius: 8px;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
 }
 
 .card-body {
   padding: 1.5rem;
 }
 
-/* Responsive adjustments for container */
-.container-fluid {
-  padding-left: clamp(1rem, 2vw, 2rem);
-  padding-right: clamp(1rem, 2vw, 2rem);
+/* Espaciado para la card de resultados si quieres que quede un poco más arriba */
+.results-card {
+  margin-bottom: 2rem;
+}
+
+/* Opcional: sombra suave */
+.shadow-sm {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Responsividad: en pantallas pequeñas, sidebar se puede colapsar (opcional)
+   y el contenido no debe tener offset. */
+@media (max-width: 991px) {
+  .app-sidebar + .main-content,
+  .app-sidebar.d-block + .main-content {
+    margin-left: 0;
+  }
+
+  .layout {
+    flex-direction: column;
+  }
+  /* Si el aside ocupa el flujo en móviles, quitar border-right */
+  .layout > div:first-child {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
 }
 
 @media (max-width: 768px) {
-  .card-body {
-    padding: 1rem;
+  .layout {
+    flex-direction: column;
   }
-  
-  .container-fluid {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .card-body {
-    padding: 0.75rem;
-  }
-  
-  .container-fluid {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+  .layout > div:first-child {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
   }
 }

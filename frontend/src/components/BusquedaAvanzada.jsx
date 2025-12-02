@@ -25,7 +25,7 @@ function BusquedaAvanzada() {
   useEffect(() => {
     const adminData = JSON.parse(localStorage.getItem("usuario"));
     const token = localStorage.getItem("token");
-    
+
     if (!adminData || !token) {
       navigate('/sesion', { replace: true });
       return;
@@ -44,7 +44,7 @@ function BusquedaAvanzada() {
   // Función para realizar la búsqueda avanzada
   const buscarUsuarios = async (e) => {
     if (e) e.preventDefault();
-    
+
     setCargando(true);
     setBusquedaRealizada(true);
 
@@ -110,15 +110,17 @@ function BusquedaAvanzada() {
   };
 
   return (
-    <div className="d-flex vh-100 busqueda-avanzada-container">
+    <div className="layout">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column main-content">
+
+      <div className="main-content">
         <Navbar hideCrear={true} hideBuscar={true} />
-        
-        <div className="container-fluid py-4 px-4">
+
+        <div className="container py-4">
+          {/* Título */}
           <div className="row mb-4">
-            <div className="col">
-              <h2 className="mb-3">
+            <div className="col-12">
+              <h2 className="section-title">
                 <FaSearch className="me-2" />
                 Búsqueda Avanzada de Candidatos
               </h2>
@@ -128,209 +130,237 @@ function BusquedaAvanzada() {
             </div>
           </div>
 
-          {/* Formulario de Filtros */}
-          <div className="card shadow-sm mb-4">
-            <div className="card-body">
-              <form onSubmit={buscarUsuarios}>
-                <div className="row g-3">
-                  {/* Nombre del usuario */}
-                  <div className="col-md-6">
-                    <label htmlFor="nombre" className="form-label">
-                      <FaUser className="me-2" />
-                      Nombre del Usuario
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="nombre"
-                      placeholder="Ej: Juan Pérez, CURP, RFC..."
-                      value={filtros.nombre}
-                      onChange={(e) => setFiltros({...filtros, nombre: e.target.value})}
-                    />
-                  </div>
+          {/* Card de filtros */}
+          <div className="row mb-5">
+            <div className="col-12">
+              <div className="card shadow-sm">
+                <div className="card-body">
+                  {/* Formulario de Filtros (fila propia) */}
+                  <div className="row mb-4">
+                    <div className="col-12">
+                      <div className="card shadow-sm search-card">
+                        <div className="card-body">
+                          <form onSubmit={buscarUsuarios}>
+                            <div className="row g-3">
+                              {/* Nombre del usuario */}
+                              <div className="col-md-6">
+                                <label htmlFor="nombre" className="form-label">
+                                  <FaUser className="me-2" />
+                                  Nombre del Usuario
+                                </label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  id="nombre"
+                                  placeholder="Ej: Juan Pérez, CURP, RFC..."
+                                  value={filtros.nombre}
+                                  onChange={(e) => setFiltros({ ...filtros, nombre: e.target.value })}
+                                />
+                              </div>
 
-                  {/* Tipo de documento/habilidad */}
-                  <div className="col-md-6">
-                    <label htmlFor="tipoDocumento" className="form-label">
-                      <FaFileAlt className="me-2" />
-                      Tipo de Documento/Habilidad
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="tipoDocumento"
-                      placeholder="Ej: Licenciatura, Maestría, Certificado en..."
-                      value={filtros.tipoDocumento}
-                      onChange={(e) => setFiltros({...filtros, tipoDocumento: e.target.value})}
-                    />
-                  </div>
+                              {/* Tipo de documento/habilidad */}
+                              <div className="col-md-6">
+                                <label htmlFor="tipoDocumento" className="form-label">
+                                  <FaFileAlt className="me-2" />
+                                  Tipo de Documento/Habilidad
+                                </label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  id="tipoDocumento"
+                                  placeholder="Ej: Licenciatura, Maestría, Certificado en..."
+                                  value={filtros.tipoDocumento}
+                                  onChange={(e) => setFiltros({ ...filtros, tipoDocumento: e.target.value })}
+                                />
+                              </div>
 
-                  {/* Filtros adicionales */}
-                  <div className="col-md-6">
-                    <div className="form-check">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="soloCertificados"
-                        checked={filtros.soloCertificados}
-                        onChange={(e) => setFiltros({...filtros, soloCertificados: e.target.checked})}
-                      />
-                      <label className="form-check-label" htmlFor="soloCertificados">
-                        <FaCertificate className="me-2" />
-                        Solo usuarios con certificados
-                      </label>
+                              {/* Filtros adicionales */}
+                              <div className="col-md-6">
+                                <div className="form-check">
+                                  <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    id="soloCertificados"
+                                    checked={filtros.soloCertificados}
+                                    onChange={(e) => setFiltros({ ...filtros, soloCertificados: e.target.checked })}
+                                  />
+                                  <label className="form-check-label" htmlFor="soloCertificados">
+                                    <FaCertificate className="me-2" />
+                                    Solo usuarios con certificados
+                                  </label>
+                                </div>
+                              </div>
+
+                              <div className="col-md-6">
+                                <div className="form-check">
+                                  <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    id="soloVerificados"
+                                    checked={filtros.soloVerificados}
+                                    onChange={(e) => setFiltros({ ...filtros, soloVerificados: e.target.checked })}
+                                  />
+                                  <label className="form-check-label" htmlFor="soloVerificados">
+                                    <FaCheckCircle className="me-2" />
+                                    Solo usuarios con documentos verificados
+                                  </label>
+                                </div>
+                              </div>
+
+                              {/* Botones */}
+                              <div className="col-12">
+                                <button
+                                  type="submit"
+                                  className="btn btn-primary me-2"
+                                  disabled={cargando}
+                                >
+                                  {cargando ? (
+                                    <>
+                                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                      Buscando...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <FaSearch className="me-2" />
+                                      Buscar
+                                    </>
+                                  )}
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-secondary"
+                                  onClick={limpiarFiltros}
+                                  disabled={cargando}
+                                >
+                                  Limpiar
+                                </button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="col-md-6">
-                    <div className="form-check">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="soloVerificados"
-                        checked={filtros.soloVerificados}
-                        onChange={(e) => setFiltros({...filtros, soloVerificados: e.target.checked})}
-                      />
-                      <label className="form-check-label" htmlFor="soloVerificados">
-                        <FaCheckCircle className="me-2" />
-                        Solo usuarios con documentos verificados
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Botones */}
-                  <div className="col-12">
-                    <button 
-                      type="submit" 
-                      className="btn btn-primary me-2"
-                      disabled={cargando}
-                    >
-                      {cargando ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                          Buscando...
-                        </>
-                      ) : (
-                        <>
-                          <FaSearch className="me-2" />
-                          Buscar
-                        </>
-                      )}
-                    </button>
-                    <button 
-                      type="button" 
-                      className="btn btn-secondary"
-                      onClick={limpiarFiltros}
-                      disabled={cargando}
-                    >
-                      Limpiar
-                    </button>
-                  </div>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
 
-          {/* Resultados */}
+          {/* Card de resultados */}
           {busquedaRealizada && !cargando && (
-            <div className="card shadow-sm">
-              <div className="card-body">
-                <h5 className="card-title mb-3">
-                  Resultados de la búsqueda ({usuarios.length} candidato{usuarios.length !== 1 ? 's' : ''} encontrado{usuarios.length !== 1 ? 's' : ''})
-                </h5>
-                
-                {usuarios.length === 0 ? (
-                  <div className="alert alert-info">
-                    <FaInfoCircle className="me-2" />
-                    No se encontraron usuarios que coincidan con los criterios de búsqueda.
-                  </div>
-                ) : (
-                  <div className="table-responsive">
-                    <table className="table table-hover align-middle">
-                      <thead className="table-light">
-                        <tr>
-                          <th scope="col">Usuario</th>
-                          <th scope="col">Nombre Completo</th>
-                          <th scope="col" className="text-center">Total Docs</th>
-                          <th scope="col" className="text-center">Certificados</th>
-                          <th scope="col" className="text-center">Verificados</th>
-                          <th scope="col">Tipos de Documentos</th>
-                          <th scope="col" className="text-center">Acciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {usuarios.map((usuario) => (
-                          <tr key={usuario.id_personal}>
-                            <td>
-                              <div className="d-flex align-items-center">
-                                <img
-                                  src={
-                                    usuario.foto_perfil
-                                      ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
-                                      : "http://localhost:5000/uploads/default-avatar.jpg"
-                                  }
-                                  alt="Foto de perfil"
-                                  className="rounded-circle me-2"
-                                  style={{ width: "40px", height: "40px", objectFit: "cover" }}
-                                  crossOrigin="use-credentials"
-                                />
-                                <span className="text-muted small">@{usuario.usuario}</span>
+            <div className="row">
+              <div className="col-12">
+                <div className="card shadow-sm results-card">
+                  <div className="card-body">
+                    {/* Resultados (fila propia) */}
+                    <div className="row">
+                      <div className="col-12">
+                        <div className="card shadow-sm results-card">
+                          <div className="card-body">
+                            <h5 className="card-title mb-3">
+                              Resultados de la búsqueda ({usuarios.length} candidato{usuarios.length !== 1 ? 's' : ''} encontrado{usuarios.length !== 1 ? 's' : ''})
+                            </h5>
+                            {usuarios.length === 0 ? (
+                              <div className="alert alert-info">
+                                <FaInfoCircle className="me-2" />
+                                No se encontraron usuarios que coincidan con los criterios de búsqueda.
                               </div>
-                            </td>
-                            <td>
-                              <strong>
-                                {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <span className="badge bg-info">{usuario.total_documentos || 0}</span>
-                            </td>
-                            <td className="text-center">
-                              <span className="badge bg-success">{usuario.num_certificados || 0}</span>
-                            </td>
-                            <td className="text-center">
-                              <span className="badge bg-primary">{usuario.num_documentos_verificados || 0}</span>
-                            </td>
-                            <td>
-                              {usuario.tipos_documentos && usuario.tipos_documentos.length > 0 ? (
-                                <div className="d-flex flex-wrap gap-1">
-                                  {usuario.tipos_documentos.slice(0, 3).map((tipo, idx) => (
-                                    <span key={idx} className="badge bg-secondary" style={{ fontSize: "0.7rem" }}>
-                                      {tipo}
-                                    </span>
-                                  ))}
-                                  {usuario.tipos_documentos.length > 3 && (
-                                    <span className="badge bg-secondary" style={{ fontSize: "0.7rem" }}>
-                                      +{usuario.tipos_documentos.length - 3} más
-                                    </span>
-                                  )}
-                                </div>
-                              ) : (
-                                <span className="text-muted small">Sin documentos</span>
-                              )}
-                            </td>
-                            <td className="text-center">
-                              <button
-                                className="btn btn-sm btn-primary"
-                                onClick={() => verDetalleUsuario(usuario.id_personal)}
-                              >
-                                <FaUser className="me-1" />
-                                Ver Detalles
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            ) : (
+                              <div className="table-responsive">
+                                <table className="table table-hover align-middle">
+                                  <thead className="table-light">
+                                    <tr>
+                                      <th scope="col">Usuario</th>
+                                      <th scope="col">Nombre Completo</th>
+                                      <th scope="col" className="text-center">Total Docs</th>
+                                      <th scope="col" className="text-center">Certificados</th>
+                                      <th scope="col" className="text-center">Verificados</th>
+                                      <th scope="col">Tipos de Documentos</th>
+                                      <th scope="col" className="text-center">Acciones</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {usuarios.map((usuario) => (
+                                      <tr key={usuario.id_personal}>
+                                        <td>
+                                          <div className="d-flex align-items-center">
+                                            <img
+                                              src={
+                                                usuario.foto_perfil
+                                                  ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
+                                                  : "http://localhost:5000/uploads/default-avatar.jpg"
+                                              }
+                                              alt="Foto de perfil"
+                                              className="rounded-circle me-2"
+                                              style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                                              crossOrigin="use-credentials"
+                                            />
+                                            <span className="text-muted small">@{usuario.usuario}</span>
+                                          </div>
+                                        </td>
+                                        <td>
+                                          <strong>
+                                            {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
+                                          </strong>
+                                        </td>
+                                        <td className="text-center">
+                                          <span className="badge bg-info">{usuario.total_documentos || 0}</span>
+                                        </td>
+                                        <td className="text-center">
+                                          <span className="badge bg-success">{usuario.num_certificados || 0}</span>
+                                        </td>
+                                        <td className="text-center">
+                                          <span className="badge bg-primary">{usuario.num_documentos_verificados || 0}</span>
+                                        </td>
+                                        <td>
+                                          {usuario.tipos_documentos && usuario.tipos_documentos.length > 0 ? (
+                                            <div className="d-flex flex-wrap gap-1">
+                                              {usuario.tipos_documentos.slice(0, 3).map((tipo, idx) => (
+                                                <span key={idx} className="badge bg-secondary" style={{ fontSize: "0.7rem" }}>
+                                                  {tipo}
+                                                </span>
+                                              ))}
+                                              {usuario.tipos_documentos.length > 3 && (
+                                                <span className="badge bg-secondary" style={{ fontSize: "0.7rem" }}>
+                                                  +{usuario.tipos_documentos.length - 3} más
+                                                </span>
+                                              )}
+                                            </div>
+                                          ) : (
+                                            <span className="text-muted small">Sin documentos</span>
+                                          )}
+                                        </td>
+                                        <td className="text-center">
+                                          <button
+                                            className="btn btn-sm btn-primary"
+                                            onClick={() => verDetalleUsuario(usuario.id_personal)}
+                                          >
+                                            <FaUser className="me-1" />
+                                            Ver Detalles
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
 
 export default BusquedaAvanzada;
+
+
