@@ -18,27 +18,6 @@ function HomeAdmin() {
   const [editData, setEditData] = useState({});
   const navigate = useNavigate();
 
-  // Helper: mergear respuesta del servidor con localStorage.usuario (conservar rol si el servidor no lo incluye)
-  const mergeAndStoreUser = (serverUser = {}) => {
-    const stored = (() => {
-      try {
-        return JSON.parse(localStorage.getItem("usuario") || "{}");
-      } catch {
-        return {};
-      }
-    })();
-
-    const merged = { ...stored, ...serverUser };
-
-    // Si el servidor no devuelve 'rol', conservar el rol que ya teníamos
-    if (!("rol" in serverUser) && "rol" in stored) {
-      merged.rol = stored.rol;
-    }
-
-    localStorage.setItem("usuario", JSON.stringify(merged));
-    return merged;
-  };
-
   // Verificar autenticación al montar el componente
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -53,10 +32,9 @@ function HomeAdmin() {
         const res = await axios.get("http://localhost:5000/api/users/me", {
           headers: { Authorization: `Bearer ${token}` }
         });
-        // Usar merge seguro antes de setear admin y localStorage
-        const merged = mergeAndStoreUser(res.data);
-        setAdmin(merged);
-        fetchDocumentos(merged.id_personal, token);
+        setAdmin(res.data);
+        localStorage.setItem("usuario", JSON.stringify(res.data)); // Actualiza localStorage
+        fetchDocumentos(res.data.id_personal, token);
       } catch (err) {
         navigate('/sesion', { replace: true });
       }
@@ -108,8 +86,8 @@ function HomeAdmin() {
       const res = await axios.get("http://localhost:5000/api/users/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const merged = mergeAndStoreUser(res.data);
-      setAdmin(merged);
+      setAdmin(res.data);
+      localStorage.setItem("usuario", JSON.stringify(res.data));
       setShowEditModal(false);
     } catch (err) {
       console.error("Error al actualizar datos:", err);
@@ -135,8 +113,8 @@ function HomeAdmin() {
       const res = await axios.get("http://localhost:5000/api/users/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const merged = mergeAndStoreUser(res.data);
-      setAdmin(merged);
+      setAdmin(res.data);
+      localStorage.setItem("usuario", JSON.stringify(res.data)); // Actualiza localStorage
     } catch (err) {
       console.error("Error al subir foto:", err);
     }
