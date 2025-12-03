@@ -185,6 +185,9 @@ function UsuarioDetalle() {
                 <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>RFC:</strong> {usuario.rfc}
                 </p>
+                <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
+                  <strong>Estudios:</strong> {usuario.estudios || 'No disponible'}
+                </p>
               </div>
             </div>
 

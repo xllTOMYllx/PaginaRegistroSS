@@ -148,8 +148,11 @@ function Miembros() {
                     <p className="mb-1">
                       <strong>CURP:</strong> {usuario.curp || "No disponible"}
                     </p>
-                    <p className="mb-0">
+                    <p className="mb-1">
                       <strong>RFC:</strong> {usuario.rfc || "No disponible"}
+                    </p>
+                    <p className="mb-0">
+                      <strong>Estudios:</strong> {usuario.estudios || "No disponible"}
                     </p>
                   </div>
                 </div>

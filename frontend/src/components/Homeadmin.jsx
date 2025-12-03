@@ -69,7 +69,8 @@ function HomeAdmin() {
       apellido_materno: admin.apellido_materno,
       curp: admin.curp,
       rfc: admin.rfc,
-      correo: admin.correo
+      correo: admin.correo,
+      estudios: admin.estudios
     });
     setShowEditModal(true);
   };
@@ -185,6 +186,7 @@ function HomeAdmin() {
                     <tr><th>CURP</th><td>{admin.curp}</td></tr>
                     <tr><th>RFC</th><td>{admin.rfc}</td></tr>
                     <tr><th>Correo</th><td>{admin.correo}</td></tr>
+                    <tr><th>Estudios</th><td>{admin.estudios || 'No disponible'}</td></tr>
 
                   </tbody>
                 </table>
@@ -391,6 +393,23 @@ function HomeAdmin() {
                     value={editData.correo || ''}
                     onChange={(e) => setEditData({ ...editData, correo: e.target.value })}
                   />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Estudios</label>
+                  <select
+                    className="form-control"
+                    value={editData.estudios || ''}
+                    onChange={(e) => setEditData({ ...editData, estudios: e.target.value })}
+                  >
+                    <option value="">Selecciona una opción</option>
+                    <option value="Primaria">Primaria</option>
+                    <option value="Secundaria">Secundaria</option>
+                    <option value="Preparatoria">Preparatoria</option>
+                    <option value="Licenciatura">Licenciatura</option>
+                    <option value="Maestría">Maestría</option>
+                    <option value="Doctorado">Doctorado</option>
+                    <option value="prefiero no decirlo">Prefiero no decirlo</option>
+                  </select>
                 </div>
               </div>
               <div className="modal-footer">

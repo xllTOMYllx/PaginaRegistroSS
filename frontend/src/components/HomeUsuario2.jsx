@@ -142,6 +142,7 @@ function HomeUsuario2() {
                     <tr><th>CURP</th><td>{Usuario2.curp}</td></tr>
                     <tr><th>RFC</th><td>{Usuario2.rfc}</td></tr>
                     <tr><th>Correo</th><td>{Usuario2.correo}</td></tr>
+                    <tr><th>Estudios</th><td>{Usuario2.estudios || 'No disponible'}</td></tr>
 
                   </tbody>
                 </table>
