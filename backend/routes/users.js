@@ -170,7 +170,8 @@ router.put('/:id', async (req, res) => {
     apellido_materno,
     curp,
     rfc,
-    correo
+    correo,
+    estudios
   } = req.body;
 
   // consulta para actualizar
@@ -182,9 +183,10 @@ router.put('/:id', async (req, res) => {
           apellido_materno = $3,
           correo = $4,
           curp = $5,
-          rfc = $6
-      WHERE id_personal = $7
-      RETURNING id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc
+          rfc = $6,
+          estudios = $7
+      WHERE id_personal = $8
+      RETURNING id_personal, nombre, apellido_paterno, apellido_materno, usuario, correo, curp, rfc, estudios
     `;
     // Consulta SQL para actualizar datos
     const result = await pool.query(updateQuery, [
@@ -194,6 +196,7 @@ router.put('/:id', async (req, res) => {
       correo,
       curp,
       rfc,
+      estudios,
       id
     ]);
     // mensaje si no se encuentra el usuario
