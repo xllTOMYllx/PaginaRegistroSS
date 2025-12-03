@@ -42,6 +42,7 @@ router.post('/register', async (req, res) => {
     CORREO,
     CURP,
     RFC,
+    ESTUDIOS,
     ROL
   } = req.body;
 
@@ -54,6 +55,7 @@ router.post('/register', async (req, res) => {
   CORREO = typeof CORREO === 'string' ? CORREO.trim() : '';
   CURP = typeof CURP === 'string' ? CURP.trim().toUpperCase() : '';
   RFC = typeof RFC === 'string' ? RFC.trim().toUpperCase() : '';
+  ESTUDIOS = typeof ESTUDIOS === 'string' ? ESTUDIOS.trim().toUpperCase() : '';
 
   //Revisar esto y lo de abajo(tomas)
   ROL = parseInt(ROL);
@@ -111,10 +113,10 @@ router.post('/register', async (req, res) => {
     const insertQuery = `
       INSERT INTO personal (
   NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO,
-  USUARIO, CONTRASENA, CORREO, CURP, RFC, ROL
+  USUARIO, CONTRASENA, CORREO, CURP, RFC, ESTUDIOS, ROL
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORREO, CURP, RFC, ROL
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORREO, CURP, RFC, ESTUDIOS, ROL
     `;
 
     // Arreglo de valores para la consulta
@@ -127,6 +129,7 @@ RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORR
       CORREO,
       CURP,
       RFC,
+      ESTUDIOS || null,
       ROL
     ];
 
@@ -306,6 +309,7 @@ router.post('/login', async (req, res) => {
         correo: user.correo,
         curp: user.curp,
         rfc: user.rfc,
+        estudios: user.estudios,
         rol: user.rol,
         foto_perfil: user.foto_perfil
       },
@@ -361,7 +365,7 @@ router.get('/me', authenticateToken, async (req, res) => {
 
   try {// consulta para obtener datos del usuario
     const query = `SELECT id_personal, nombre, apellido_paterno, apellido_materno, 
-    usuario, correo, curp, rfc, foto_perfil
+    usuario, correo, curp, rfc, estudios, foto_perfil
                    FROM personal WHERE id_personal = $1`;
     const result = await pool.query(query, [req.user.id_personal]);
     // mensaje si no se encuentra el usuario
@@ -429,7 +433,7 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
     if (req.user.rol === 2) {
       query = `
         SELECT DISTINCT p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
-               p.usuario, p.correo, p.curp, p.rfc, p.rol, p.foto_perfil, p.status
+               p.usuario, p.correo, p.curp, p.rfc, p.estudios, p.rol, p.foto_perfil, p.status
         FROM personal p
         INNER JOIN grupo_miembros gm ON p.id_personal = gm.id_personal
         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
@@ -441,7 +445,7 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
       // Admin ve todos
       query = `
         SELECT id_personal, nombre, apellido_paterno, apellido_materno,
-               usuario, correo, curp, rfc, rol, foto_perfil, status
+               usuario, correo, curp, rfc, estudios, rol, foto_perfil, status
         FROM personal
         WHERE rol = ANY($1)
         ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
@@ -492,7 +496,7 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
     // Obtener datos del usuario
     const userResult = await pool.query(
       `SELECT id_personal, nombre, apellido_paterno, apellido_materno,
-              usuario, correo, curp, rfc, rol, foto_perfil, status
+              usuario, correo, curp, rfc, estudios, rol, foto_perfil, status
        FROM personal
        WHERE id_personal = $1`,
       [id]
@@ -598,7 +602,7 @@ router.get("/buscar", authenticateToken, async (req, res) => {
 
 // Búsqueda avanzada de usuarios por habilidades/documentos (solo rol 3 y 4)
 router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res) => {
-  const { nombre, tipoDocumento, soloCertificados, soloVerificados } = req.query;
+  const { nombre, tipoDocumento, estudios, soloCertificados, soloVerificados } = req.query;
 
   try {
     // Determinar qué roles puede ver el usuario autenticado
@@ -620,6 +624,7 @@ router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res)
         p.correo, 
         p.curp, 
         p.rfc, 
+        p.estudios,
         p.rol, 
         p.foto_perfil, 
         p.status,
@@ -663,6 +668,13 @@ router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res)
       paramIndex++;
     }
 
+    // Filtrar por nivel de estudios si se proporciona
+    if (estudios && estudios.trim() !== "") {
+      baseQuery += ` AND p.estudios ILIKE $${paramIndex}`;
+      params.push(`%${estudios}%`);
+      paramIndex++;
+    }
+
     // Filtrar solo usuarios con certificados
     if (soloCertificados === 'true') {
       baseQuery += ` AND EXISTS (
@@ -683,7 +695,7 @@ router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res)
 
     baseQuery += `
       GROUP BY p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
-               p.usuario, p.correo, p.curp, p.rfc, p.rol, p.foto_perfil, p.status
+               p.usuario, p.correo, p.curp, p.rfc, p.estudios, p.rol, p.foto_perfil, p.status
       ORDER BY p.apellido_paterno ASC, p.apellido_materno ASC, p.nombre ASC
       LIMIT 100
     `;

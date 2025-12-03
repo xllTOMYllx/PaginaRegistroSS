@@ -14,6 +14,7 @@ function BusquedaAvanzada() {
   const [filtros, setFiltros] = useState({
     nombre: "",
     tipoDocumento: "",
+    estudios: "",
     soloCertificados: false,
     soloVerificados: false
   });
@@ -58,6 +59,9 @@ function BusquedaAvanzada() {
       if (filtros.tipoDocumento.trim()) {
         params.append('tipoDocumento', filtros.tipoDocumento.trim());
       }
+      if (filtros.estudios.trim()) {
+        params.append('estudios', filtros.estudios.trim());
+      }
       if (filtros.soloCertificados) {
         params.append('soloCertificados', 'true');
       }
@@ -89,6 +93,7 @@ function BusquedaAvanzada() {
     setFiltros({
       nombre: "",
       tipoDocumento: "",
+      estudios: "",
       soloCertificados: false,
       soloVerificados: false
     });
@@ -172,6 +177,29 @@ function BusquedaAvanzada() {
                                   value={filtros.tipoDocumento}
                                   onChange={(e) => setFiltros({ ...filtros, tipoDocumento: e.target.value })}
                                 />
+                              </div>
+
+                              {/* Nivel de estudios */}
+                              <div className="col-md-6">
+                                <label htmlFor="estudios" className="form-label">
+                                  <FaFileAlt className="me-2" />
+                                  Nivel de Estudios
+                                </label>
+                                <select
+                                  className="form-control"
+                                  id="estudios"
+                                  value={filtros.estudios}
+                                  onChange={(e) => setFiltros({ ...filtros, estudios: e.target.value })}
+                                >
+                                  <option value="">Todos los niveles</option>
+                                  <option value="PRIMARIA">Primaria</option>
+                                  <option value="SECUNDARIA">Secundaria</option>
+                                  <option value="PREPARATORIA">Preparatoria</option>
+                                  <option value="LICENCIATURA">Licenciatura</option>
+                                  <option value="MAESTRÍA">Maestría</option>
+                                  <option value="DOCTORADO">Doctorado</option>
+                                  <option value="PREFIERO NO DECIRLO">Prefiero no decirlo</option>
+                                </select>
                               </div>
 
                               {/* Filtros adicionales */}
