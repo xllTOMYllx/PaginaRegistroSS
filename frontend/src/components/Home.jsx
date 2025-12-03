@@ -361,6 +361,7 @@ function Home() {
                     <tr><th>CURP</th><td>{usuario.curp || 'No disponible'}</td></tr>
                     <tr><th>RFC</th><td>{usuario.rfc || 'No disponible'}</td></tr>
                     <tr><th>Correo Electrónico</th><td>{usuario.correo || 'No disponible'}</td></tr>
+                    <tr><th>Estudios</th><td>{usuario.estudios || 'No disponible'}</td></tr>
                   </tbody>
                 </table>
               ) : (

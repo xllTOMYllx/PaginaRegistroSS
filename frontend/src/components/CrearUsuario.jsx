@@ -37,6 +37,7 @@ function CrearUsuario() {
     USUARIO: '',
     CONTRASENA: '',
     RFC: '',
+    ESTUDIOS: '',
     ROL: ''
   });
 
@@ -71,6 +72,7 @@ function CrearUsuario() {
         USUARIO: formData.USUARIO.toUpperCase(),
         CURP: formData.CURP.toUpperCase(),
         RFC: formData.RFC.toUpperCase(),
+        ESTUDIOS: formData.ESTUDIOS.toUpperCase(),
         ROL: formData.ROL
       });
       setMensaje('Usuario creado correctamente');
@@ -83,6 +85,7 @@ function CrearUsuario() {
         USUARIO: '',
         CONTRASENA: '',
         RFC: '',
+        ESTUDIOS: '',
         ROL: ''
       });
       setPasswordStrength(0);
@@ -131,6 +134,27 @@ function CrearUsuario() {
                     {error[field] && <div className="text-danger small mt-1">{error[field]}</div>}
                   </div>
                 ))}
+
+                {/* Campo de estudios */}
+                <div className="mb-3">
+                  <label className="form-label">ESTUDIOS</label>
+                  <select
+                    name="ESTUDIOS"
+                    value={formData.ESTUDIOS}
+                    onChange={handleChange}
+                    className="form-select rounded-3"
+                  >
+                    <option value="">Selecciona una opción</option>
+                    <option value="Primaria">Primaria</option>
+                    <option value="Secundaria">Secundaria</option>
+                    <option value="Preparatoria">Preparatoria</option>
+                    <option value="Licenciatura">Licenciatura</option>
+                    <option value="Maestría">Maestría</option>
+                    <option value="Doctorado">Doctorado</option>
+                    <option value="prefiero no decirlo">Prefiero no decirlo</option>
+                  </select>
+                  {error.ESTUDIOS && <div className="text-danger small mt-1">{error.ESTUDIOS}</div>}
+                </div>
 
                 {/* Campo de contraseña */}
                 <div className="mb-4">

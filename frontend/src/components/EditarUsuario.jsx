@@ -15,6 +15,7 @@ function EditarUsuario() {
     curp: "",
     rfc: "",
     correo: "",
+    estudios: "",
   });
   // Estados para mensajes y errores
   const [mensaje, setMensaje] = useState("");
@@ -202,6 +203,27 @@ function EditarUsuario() {
                 {error[field] && <div className="text-danger small mt-1">{error[field]}</div>}
               </div>
             ))}
+            
+            {/* Campo de estudios */}
+            <div className="mb-3">
+              <label className="form-label">Estudios</label>
+              <select
+                name="estudios"
+                value={formData.estudios || ""}
+                onChange={handleChange}
+                className="form-control rounded-3"
+              >
+                <option value="">Selecciona una opción</option>
+                <option value="Primaria">Primaria</option>
+                <option value="Secundaria">Secundaria</option>
+                <option value="Preparatoria">Preparatoria</option>
+                <option value="Licenciatura">Licenciatura</option>
+                <option value="Maestría">Maestría</option>
+                <option value="Doctorado">Doctorado</option>
+                <option value="prefiero no decirlo">Prefiero no decirlo</option>
+              </select>
+              {error.estudios && <div className="text-danger small mt-1">{error.estudios}</div>}
+            </div>
             
             {/* Botón para enviar el formulario y guardar cambios */}
             <button
