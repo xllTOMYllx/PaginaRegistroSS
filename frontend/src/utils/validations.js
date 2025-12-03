@@ -161,8 +161,8 @@ export function validateForm(formData) {
 
 }
 
-// --- Formatear estudios para display ---
-// Convierte valores en UPPERCASE de la BD a formato amigable para el usuario
+// --- Format estudios for display ---
+// Converts UPPERCASE values from DB to user-friendly format
 export function formatEstudios(estudios) {
   if (!estudios) return 'No especificado';
   

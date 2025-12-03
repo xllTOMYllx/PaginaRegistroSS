@@ -174,7 +174,7 @@ router.put('/:id', async (req, res) => {
     estudios
   } = req.body;
 
-  // Normalizar campos a UPPERCASE
+  // Normalize fields to UPPERCASE for consistency
   nombre = typeof nombre === 'string' ? nombre.trim().toUpperCase() : nombre;
   apellido_paterno = typeof apellido_paterno === 'string' ? apellido_paterno.trim().toUpperCase() : apellido_paterno;
   apellido_materno = typeof apellido_materno === 'string' ? apellido_materno.trim().toUpperCase() : apellido_materno;

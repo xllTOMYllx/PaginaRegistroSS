@@ -61,7 +61,7 @@ function BusquedaAvanzada() {
         params.append('tipoDocumento', filtros.tipoDocumento.trim());
       }
       if (filtros.estudios.trim()) {
-        // Normalizar a UPPERCASE para coincidir con cómo se guarda en la BD
+        // Normalize to UPPERCASE to match database storage
         params.append('estudios', filtros.estudios.trim().toUpperCase());
       }
       if (filtros.soloCertificados) {
@@ -79,7 +79,7 @@ function BusquedaAvanzada() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // El backend ya filtra correctamente por estudios
+      // Backend correctly filters by estudios using case-insensitive comparison
       const resultados = Array.isArray(response.data) ? response.data : [];
       setUsuarios(resultados);
     } catch (error) {
