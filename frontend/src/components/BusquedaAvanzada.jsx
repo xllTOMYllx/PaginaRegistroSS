@@ -53,6 +53,9 @@ function BusquedaAvanzada() {
       const token = localStorage.getItem("token");
       const params = new URLSearchParams();
 
+      // helper para Title Case
+      const toTitleCase = (s) => s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
       if (filtros.nombre.trim()) {
         params.append('nombre', filtros.nombre.trim());
       }
@@ -60,7 +63,8 @@ function BusquedaAvanzada() {
         params.append('tipoDocumento', filtros.tipoDocumento.trim());
       }
       if (filtros.estudios.trim()) {
-        params.append('estudios', filtros.estudios.trim());
+        // Normalizar a Title Case para coincidir con cómo guardas en la BD (ej. "Doctorado")
+        params.append('estudios', toTitleCase(filtros.estudios.trim()));
       }
       if (filtros.soloCertificados) {
         params.append('soloCertificados', 'true');
@@ -69,12 +73,28 @@ function BusquedaAvanzada() {
         params.append('soloVerificados', 'true');
       }
 
+      // Debug: ver URL final enviada
+      console.log('Buscar Avanzado params:', params.toString());
+
       const response = await axios.get(
         `${API_ENDPOINTS.BUSCAR_AVANZADO}?${params.toString()}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUsuarios(response.data);
+      // Si el backend no filtra por estudios, aplicamos filtrado cliente adicional
+      const estudiosFilter = filtros.estudios.trim() ? toTitleCase(filtros.estudios.trim()) : "";
+      let resultados = Array.isArray(response.data) ? response.data : [];
+      if (estudiosFilter) {
+        const estudiosFilterLower = estudiosFilter.toLowerCase();
+        resultados = resultados.filter((u) => {
+          // Coincide por campo usuario.estudios exactamente (Title Case)
+          if (u.estudios && u.estudios === estudiosFilter) return true;
+          // O coincide si alguno de sus documentos incluye el tipo (case-insensitive)
+          if (Array.isArray(u.documentos) && u.documentos.some(d => (d.tipo || '').toLowerCase().includes(estudiosFilterLower))) return true;
+          return false;
+        });
+      }
+      setUsuarios(resultados);
     } catch (error) {
       console.error("Error al buscar usuarios:", error);
       if (error.response?.status === 401 || error.response?.status === 403) {
@@ -192,13 +212,13 @@ function BusquedaAvanzada() {
                                   onChange={(e) => setFiltros({ ...filtros, estudios: e.target.value })}
                                 >
                                   <option value="">Todos los niveles</option>
-                                  <option value="PRIMARIA">Primaria</option>
-                                  <option value="SECUNDARIA">Secundaria</option>
-                                  <option value="PREPARATORIA">Preparatoria</option>
-                                  <option value="LICENCIATURA">Licenciatura</option>
-                                  <option value="MAESTRÍA">Maestría</option>
-                                  <option value="DOCTORADO">Doctorado</option>
-                                  <option value="PREFIERO NO DECIRLO">Prefiero no decirlo</option>
+                                  <option value="Primaria">Primaria</option>
+                                  <option value="Secundaria">Secundaria</option>
+                                  <option value="Preparatoria">Preparatoria</option>
+                                  <option value="Licenciatura">Licenciatura</option>
+                                  <option value="Maestría">Maestría</option>
+                                  <option value="Doctorado">Doctorado</option>
+                                  <option value="Prefiero no decirlo">Prefiero no decirlo</option>
                                 </select>
                               </div>
 
@@ -301,6 +321,7 @@ function BusquedaAvanzada() {
                                     <tr>
                                       <th scope="col">Usuario</th>
                                       <th scope="col">Nombre Completo</th>
+                                      <th scope="col">Estudios</th>
                                       <th scope="col" className="text-center">Total Docs</th>
                                       <th scope="col" className="text-center">Certificados</th>
                                       <th scope="col" className="text-center">Verificados</th>
@@ -331,6 +352,9 @@ function BusquedaAvanzada() {
                                           <strong>
                                             {usuario.nombre} {usuario.apellido_paterno} {usuario.apellido_materno}
                                           </strong>
+                                        </td>
+                                        <td>
+                                          {usuario.estudios || 'No especificado'}
                                         </td>
                                         <td className="text-center">
                                           <span className="badge bg-info">{usuario.total_documentos || 0}</span>
