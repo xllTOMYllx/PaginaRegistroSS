@@ -4,7 +4,7 @@ import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
-import { FaSearch, FaUser, FaFileAlt, FaCertificate, FaCheckCircle, FaInfoCircle } from 'react-icons/fa';
+import { FaSearch, FaUser, FaFileAlt, FaCertificate, FaCheckCircle, FaInfoCircle, FaGraduationCap } from 'react-icons/fa';
 import API_ENDPOINTS from '../utils/config';
 import '../css/BusquedaAvanzada.css';
 
@@ -182,7 +182,7 @@ function BusquedaAvanzada() {
                               {/* Nivel de estudios */}
                               <div className="col-md-6">
                                 <label htmlFor="estudios" className="form-label">
-                                  <FaFileAlt className="me-2" />
+                                  <FaGraduationCap className="me-2" />
                                   Nivel de Estudios
                                 </label>
                                 <select
