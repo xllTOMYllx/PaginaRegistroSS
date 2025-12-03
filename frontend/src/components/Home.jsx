@@ -1,4 +1,3 @@
-
 // importaciones necesarias
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -22,16 +21,33 @@ function Home() {
 
 
   // ✅ Función para cerrar sesión
-  const cerrarSesion = () => {
-    localStorage.removeItem('token'); // Elimina el token
-    setUsuario(null); // Limpia el estado del usuario
-    setDocumentos([]); // Limpia los documentos
-    setNotificaciones([]); // Limpia las notificaciones
-    setSecundaria(null); // Limpia estado de secundaria
-    setBachillerato(null); // Limpia estado de bachillerato
-    setUniversidad(null); // Limpia estado de universidad
-    setCertificados(null); // Limpia estado de certificados
-    navigate('/sesion', { replace: true }); // Redirige sin guardar en historial
+  const cerrarSesion = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      // Opcional: notificar al backend para invalidar sesión/token
+      if (token) {
+        await fetch('http://localhost:5000/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          credentials: 'include'
+        }).catch(() => {/* silenciar errores de logout backend */});
+      }
+    } catch (e) {
+      // no interrumpir el flujo de cierre de sesión por errores de red
+    } finally {
+      // Limpiar almacenamiento y estado local
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario'); // <- agregar esto
+      sessionStorage.clear(); // opcional: limpiar sessionStorage por si hay datos ahí
+      setUsuario(null);
+      setDocumentos([]);
+      setNotificaciones([]);
+      setSecundaria(null);
+      setBachillerato(null);
+      setUniversidad(null);
+      setCertificados(null);
+      navigate('/sesion', { replace: true });
+    }
   };
 
   // Obtener el usuario autenticado al cargar el componente
