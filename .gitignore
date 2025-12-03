@@ -138,5 +138,13 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# Environment files
 .env
+.env.*
+!.env.example
 
+# App uploads (do not commit user-uploaded data)
+backend/uploads/
+
+# Ignore local holding folder used by mistake
+OtherFiles/
