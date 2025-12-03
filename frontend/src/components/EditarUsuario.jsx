@@ -77,6 +77,8 @@ function EditarUsuario() {
     else if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(upperCaseData.rfc))
       newErrors.rfc = "RFC no válido. Debe tener 12 o 13 caracteres: 3-4 letras, 6 dígitos y 3 alfanuméricos.";
     
+    //validacion de estudios no se requiere ya que es un select
+
     //validacion de correo
     if (!formData.correo) newErrors.correo = "El correo es obligatorio.";
     else if (!/^[^\s@]+@(gmail\.com)$/.test(formData.correo))
