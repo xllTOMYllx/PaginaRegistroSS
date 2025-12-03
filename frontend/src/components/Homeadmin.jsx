@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import { formatEstudios } from '../utils/validations';
 import axios from "axios";
 import '../css/Homeadmin.css';
 
@@ -186,7 +187,7 @@ function HomeAdmin() {
                     <tr><th>CURP</th><td>{admin.curp}</td></tr>
                     <tr><th>RFC</th><td>{admin.rfc}</td></tr>
                     <tr><th>Correo</th><td>{admin.correo}</td></tr>
-                    <tr><th>Estudios</th><td>{admin.estudios || 'No disponible'}</td></tr>
+                    <tr><th>Estudios</th><td>{formatEstudios(admin.estudios)}</td></tr>
 
                   </tbody>
                 </table>

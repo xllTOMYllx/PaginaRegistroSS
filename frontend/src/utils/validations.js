@@ -160,3 +160,22 @@ export function validateForm(formData) {
   return newErrors;
 
 }
+
+// --- Formatear estudios para display ---
+// Convierte valores en UPPERCASE de la BD a formato amigable para el usuario
+export function formatEstudios(estudios) {
+  if (!estudios) return 'No especificado';
+  
+  // Mapeo de valores UPPERCASE a formato de display
+  const estudiosMap = {
+    'PRIMARIA': 'Primaria',
+    'SECUNDARIA': 'Secundaria',
+    'PREPARATORIA': 'Preparatoria',
+    'LICENCIATURA': 'Licenciatura',
+    'MAESTRÍA': 'Maestría',
+    'DOCTORADO': 'Doctorado',
+    'PREFIERO NO DECIRLO': 'Prefiero no decirlo'
+  };
+  
+  return estudiosMap[estudios.toUpperCase()] || estudios;
+}

@@ -6,6 +6,7 @@ import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaUser, FaFileAlt, FaCertificate, FaCheckCircle, FaInfoCircle, FaGraduationCap } from 'react-icons/fa';
 import API_ENDPOINTS from '../utils/config';
+import { formatEstudios } from '../utils/validations';
 import '../css/BusquedaAvanzada.css';
 
 function BusquedaAvanzada() {
@@ -340,7 +341,7 @@ function BusquedaAvanzada() {
                                           </strong>
                                         </td>
                                         <td>
-                                          {usuario.estudios || 'No especificado'}
+                                          {formatEstudios(usuario.estudios)}
                                         </td>
                                         <td className="text-center">
                                           <span className="badge bg-info">{usuario.total_documentos || 0}</span>
