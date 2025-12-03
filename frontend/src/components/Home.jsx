@@ -21,33 +21,19 @@ function Home() {
 
 
   // ✅ Función para cerrar sesión
-  const cerrarSesion = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      // Opcional: notificar al backend para invalidar sesión/token
-      if (token) {
-        await fetch('http://localhost:5000/api/auth/logout', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          credentials: 'include'
-        }).catch(() => {/* silenciar errores de logout backend */});
-      }
-    } catch (e) {
-      // no interrumpir el flujo de cierre de sesión por errores de red
-    } finally {
-      // Limpiar almacenamiento y estado local
-      localStorage.removeItem('token');
-      localStorage.removeItem('usuario'); // <- agregar esto
-      sessionStorage.clear(); // opcional: limpiar sessionStorage por si hay datos ahí
-      setUsuario(null);
-      setDocumentos([]);
-      setNotificaciones([]);
-      setSecundaria(null);
-      setBachillerato(null);
-      setUniversidad(null);
-      setCertificados(null);
-      navigate('/sesion', { replace: true });
-    }
+  const cerrarSesion = () => {
+    // Limpiar almacenamiento y estado local
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    sessionStorage.clear();
+    setUsuario(null);
+    setDocumentos([]);
+    setNotificaciones([]);
+    setSecundaria(null);
+    setBachillerato(null);
+    setUniversidad(null);
+    setCertificados(null);
+    navigate('/sesion', { replace: true });
   };
 
   // Obtener el usuario autenticado al cargar el componente
