@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaBell } from "react-icons/fa";
+import { formatEstudios } from '../utils/validations';
 import '../css/Home.css'
 
 // función principal del componente Home
@@ -361,7 +362,7 @@ function Home() {
                     <tr><th>CURP</th><td>{usuario.curp || 'No disponible'}</td></tr>
                     <tr><th>RFC</th><td>{usuario.rfc || 'No disponible'}</td></tr>
                     <tr><th>Correo Electrónico</th><td>{usuario.correo || 'No disponible'}</td></tr>
-                    <tr><th>Estudios</th><td>{usuario.estudios || 'No disponible'}</td></tr>
+                    <tr><th>Estudios</th><td>{formatEstudios(usuario.estudios)}</td></tr>
                   </tbody>
                 </table>
               ) : (

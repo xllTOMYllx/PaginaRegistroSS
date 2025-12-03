@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import { formatEstudios } from '../utils/validations';
 import axios from "axios";
 import '../css/Homeadmin.css';
 
@@ -186,7 +187,7 @@ function HomeAdmin() {
                     <tr><th>CURP</th><td>{admin.curp}</td></tr>
                     <tr><th>RFC</th><td>{admin.rfc}</td></tr>
                     <tr><th>Correo</th><td>{admin.correo}</td></tr>
-                    <tr><th>Estudios</th><td>{admin.estudios || 'No disponible'}</td></tr>
+                    <tr><th>Estudios</th><td>{formatEstudios(admin.estudios)}</td></tr>
 
                   </tbody>
                 </table>
@@ -402,13 +403,13 @@ function HomeAdmin() {
                     onChange={(e) => setEditData({ ...editData, estudios: e.target.value })}
                   >
                     <option value="">Selecciona una opción</option>
-                    <option value="Primaria">Primaria</option>
-                    <option value="Secundaria">Secundaria</option>
-                    <option value="Preparatoria">Preparatoria</option>
-                    <option value="Licenciatura">Licenciatura</option>
-                    <option value="Maestría">Maestría</option>
-                    <option value="Doctorado">Doctorado</option>
-                    <option value="prefiero no decirlo">Prefiero no decirlo</option>
+                    <option value="PRIMARIA">Primaria</option>
+                    <option value="SECUNDARIA">Secundaria</option>
+                    <option value="PREPARATORIA">Preparatoria</option>
+                    <option value="LICENCIATURA">Licenciatura</option>
+                    <option value="MAESTRÍA">Maestría</option>
+                    <option value="DOCTORADO">Doctorado</option>
+                    <option value="PREFIERO NO DECIRLO">Prefiero no decirlo</option>
                   </select>
                 </div>
               </div>

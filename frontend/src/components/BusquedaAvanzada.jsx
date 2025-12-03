@@ -6,6 +6,7 @@ import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaUser, FaFileAlt, FaCertificate, FaCheckCircle, FaInfoCircle, FaGraduationCap } from 'react-icons/fa';
 import API_ENDPOINTS from '../utils/config';
+import { formatEstudios } from '../utils/validations';
 import '../css/BusquedaAvanzada.css';
 
 function BusquedaAvanzada() {
@@ -53,9 +54,6 @@ function BusquedaAvanzada() {
       const token = localStorage.getItem("token");
       const params = new URLSearchParams();
 
-      // helper para Title Case
-      const toTitleCase = (s) => s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-
       if (filtros.nombre.trim()) {
         params.append('nombre', filtros.nombre.trim());
       }
@@ -63,8 +61,8 @@ function BusquedaAvanzada() {
         params.append('tipoDocumento', filtros.tipoDocumento.trim());
       }
       if (filtros.estudios.trim()) {
-        // Normalizar a Title Case para coincidir con cómo guardas en la BD (ej. "Doctorado")
-        params.append('estudios', toTitleCase(filtros.estudios.trim()));
+        // Normalize to UPPERCASE to match database storage
+        params.append('estudios', filtros.estudios.trim().toUpperCase());
       }
       if (filtros.soloCertificados) {
         params.append('soloCertificados', 'true');
@@ -81,19 +79,8 @@ function BusquedaAvanzada() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Si el backend no filtra por estudios, aplicamos filtrado cliente adicional
-      const estudiosFilter = filtros.estudios.trim() ? toTitleCase(filtros.estudios.trim()) : "";
-      let resultados = Array.isArray(response.data) ? response.data : [];
-      if (estudiosFilter) {
-        const estudiosFilterLower = estudiosFilter.toLowerCase();
-        resultados = resultados.filter((u) => {
-          // Coincide por campo usuario.estudios exactamente (Title Case)
-          if (u.estudios && u.estudios === estudiosFilter) return true;
-          // O coincide si alguno de sus documentos incluye el tipo (case-insensitive)
-          if (Array.isArray(u.documentos) && u.documentos.some(d => (d.tipo || '').toLowerCase().includes(estudiosFilterLower))) return true;
-          return false;
-        });
-      }
+      // Backend correctly filters by estudios using case-insensitive comparison
+      const resultados = Array.isArray(response.data) ? response.data : [];
       setUsuarios(resultados);
     } catch (error) {
       console.error("Error al buscar usuarios:", error);
@@ -212,13 +199,13 @@ function BusquedaAvanzada() {
                                   onChange={(e) => setFiltros({ ...filtros, estudios: e.target.value })}
                                 >
                                   <option value="">Todos los niveles</option>
-                                  <option value="Primaria">Primaria</option>
-                                  <option value="Secundaria">Secundaria</option>
-                                  <option value="Preparatoria">Preparatoria</option>
-                                  <option value="Licenciatura">Licenciatura</option>
-                                  <option value="Maestría">Maestría</option>
-                                  <option value="Doctorado">Doctorado</option>
-                                  <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                                  <option value="PRIMARIA">Primaria</option>
+                                  <option value="SECUNDARIA">Secundaria</option>
+                                  <option value="PREPARATORIA">Preparatoria</option>
+                                  <option value="LICENCIATURA">Licenciatura</option>
+                                  <option value="MAESTRÍA">Maestría</option>
+                                  <option value="DOCTORADO">Doctorado</option>
+                                  <option value="PREFIERO NO DECIRLO">Prefiero no decirlo</option>
                                 </select>
                               </div>
 
@@ -354,7 +341,7 @@ function BusquedaAvanzada() {
                                           </strong>
                                         </td>
                                         <td>
-                                          {usuario.estudios || 'No especificado'}
+                                          {formatEstudios(usuario.estudios)}
                                         </td>
                                         <td className="text-center">
                                           <span className="badge bg-info">{usuario.total_documentos || 0}</span>

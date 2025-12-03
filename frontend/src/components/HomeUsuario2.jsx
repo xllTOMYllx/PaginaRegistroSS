@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import { formatEstudios } from '../utils/validations';
 import axios from "axios";
 
 function HomeUsuario2() {
@@ -142,7 +143,7 @@ function HomeUsuario2() {
                     <tr><th>CURP</th><td>{Usuario2.curp}</td></tr>
                     <tr><th>RFC</th><td>{Usuario2.rfc}</td></tr>
                     <tr><th>Correo</th><td>{Usuario2.correo}</td></tr>
-                    <tr><th>Estudios</th><td>{Usuario2.estudios || 'No disponible'}</td></tr>
+                    <tr><th>Estudios</th><td>{formatEstudios(Usuario2.estudios)}</td></tr>
 
                   </tbody>
                 </table>

@@ -4,6 +4,7 @@ import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import GmailCredentialsModal from "./GmailCredentialsModal";
+import { formatEstudios } from '../utils/validations';
 import '../css/UsuarioDetalle.css'
 
 function UsuarioDetalle() {
@@ -186,7 +187,7 @@ function UsuarioDetalle() {
                   <strong>RFC:</strong> {usuario.rfc}
                 </p>
                 <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
-                  <strong>Estudios:</strong> {usuario.estudios || 'No disponible'}
+                  <strong>Estudios:</strong> {formatEstudios(usuario.estudios)}
                 </p>
               </div>
             </div>

@@ -4,6 +4,7 @@ import axios from "axios";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
+import { formatEstudios } from '../utils/validations';
 import '../css/Usuarios.css'
 import { FaUser, FaUserShield, FaArrowLeft } from 'react-icons/fa';
 
@@ -152,7 +153,7 @@ function Miembros() {
                       <strong>RFC:</strong> {usuario.rfc || "No disponible"}
                     </p>
                     <p className="mb-0">
-                      <strong>Estudios:</strong> {usuario.estudios || "No disponible"}
+                      <strong>Estudios:</strong> {formatEstudios(usuario.estudios)}
                     </p>
                   </div>
                 </div>
