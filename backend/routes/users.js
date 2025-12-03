@@ -164,7 +164,7 @@ RETURNING id_personal, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, USUARIO, CORR
 // Actualizar datos personales
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const {
+  let {
     nombre,
     apellido_paterno,
     apellido_materno,
@@ -173,6 +173,14 @@ router.put('/:id', async (req, res) => {
     correo,
     estudios
   } = req.body;
+
+  // Normalizar campos a UPPERCASE
+  nombre = typeof nombre === 'string' ? nombre.trim().toUpperCase() : nombre;
+  apellido_paterno = typeof apellido_paterno === 'string' ? apellido_paterno.trim().toUpperCase() : apellido_paterno;
+  apellido_materno = typeof apellido_materno === 'string' ? apellido_materno.trim().toUpperCase() : apellido_materno;
+  curp = typeof curp === 'string' ? curp.trim().toUpperCase() : curp;
+  rfc = typeof rfc === 'string' ? rfc.trim().toUpperCase() : rfc;
+  estudios = typeof estudios === 'string' ? estudios.trim().toUpperCase() : estudios;
 
   // consulta para actualizar
   try {
