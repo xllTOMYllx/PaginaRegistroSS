@@ -673,7 +673,7 @@ router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res)
 
     // Filtrar por nivel de estudios si se proporciona
     if (estudios && estudios.trim() !== "") {
-      baseQuery += ` AND p.estudios = $${paramIndex}`;
+      baseQuery += ` AND UPPER(p.estudios) = $${paramIndex}`;
       params.push(estudios.trim().toUpperCase());
       paramIndex++;
     }
