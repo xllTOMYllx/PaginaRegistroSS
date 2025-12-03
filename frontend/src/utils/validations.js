@@ -136,6 +136,8 @@ export function validateForm(formData) {
     }
   }
 
+  //Maximo grado de estudios, se maneja mediante un topic select por lo que no requiere validación adicional
+  
   // RFC
   if (!upperCaseData.RFC) {
     newErrors.RFC = 'El RFC es obligatorio.';

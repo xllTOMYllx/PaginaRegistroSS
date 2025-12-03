@@ -27,6 +27,7 @@ function RegisterForm() {
     USUARIO: '',
     CONTRASENA: '',
     RFC: '',
+    ESTUDIOS: '',
     ROL: 1 // Asignar rol predeterminado (1 = usuario normal)
 
   });
@@ -86,6 +87,7 @@ function RegisterForm() {
         USUARIO: formData.USUARIO.toUpperCase(),
         CURP: formData.CURP.toUpperCase(),
         RFC: formData.RFC.toUpperCase(),
+        ESTUDIOS: formData.ESTUDIOS.toUpperCase(),
         ROL: formData.ROL
       });// petición POST al backend
       setMensaje('Usuario registrado correctamente');
@@ -99,6 +101,7 @@ function RegisterForm() {
         USUARIO: '',
         CONTRASENA: '',
         RFC: '',
+        ESTUDIOS: '',
         ROL: 1 // Asignar rol predeterminado (1 = usuario normal)
 
       });
@@ -207,6 +210,28 @@ function RegisterForm() {
               required
             />
             {error.RFC && touched.RFC && <div className="invalid-feedback">{error.RFC}</div>}
+          </div>
+
+          {/* Campo de estudios, se usa un desplegable con las opciones de Primaria, Secundaria, Preparatoria, Licenciatura, Maestría, Doctorado */}
+          <div className="mb-3">
+            <label className="form-label">MÁXIMO GRADO DE ESTUDIOS</label>
+            <select
+              name="ESTUDIOS"
+              value={formData.ESTUDIOS}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={getInputClass('ESTUDIOS')}
+            >
+              <option value="">Selecciona una opción</option>
+              <option value="Primaria">Primaria</option>
+              <option value="Secundaria">Secundaria</option>
+              <option value="Preparatoria">Preparatoria</option>
+              <option value="Licenciatura">Licenciatura</option>
+              <option value="Maestría">Maestría</option>
+              <option value="Doctorado">Doctorado</option>
+              <option value="prefiero no decirlo">Prefiero no decirlo</option>
+            </select>
+            {error.ESTUDIOS && touched.ESTUDIOS && <div className="invalid-feedback">{error.ESTUDIOS}</div>}
           </div>
 
           {/* Campo de correo */}
