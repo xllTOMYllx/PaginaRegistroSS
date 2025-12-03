@@ -65,6 +65,21 @@ params.push(`%${palabra}%`);
   - Uses parameterized queries to prevent SQL injection
 - **Risk**: None - properly secured endpoint
 
+### Issue 4: Education Level Update in User Profile (NEW)
+- **Security Impact**: Neutral/Positive
+- **Details**:
+  - Added `estudios` field to the user update endpoint (PUT /api/users/:id)
+  - Uses parameterized query with proper placeholder ordering ($7 for estudios, $8 for id)
+  - Input received from authenticated frontend form with dropdown validation
+  - Returns updated user data including estudios field
+  - No authentication/authorization changes - existing protections remain
+- **Risk**: None - follows same security patterns as existing fields in the same endpoint
+- **Validation**: 
+  - Frontend uses dropdown with predefined values (Primaria, Secundaria, Preparatoria, Licenciatura, Maestría, Doctorado, Prefiero no decirlo)
+  - Backend accepts any string but stores it in VARCHAR(50) column
+  - No SQL injection risk due to parameterized query
+  - Field is optional and nullable
+
 ## Vulnerability Assessment
 
 ### SQL Injection: ✅ PROTECTED
