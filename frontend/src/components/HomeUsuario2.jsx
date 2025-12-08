@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
-import { formatEstudios } from '../utils/validations';
+import { formatEstudios, normalizarTipoDocumento } from '../utils/validations';
 import axios from "axios";
+
 
 function HomeUsuario2() {
   const [Usuario2, setUsuario2] = useState(null);
@@ -186,7 +187,7 @@ function HomeUsuario2() {
               {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
                 const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
                 const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
-                const tipo = nivel.toLowerCase();
+                const tipo = normalizarTipoDocumento(nivel);
                 const documentoExistente = documentos.find(doc => doc.tipo === tipo);
 
                 return (

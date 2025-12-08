@@ -176,14 +176,18 @@ function BusquedaAvanzada() {
                                   <FaFileAlt className="me-2" />
                                   Tipo de Documento/Habilidad
                                 </label>
-                                <input
-                                  type="text"
+                                <select
                                   className="form-control"
                                   id="tipoDocumento"
-                                  placeholder="Ej: Licenciatura, Maestría, Certificado en..."
                                   value={filtros.tipoDocumento}
                                   onChange={(e) => setFiltros({ ...filtros, tipoDocumento: e.target.value })}
-                                />
+                                >
+                                  <option value="">Todos los tipos</option>
+                                  <option value="secundaria">Secundaria</option>
+                                  <option value="bachillerato">Bachillerato</option>
+                                  <option value="universidad">Universidad</option>
+                                  <option value="certificados">Certificados</option>
+                                </select>
                               </div>
 
                               {/* Nivel de estudios */}
