@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const { Pool } = require('pg');
@@ -163,11 +162,11 @@ router.post('/subir-academico', authenticateToken, upload.single('archivo'), asy
     if (!tipo) {
       return res.status(400).json({ error: 'Debes indicar el tipo de documento' });
     }
-    // Insertar en la base de datos
+    // Insertar en la base de datos (@Irvinglez12 si se madrea algo al subir un documento aqui esta el cambio que hice)
     await pool.query(
-      `INSERT INTO documentos_academicos (id_personal, tipo, archivo)
-       VALUES ($1, $2, $3)`,
-      [req.user.id_personal, tipo, req.file.filename]
+      `INSERT INTO documentos_academicos (id_personal, tipo, archivo, es_certificado)
+       VALUES ($1, $2, $3, $4)`,
+      [req.user.id_personal, tipo, req.file.filename, tipo === 'certificados']
     );
     // Obtener nombre del usuario desde la tabla personal
 // Obtener el email del usuario

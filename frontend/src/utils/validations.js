@@ -179,3 +179,13 @@ export function formatEstudios(estudios) {
   
   return estudiosMap[estudios.toUpperCase()] || estudios;
 }
+
+// --- Normalizar tipos de documento para upload ---
+export function normalizarTipoDocumento(nivel) {
+  const mapeo = {
+    'Secundaria': 'secundaria',
+    'Bachillerato': 'preparatoria',      // Normalizar a "preparatoria"
+    'Universidad': 'licenciatura'        // Normalizar a "licenciatura"
+  };
+  return mapeo[nivel] || nivel.toLowerCase();
+}

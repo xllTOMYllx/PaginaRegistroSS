@@ -3,13 +3,15 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaBell } from "react-icons/fa";
-import { formatEstudios } from '../utils/validations';
+import { formatEstudios, normalizarTipoDocumento } from '../utils/validations';
+import { useAuth } from '../context/AuthContext';
 import '../css/Home.css'
 
 // función principal del componente Home
 function Home() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setUser } = useAuth();
   const [usuario, setUsuario] = useState(null);
   const [secundaria, setSecundaria] = useState(null);
   const [bachillerato, setBachillerato] = useState(null);
@@ -23,10 +25,15 @@ function Home() {
 
   // ✅ Función para cerrar sesión
   const cerrarSesion = () => {
-    // Limpiar almacenamiento y estado local
+    // Limpiar almacenamiento local
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
     sessionStorage.clear();
+    
+    // Limpiar contexto global
+    setUser(null);
+    
+    // Limpiar estado local del componente
     setUsuario(null);
     setDocumentos([]);
     setNotificaciones([]);
@@ -34,6 +41,8 @@ function Home() {
     setBachillerato(null);
     setUniversidad(null);
     setCertificados(null);
+    
+    // Navegar a la página de sesión
     navigate('/sesion', { replace: true });
   };
 
@@ -424,7 +433,7 @@ function Home() {
             {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
               const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
               const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
-              const tipo = nivel.toLowerCase();
+              const tipo = normalizarTipoDocumento(nivel);
               const documentoExistente = documentos.find(doc => doc.tipo === tipo);
 
               {/* Renderizado de cada nivel académico */ }
