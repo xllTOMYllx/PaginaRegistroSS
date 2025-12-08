@@ -4,6 +4,7 @@ import axios from 'axios';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { FaUsers, FaUserTie, FaPlus, FaEdit, FaTrash, FaArrowLeft } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 
 function Grupos() {
   const [grupos, setGrupos] = useState([]);
@@ -19,18 +20,22 @@ function Grupos() {
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    const adminData = JSON.parse(localStorage.getItem('usuario'));
+    const stored = (() => { try { return JSON.parse(localStorage.getItem('usuario')); } catch { return null; } })();
     const token = localStorage.getItem('token');
-    if (!adminData || !token || adminData.rol !== 3) {
+    const adminData = user || stored;
+
+    if (!adminData || !token || Number(adminData.rol) !== 3) {
       navigate('/sesion', { replace: true });
       return;
     }
+
     setAdmin(adminData);
     fetchGrupos();
     fetchSupervisores();
-  }, [navigate]);
+  }, [navigate, user]);
 
   const fetchGrupos = async () => {
     try {
