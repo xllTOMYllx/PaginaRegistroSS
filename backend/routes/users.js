@@ -374,16 +374,16 @@ router.get('/me', authenticateToken, async (req, res) => {
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
 
-  try {// consulta para obtener datos del usuario
+  try {
     const query = `SELECT id_personal, nombre, apellido_paterno, apellido_materno, 
-    usuario, correo, curp, rfc, estudios, foto_perfil
+    usuario, correo, curp, rfc, estudios, foto_perfil, rol
                    FROM personal WHERE id_personal = $1`;
     const result = await pool.query(query, [req.user.id_personal]);
-    // mensaje si no se encuentra el usuario
+    
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-    // manejo de errores
+    
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error al obtener usuario:', error);

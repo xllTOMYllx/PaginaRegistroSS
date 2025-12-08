@@ -25,22 +25,14 @@ function BusquedaAvanzada() {
 
   // Verificar autenticación y permisos
   useEffect(() => {
-    const adminData = JSON.parse(localStorage.getItem("usuario"));
-    const token = localStorage.getItem("token");
-
-    if (!adminData || !token) {
-      navigate('/sesion', { replace: true });
-      return;
-    }
-
-    // Verificar que sea rol 3 o 4
-    if (![3, 4].includes(adminData.rol)) {
+    const adminData = JSON.parse(localStorage.getItem('usuario'));
+    const rol = Number(adminData?.rol);
+    if (![3,4].includes(rol)) {
       alert("Acceso denegado: Esta función solo está disponible para administradores.");
       navigate('/homeadmin', { replace: true });
       return;
     }
-
-    setAdmin(adminData);
+    setAdmin({ ...adminData, rol });
   }, [navigate]);
 
   // Función para realizar la búsqueda avanzada
