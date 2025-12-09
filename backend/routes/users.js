@@ -446,7 +446,7 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
         SELECT p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
                p.usuario, p.correo, p.curp, p.rfc, p.estudios, p.rol, p.foto_perfil, p.status,
                json_agg(json_build_object('id_grupo', g.id_grupo, 'nombre_grupo', g.nombre) 
-                        ORDER BY g.nombre) as grupos
+                        ORDER BY g.nombre) FILTER (WHERE g.id_grupo IS NOT NULL) as grupos
         FROM personal p
         INNER JOIN grupo_miembros gm ON p.id_personal = gm.id_personal
         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
@@ -606,7 +606,7 @@ router.get("/buscar", authenticateToken, async (req, res) => {
                p.usuario, p.correo, p.curp, p.rfc, p.estudios, 
                p.rol, p.foto_perfil, p.status,
                json_agg(json_build_object('id_grupo', g.id_grupo, 'nombre_grupo', g.nombre) 
-                        ORDER BY g.nombre) as grupos
+                        ORDER BY g.nombre) FILTER (WHERE g.id_grupo IS NOT NULL) as grupos
         FROM personal p
         INNER JOIN grupo_miembros gm ON p.id_personal = gm.id_personal
         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
