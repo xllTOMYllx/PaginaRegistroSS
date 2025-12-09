@@ -139,11 +139,9 @@ function Sesion() {
           <button type="submit" className="btn btn-primary w-100 rounded-3" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737', fontFamily: "Roboto, sans-serif" }}>
             Iniciar Sesión
           </button>
-          <p className="text-center mt-3">¿No tienes una cuenta?</p>
+         
         </form>
-        <button type="button" className="btn btn-primary w-100 rounded-3 mt-2" style={{ backgroundColor: '#7A1737', borderColor: '#7A1737', fontFamily: "Roboto, sans-serif" }} onClick={() => navigate('/')}>
-          Registrarse
-        </button>
+
 
       </div>
     </div>

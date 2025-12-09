@@ -521,7 +521,7 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
 
     // Obtener documentos del usuario
     const docsResult = await pool.query(
-      `SELECT id, tipo, archivo, cotejado, fecha_subida
+      `SELECT id, tipo, archivo, cotejado, es_certificado, fecha_subida
        FROM documentos_academicos
        WHERE id_personal = $1`,
       [id]
@@ -561,7 +561,7 @@ router.get("/buscar", authenticateToken, async (req, res) => {
 
     // Construir condiciones dinámicamente: cada palabra debe coincidir en alguno de los campos
     // Empezamos con rol = ANY($1) y pasamos rolesPermitidos como primer parámetro
-    let whereCondition = "rol = ANY($1)";
+    let whereCondition = "p.rol = ANY($1)";
     let params = [rolesPermitidos];
     let paramIndex = 2;
 
@@ -569,11 +569,11 @@ router.get("/buscar", authenticateToken, async (req, res) => {
     palabras.forEach((palabra) => {
       const searchTerm = `%${palabra}%`;
       whereCondition += ` AND (
-        nombre ILIKE $${paramIndex}
-        OR apellido_paterno ILIKE $${paramIndex}
-        OR apellido_materno ILIKE $${paramIndex}
-        OR curp ILIKE $${paramIndex}
-        OR rfc ILIKE $${paramIndex}
+        p.nombre ILIKE $${paramIndex}
+        OR p.apellido_paterno ILIKE $${paramIndex}
+        OR p.apellido_materno ILIKE $${paramIndex}
+        OR p.curp ILIKE $${paramIndex}
+        OR p.rfc ILIKE $${paramIndex}
       )`;
       params.push(searchTerm);
       paramIndex++;
@@ -594,9 +594,9 @@ router.get("/buscar", authenticateToken, async (req, res) => {
     } else {
       // Admin busca en todos
       query = `
-        SELECT * FROM personal
+        SELECT * FROM personal p
         WHERE ${whereCondition}
-        ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
+        ORDER BY p.apellido_paterno ASC, p.apellido_materno ASC, p.nombre ASC
         LIMIT 50
       `;
     }
