@@ -4,6 +4,7 @@ import RegisterForm from './components/RegisterForm';
 import Sesion from './components/sesion';
 import EditarUsuario from './components/EditarUsuario';
 import Homeadmin from './components/Homeadmin';
+import HomeAdmin4 from './components/HomeAdmin4';
 import HomeUsuario2 from './components/HomeUsuario2';
 import Usuarios from './components/Usuarios';
 import UsuarioDetalle from './components/UsuarioDetalle';
@@ -36,6 +37,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Homeadmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/homeadmin4"
+          element={
+            <ProtectedRoute>
+              <HomeAdmin4 />
             </ProtectedRoute>
           }
         />
