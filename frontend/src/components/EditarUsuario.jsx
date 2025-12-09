@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../css/EditarUsuario.css";
 
 // función principal del componente EditarUsuario
 function EditarUsuario() {
@@ -163,28 +164,32 @@ function EditarUsuario() {
 
 //pagina de edición de usuario
   return ( // Contenedor principal
-    <div className="container py-5">
+    <div className="editar-page">
+      <div className="top-image-container">
+        <img
+          src={encodeURI('/ImagenSesver.png')}
+          alt="Imagen superior"
+          className="top-image"
+        />
+      </div>
+      <nav className="navbar navbar-light shadow-sm mb-4 home-navbar editar-navbar">
+        <div className="container-fluid d-flex align-items-center flex-nowrap gap-2 navbar-actions"></div>
+      </nav>
+      <div className="container py-5">
       <div>
         {/* Botón para regresar a la página de inicio */}
         <button
           onClick={() => navigate("/home", { state: { user: formData } })}
-          className="btn btn-dark mb-4"
-          style={{
-            position: "fixed",
-            top: "20px",
-            left: "20px",
-            backgroundColor: "#7A1737",
-            marginBottom: "30px",
-          }}
+          className="btn editar-back-btn"
         >
           Regresar
         </button>
       </div>
 
       {/* Encabezado de la página */}
-      <div className="row justify-content-center" style={{ marginTop: "20px" }}>
+      <div className="row justify-content-center editar-row">
         <div className="col-12 col-md-8 col-lg-6">
-          <h3 className="mb-4 text-center" style={{ color: "#7A1737" }}>
+          <h3 className="mb-4 text-center editar-title">
             Editar Datos Personales
           </h3>
           {/* Formulario de edición */}
@@ -230,8 +235,7 @@ function EditarUsuario() {
             {/* Botón para enviar el formulario y guardar cambios */}
             <button
               type="submit"
-              className="btn w-100"
-              style={{ backgroundColor: "#7A1737", color: "#fff" }}
+              className="btn w-100 editar-submit-btn"
             >
               Guardar Cambios
             </button>
@@ -243,7 +247,7 @@ function EditarUsuario() {
 
           <hr className="my-4" />
 
-          <h5 className="mb-3 text-center" style={{ color: '#7A1737' }}>Cambiar contraseña</h5>
+          <h5 className="mb-3 text-center editar-subtitle">Cambiar contraseña</h5>
           <form onSubmit={handlePwdSubmit}>
             <div className="mb-2">
               <label className="form-label">Contraseña actual</label>
@@ -272,11 +276,16 @@ function EditarUsuario() {
                 </button>
               </div>
             </div>
-            {pwdMsg && <div className="text-center mb-2" style={{ color: pwdMsg.includes('actualizada') ? 'green' : '#d9534f' }}>{pwdMsg}</div>}
-            <button type="submit" className="btn w-100" style={{ backgroundColor: '#7A1737', color: '#fff' }}>Actualizar contraseña</button>
+            {pwdMsg && (
+              <div className={`text-center mb-2 editar-pwd-msg ${pwdMsg.includes('actualizada') ? 'pwd-success' : 'pwd-error'}`}>
+                {pwdMsg}
+              </div>
+            )}
+            <button type="submit" className="btn w-100 editar-submit-btn">Actualizar contraseña</button>
           </form>
         </div>
       </div>
+    </div>
     </div>
   );
 }

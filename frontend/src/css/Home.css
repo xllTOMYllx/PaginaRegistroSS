@@ -1,3 +1,173 @@
+/* Base Home styles */
+.home-page {
+  font-size: 1.3rem;
+}
+
+.home-page .btn,
+.home-page button,
+.home-page input,
+.home-page .form-control,
+.home-page .badge,
+.home-page .table,
+.home-page .table th,
+.home-page .table td,
+.home-page .card,
+.home-page .card-body,
+.home-page .card-header {
+  font-size: 1.3rem;
+}
+
+.top-image-container {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.top-image {
+  max-width: 80%;
+  height: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+.home-navbar {
+  background-color: #7A1737;
+}
+
+.home-nav-btn {
+  background-color: #7A1737;
+  border: 2px solid #7A1737;
+  color: #fff;
+}
+
+.home-nav-btn:focus,
+.home-nav-btn:active,
+.home-nav-btn:focus-visible {
+  background-color: #7A1737 !important;
+  border-color: #7A1737 !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.home-nav-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.logout-btn-nav {
+  background-color: #ff7a85;
+  color: #fff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  font-size: 1.3rem;
+}
+
+.logout-btn-nav:hover,
+.logout-btn-nav:focus,
+.logout-btn-nav:active {
+  background-color: #ff1f1f !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.home-main {
+  max-width: 90%;
+}
+
+.home-title {
+  color: #7A1737;
+}
+
+.edit-user-btn {
+  background-color: #7A1737;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.user-photo-img {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border: 2px solid #7A1737;
+}
+
+.user-photo-input {
+  width: 100%;
+  max-width: 200px;
+}
+
+.user-photo-upload {
+  background-color: #7A1737;
+  color: #fff;
+  border-color: #7A1737;
+  width: 100%;
+  max-width: 200px;
+}
+
+.academic-icon {
+  color: #7A1737;
+}
+
+.doc-icon {
+  color: #7A1737;
+}
+
+.academic-label {
+  min-width: 160px;
+}
+
+.academic-input {
+  flex: 1;
+}
+
+.academic-upload-btn {
+  background-color: #7A1737;
+  color: #fff;
+  border-color: #7A1737;
+}
+
+.doc-view-btn {
+  background-color: #7A1737;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+}
+
+.doc-badge {
+  padding: 6px 16px;
+  border-radius: 4px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+}
+
+.doc-delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+}
+
 /* Ajustes para pantallas menores a 576px (móviles) */
 @media (max-width: 576px) {
 
@@ -12,7 +182,7 @@
 
   .navbar-actions .btn {
     padding: 4px 6px !important; /* Reduce padding */
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     min-height: 22px !important;
     white-space: nowrap; /* Evita que el texto se rompa */
     margin: 0 !important; /* Elimina márgenes */
@@ -20,7 +190,7 @@
 
   .navbar-actions .btn.btn-sm.d-inline.d-sm-none {
     padding: 2px 4px !important; /* Más compacto para móviles */
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     min-height: 18px !important;
     border-radius: 10px !important;
     max-width: 50px !important;
@@ -30,7 +200,7 @@
 
   .navbar-actions .btn.btn-sm.d-none.d-sm-inline {
     padding: 4px 8px !important;
-    font-size: 0.75rem !important;
+    font-size: 1.3rem !important;
     min-height: 24px !important;
     border-radius: 16px !important;
   }
@@ -41,7 +211,7 @@
   }
 
   .navbar-actions .badge {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     padding: 1px 3px !important;
     min-height: 16px !important;
     top: -4px !important;
@@ -51,7 +221,7 @@
 
   /* Reducir tamaño del h4 en el header */
   .card-header h4 {
-    font-size: 1.1rem !important;
+    font-size: 1.3rem !important;
   }
 
   /* Ajuste para el nuevo contenedor de ícono, label y botón Editar */
@@ -74,7 +244,7 @@
 
   /* Ajuste para el botón Editar */
   .edit-user-btn {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     padding: 4px 8px !important;
     min-height: 24px !important;
     letter-spacing: 0.5px !important; /* Reduce letter-spacing para mejor ajuste */
@@ -83,13 +253,13 @@
   }
 
   .edit-user-btn .bi-pencil-square {
-    font-size: 0.8rem !important;
+    font-size: 1.3rem !important;
     margin-right: 2px !important;
   }
 
   /* Ajuste para la Tabla de informacion del usuario */
   .user-info-table {
-    font-size: 0.8rem !important; /* Tabla más pequeña */
+    font-size: 1.3rem !important; /* Tabla más pequeña */
   }
 
   .user-info-table th,
@@ -120,13 +290,13 @@
   .user-photo-section .btn {
     width: 100% !important; /* Full-width como en .new-certification */
     max-width: none !important;
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     padding: 6px 12px !important;
     margin-bottom: 4px !important;
   }
 
   .user-photo-section .bi-cloud-arrow-up-fill {
-    font-size: 0.8rem !important; /* Consistente con otros botones */
+    font-size: 1.3rem !important; /* Consistente con otros botones */
     margin-right: 2px !important;
   }
 
@@ -136,7 +306,7 @@
   }
 
   .document-info .me-auto {
-    font-size: 0.75rem !important;
+    font-size: 1.3rem !important;
     max-width: 150px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -166,12 +336,12 @@
   }
 
   .academic-level .bi-mortarboard-fill {
-    font-size: 1rem !important;
+    font-size: 1.3rem !important;
     margin-right: 8px !important;
   }
 
   .academic-level .form-label {
-    font-size: 0.8rem !important;
+    font-size: 1.3rem !important;
     min-width: 100px !important;
     margin-bottom: 0 !important;
     margin-right: 4px !important;
@@ -179,26 +349,26 @@
   }
 
   .academic-level .form-control {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     width: 120px !important;
     margin-right: 4px !important;
     margin-bottom: 0 !important;
   }
 
   .academic-level .btn {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     padding: 4px 8px !important;
     min-height: 24px !important;
     margin-bottom: 0 !important;
   }
 
   .academic-level .bi-cloud-arrow-up-fill {
-    font-size: 0.8rem !important;
+    font-size: 1.3rem !important;
     margin-right: 2px !important;
   }
 
   .academic-level .small.text-muted {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     max-width: 100px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -213,7 +383,7 @@
 
   .academic-level .badge {
     padding: 4px 8px !important;
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     min-height: 24px !important;
   }
 
@@ -221,7 +391,7 @@
   .certificados-row .btn,
   .certificados-row .badge {
     padding: 4px 8px !important;
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     min-height: 24px !important;
   }
 
@@ -233,33 +403,33 @@
   }
 
   .new-certification .form-label {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     min-width: 100px !important; /* Reduce el ancho mínimo */
     margin-bottom: 0 !important;
     margin-right: 4px !important;
   }
 
   .new-certification .form-control {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     width: 200px !important; /* Ancho fijo más pequeño */
     margin-right: 4px !important;
     margin-bottom: 0 !important;
   }
 
   .new-certification .btn {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     padding: 4px 8px !important;
     min-height: 24px !important;
     margin-bottom: 0 !important;
   }
 
   .new-certification .bi-cloud-arrow-up-fill {
-    font-size: 0.8rem !important; /* Reduce el tamaño del ícono dentro del botón */
+    font-size: 1.3rem !important; /* Reduce el tamaño del ícono dentro del botón */
     margin-right: 2px !important;
   }
 
   .new-certification .small.text-muted {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     max-width: 100px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -277,13 +447,13 @@
   /* Ajustes para la navbar */
   .navbar-actions .btn.d-inline.d-sm-none {
     padding: 2px 3px !important;
-    font-size: 0.5rem !important;
+    font-size: 1.3rem !important;
     min-height: 16px !important;
     max-width: 45px !important;
   }
 
   .navbar-actions .badge {
-    font-size: 0.4rem !important;
+    font-size: 1.3rem !important;
     padding: 0px 2px !important;
     min-height: 12px !important;
     top: -3px !important;
@@ -292,14 +462,14 @@
 
   /* Ajuste para el nuevo contenedor de ícono, label y botón Editar */
   .card-header .d-flex.align-items-center h4 {
-    font-size: 1rem !important; /* Más pequeño en móviles estrechos */
+    font-size: 1.3rem !important; /* Más pequeño en móviles estrechos */
     margin-right: 4px !important;
     max-width: 100% !important; /* Más restrictivo en móviles estrechos */
   }
 
   /* Ajuste para el botón Editar */
   .edit-user-btn {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     padding: 2px 6px !important;
     min-height: 20px !important;
     letter-spacing: 0.5px !important;
@@ -308,19 +478,19 @@
   }
 
   .edit-user-btn .bi-pencil-square {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     margin-right: 2px !important;
   }
 
   /* Ajuste para el apartado de la tabla de información del usuario */
   .user-info-table {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
   }
 
   .user-info-table th,
   .user-info-table td {
     padding: 2px 4px !important; /* Aún más compacto */
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
   }
 
   /* Ajuste para la sesion de la imagen de perfil */
@@ -331,7 +501,7 @@
 
   .user-photo-section .form-control,
   .user-photo-section .btn {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     padding: 4px 8px !important;
     min-height: 20px !important; /* Como en .academic-level */
   }
@@ -342,7 +512,7 @@
   }
 
   .document-info .me-auto {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     max-width: 120px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -358,31 +528,31 @@
   }
 
   .academic-level .bi-mortarboard-fill {
-    font-size: 0.9rem !important;
+    font-size: 1.3rem !important;
   }
 
   .academic-level .form-label {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     min-width: 80px !important;
   }
 
   .academic-level .form-control {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     width: 100px !important;
   }
 
   .academic-level .btn {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     padding: 2px 6px !important;
     min-height: 20px !important;
   }
 
   .academic-level .bi-cloud-arrow-up-fill {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
   }
 
   .academic-level .small.text-muted {
-    font-size: 0.5rem !important;
+    font-size: 1.3rem !important;
     max-width: 80px !important;
   }
 
@@ -394,7 +564,7 @@
 
   .academic-level .badge {
     padding: 2px 6px !important;
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     min-height: 20px !important;
   }
 
@@ -420,31 +590,31 @@
   }
 
   .new-certification .bi-file-earmark-text-fill {
-    font-size: 0.9rem !important;
+    font-size: 1.3rem !important;
   }
 
   .new-certification .form-label {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
     min-width: 80px !important;
   }
 
   .new-certification .form-control {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     width: 100px !important;
   }
 
   .new-certification .btn {
-    font-size: 0.6rem !important;
+    font-size: 1.3rem !important;
     padding: 2px 6px !important;
     min-height: 20px !important;
   }
 
   .new-certification .bi-cloud-arrow-up-fill {
-    font-size: 0.7rem !important;
+    font-size: 1.3rem !important;
   }
 
   .new-certification .small.text-muted {
-    font-size: 0.5rem !important;
+    font-size: 1.3rem !important;
     max-width: 80px !important;
   }
 

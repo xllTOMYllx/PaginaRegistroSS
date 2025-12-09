@@ -1,0 +1,116 @@
+/* Base layout for EditarUsuario */
+.editar-page {
+  font-size: 1.3rem;
+}
+
+.editar-page .btn,
+.editar-page button,
+.editar-page input,
+.editar-page select,
+.editar-page .form-control,
+.editar-page .form-label,
+.editar-page .alert,
+.editar-page .small,
+.editar-page .text-danger,
+.editar-page .text-center,
+.editar-page .form-select {
+  font-size: 1.3rem;
+}
+
+.editar-back-btn {
+  position:sticky
+}
+
+.editar-back-btn:hover,
+.editar-back-btn:focus,
+.editar-back-btn:active {
+  background-color: #a02145;
+  color: #fff;
+}
+
+.editar-row {
+  margin-top: 20px;
+}
+
+.editar-title,
+.editar-subtitle {
+  color: #7A1737;
+}
+
+.editar-submit-btn {
+  background-color: #7A1737;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+
+.editar-submit-btn:hover,
+.editar-submit-btn:focus,
+.editar-submit-btn:active {
+  background-color: #a02145;
+  color: #fff;
+}
+
+.top-image-container {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.top-image {
+  max-width: 80%;
+  height: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Estilos de navbar iguales a Home */
+.home-navbar {
+  background-color: #7A1737;
+}
+
+.home-nav-btn {
+  background-color: #7A1737;
+  border: 2px solid #7A1737;
+  color: #fff;
+}
+
+.home-nav-btn:focus,
+.home-nav-btn:active,
+.home-nav-btn:focus-visible {
+  background-color: #7A1737 !important;
+  border-color: #7A1737 !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.home-nav-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.editar-navbar {
+  min-height: 64px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.editar-pwd-msg {
+  font-size: 1.3rem;
+}
+
+.pwd-success {
+  color: green;
+}
+
+.pwd-error {
+  color: #d9534f;
+}

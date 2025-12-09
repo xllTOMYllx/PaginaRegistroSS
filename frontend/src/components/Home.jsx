@@ -22,6 +22,8 @@ function Home() {
   const [nuevas, setNuevas] = useState(0);
   const [mostrarPanel, setMostrarPanel] = useState(false);
 
+  const [activeSection, setActiveSection] = useState('user');
+
 
   // ✅ Función para cerrar sesión
   const cerrarSesion = () => {
@@ -201,138 +203,59 @@ function Home() {
 
   // ---Diseño principal de la página--- //
   return (
-    <>
+    <div className="home-page">
       {/* Imagen superior (usa encodeURI para manejar espacios en el nombre) */}
-      <div className="top-image-container" style={{ textAlign: 'center', padding: '8px 0' }}>
+      <div className="top-image-container">
         <img
           src={encodeURI('/ImagenSesver.png')}
           alt="Imagen superior"
-          style={{ maxWidth: '80%', height: '100%', display: 'block', margin: '0 auto' }}
+          className="top-image"
         />
       </div>
 
       {/* Barra de navegación superior */}
-      <nav className="navbar navbar-light shadow-sm mb-4" style={{ backgroundColor: "#7A1737" }}>
-        <div className="container-fluid d-flex justify-content-end align-items-center flex-nowrap gap-1 navbar-actions">
-
-          {/* Botón de Notificaciones */}
-          <div>
-          <button
-            className="btn btn-sm position-relative"
-            style={{ padding: "4px 8px" }}
-            onClick={() => setMostrarPanel(!mostrarPanel)}
-          >
-            <FaBell size={16} color="white" />
-            {notificaciones.filter(n => !n.leido).length > 0 && (
-              <span
-                className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style={{ fontSize: "0.6rem", padding: "2px 4px" }}
-              >
-                {notificaciones.filter(n => !n.leido).length}
-              </span>
-            )}
-          </button>
-
-          {/* Botón Cerrar Sesión */}
-          <button
-            onClick={cerrarSesion}
-            style={{
-              backgroundColor: "#ff4d4f",
-              color: "white",
-              padding: "6px 12px",
-              border: "none",
-              borderRadius: "20px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
-              fontSize: "0.875rem"
-            }}
-          >
-            Cerrar Sesión
-          </button>
+      <nav className="navbar navbar-light shadow-sm mb-4 home-navbar">
+        <div className="container-fluid d-flex align-items-center flex-nowrap gap-2 navbar-actions">
+          <div className="d-flex align-items-center flex-wrap gap-2 home-nav-left">
+            <button
+              className="btn btn-sm text-white home-nav-btn"
+              onClick={() => setActiveSection('user')}
+            >
+              Datos del usuario
+            </button>
+            <button
+              className="btn btn-sm text-white home-nav-btn"
+              onClick={() => setActiveSection('academic')}
+            >
+              Información académica
+            </button>
+            <button
+              className="btn btn-sm text-white home-nav-btn"
+              onClick={() => setActiveSection('certs')}
+            >
+              Certificados
+            </button>
+          </div>
+          <div className="d-flex align-items-center ms-auto home-nav-right">
+            <button
+              onClick={cerrarSesion}
+              className="btn logout-btn-nav"
+            >
+              Cerrar Sesión
+            </button>
           </div>
         </div>
 
-
-        {/* Panel desplegable de notificaciones */}
-        {mostrarPanel && (
-          <div
-            className="card shadow position-absolute"
-            style={{
-              top: "60px",
-              right: "5px",
-              width: "235px",
-              zIndex: 1000,
-              maxHeight: "400px",
-              overflowY: "auto"
-            }}
-          >
-            <div className="card-header bg-white">
-              <strong style={{ color: "#7A1737" }}>Notificaciones</strong>
-            </div>
-            <div className="card-body p-2 w-100 w-md-50">
-              {notificaciones.length > 0 ? (
-                notificaciones.map((n) => (
-                  <div
-                    key={n.id}
-                    className={`d-flex justify-content-between align-items-start p-2 mb-2 rounded ${n.leido ? "bg-light" : "bg-white border"}`}
-                  >
-                    <div
-                      style={{ cursor: "pointer", flex: 1 }}
-                      onClick={async () => {
-                        const token = localStorage.getItem("token");
-                        await axios.put(
-                          `http://localhost:5000/api/documentos/notificaciones/${n.id}/leido`,
-                          {},
-                          { headers: { Authorization: `Bearer ${token}` } }
-                        );
-                        setNotificaciones(prev =>
-                          prev.map(item =>
-                            item.id === n.id ? { ...item, leido: true } : item
-                          )
-                        );
-                      }}
-                    >
-                      <small className="d-block">
-                        <strong>{n.usuario}:</strong> {n.mensaje}
-                      </small>
-                      <small className="text-muted">
-                        {new Date(n.fecha).toLocaleString()}
-                      </small>
-                    </div>
-                    <button
-                      className="btn p-0 text-danger ms-2"
-                      style={{ fontSize: "2.5rem" }}
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        const token = localStorage.getItem("token");
-                        await axios.delete(
-                          `http://localhost:5000/api/documentos/notificaciones/${n.id}`,
-                          { headers: { Authorization: `Bearer ${token}` } }
-                        );
-                        setNotificaciones(prev => prev.filter(item => item.id !== n.id));
-                      }}
-                    > &times;
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div className="text-muted text-center">No hay notificaciones</div>
-              )}
-            </div>
-          </div>
-        )}
       </nav >
 
-
       {/* Contenedor principal */}
-      < main className="container mt-5" style={{ maxWidth: "800px" }
-      }>
+      < main className="container mt-5 home-main">
         {/* Contenedor unificado de usuario + foto */}
+        {activeSection === 'user' && (
         < div className="card shadow mb-4 w-100" >
           <div className="card-header bg-white border-0 ">
             <div className="d-flex align-items-center gap-2">
-            <h4 className="mb-0" style={{ color: "#7A1737" }}>
+              <h4 className="mb-0 home-title">
               <i className="bi bi-person-circle me-2"></i>
               {/* Datos del usuario */}
               Datos del Usuario: {usuario ? usuario.usuario : 'Desconocido'}
@@ -340,16 +263,6 @@ function Home() {
             <button
               onClick={() => navigate('/editarUsuario', { state: { user: usuario } })}
               className="btn edit-user-btn"
-              style={{
-                backgroundColor: "#7A1737",
-                color: "#fff",
-                border: "none",
-                padding: "8px 20px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontWeight: "bold",
-                letterSpacing: "1px"
-              }}
             >
               {/* Botón Editar */}
               <i className="bi bi-pencil-square me-1"></i>
@@ -384,15 +297,9 @@ function Home() {
               {usuario?.foto_perfil ? (
                 <img
                   src={`http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`}
-                  className="img-fluid mb-3 rounded-3"  // cuadrado con esquinas redondeadas
+                  className="img-fluid mb-3 rounded-3 user-photo-img"  // cuadrado con esquinas redondeadas
                   alt="Foto de usuario"
                   crossOrigin="use-credentials"
-                  style={{
-                    width: "150px",
-                    height: "150px",
-                    objectFit: "cover",
-                    border: "2px solid #7A1737"
-                  }}
                 />
               ) : (
                 <div className="text-muted mb-3">No hay foto de perfil</div>
@@ -402,16 +309,15 @@ function Home() {
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/jpg"
-                className="form-control rounded-3 mb-2"
-                style={{ width: "100%", maxWidth: "200px" }}   // más ancho y alineado con la imagen
+                className="form-control rounded-3 mb-2 user-photo-input"
+                id="fotoPerfil"
                 onChange={e => setFotoPerfil(e.target.files[0])}
               />
 
               {/* Botón Subir Foto */}
               <button
                 type="button"
-                className="btn mb-2"
-                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737", width: "100%", maxWidth: "200px" }} // mismo ancho que el input
+                className="btn mb-2 user-photo-upload"
                 onClick={subirFotoPerfil}
               >
                 <i className="bi bi-cloud-arrow-up-fill me-1"></i>
@@ -420,11 +326,13 @@ function Home() {
             </div>
           </div>
         </div >
+        )}
 
         {/* Información Académica */}
+        {activeSection === 'academic' && (
         < div className="card shadow mb-4 w-100" >
           <div className="card-header bg-white border-0">
-            <h4 className="mb-0" style={{ color: "#7A1737" }}>
+            <h4 className="mb-0 home-title">
               <i className="bi bi-journal-text me-2"></i>
               Información Académica
             </h4>
@@ -439,8 +347,8 @@ function Home() {
               {/* Renderizado de cada nivel académico */ }
               return (
                 <div key={nivel} className="d-flex flex-wrap align-items-center mb-3 academic-level">
-                  <i className="bi bi-mortarboard-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-                  <label className="form-label mb-2 me-2 flex-shrink-0" style={{ minWidth: 160 }}>{nivel}</label>
+                  <i className="bi bi-mortarboard-fill fs-4 me-3 academic-icon"></i>
+                  <label className="form-label mb-2 me-2 flex-shrink-0 academic-label">{nivel}</label>
                   <div className="d-flex flex-grow-1 align-items-center">
 
                   {!documentoExistente ? (
@@ -449,14 +357,12 @@ function Home() {
                       <input
                         type="file"
                         accept=".pdf"
-                        className="form-control mb-2 me-2 flex-grow-1"
-                        style={{ flex: 1 }}
+                        className="form-control mb-2 me-2 flex-grow-1 academic-input"
                         onChange={e => setMap[idx](e.target.files[0])}
                       />
                       <button
                         type="button"
-                        className="btn mb-2"
-                        style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                        className="btn mb-2 academic-upload-btn"
                         onClick={() => subirArchivo(stateMap[idx], tipo)}
                       >
                         <i className="bi bi-cloud-arrow-up-fill me-1"></i>
@@ -472,44 +378,17 @@ function Home() {
                         href={`http://localhost:5000/uploads/academico/${usuario?.id_personal}/${encodeURIComponent(documentoExistente.archivo)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-sm"
-                        style={{
-                          backgroundColor: "#7A1737",
-                          color: "#fff",
-                          border: "none",
-                          padding: "6px 16px",
-                          fontSize: "0.875rem",
-                          borderRadius: "4px"
-                        }}
+                        className="btn btn-sm doc-view-btn"
                       >
                         Ver documento
                       </a>
                       <span
-                        className={`badge ${documentoExistente.cotejado ? "bg-success" : "bg-warning text-dark"}`}
-                        style={{
-                          padding: "6px 16px",
-                          fontSize: "0.875rem",
-                          borderRadius: "4px",
-
-                          minHeight: "32px", // Altura mínima para igualar los botones
-                          display: "inline-flex", // Cambia a flex para mejor alineación
-                          alignItems: "center", // Centra el texto verticalmente
-                          justifyContent: "center", // Centra el texto horizontalmente
-                          lineHeight: "1.5" // Ajusta la altura de línea para consistencia
-                        }}
+                        className={`badge ${documentoExistente.cotejado ? "bg-success" : "bg-warning text-dark"} doc-badge`}
                       >
                         {documentoExistente.cotejado ? "Cotejado" : "Pendiente"}
                       </span>
                       <button
-                        className="btn btn-sm"
-                        style={{
-                          backgroundColor: "#dc3545",
-                          color: "#fff",
-                          border: "none",
-                          padding: "6px 16px",
-                          fontSize: "0.875rem",
-                          borderRadius: "4px"
-                        }}
+                        className="btn btn-sm doc-delete-btn"
                         onClick={() => eliminarDocumento(documentoExistente.id)}
                       >
                         Eliminar
@@ -522,11 +401,13 @@ function Home() {
             })}
           </div>
         </div >
+        )}
 
         {/* Certificados */}
+        {activeSection === 'certs' && (
         <div className="card shadow mb-4 w-100">
           <div className="card-header bg-white border-0">
-            <h4 className="mb-0" style={{ color: "#7A1737" }}>
+            <h4 className="mb-0 home-title">
               <i className="bi bi-award-fill me-2"></i>
               Certificados
             </h4>
@@ -534,19 +415,17 @@ function Home() {
           <div className="card-body">
             {/* Nueva certificación */}
             <div className="d-flex flex-wrap align-items-center mb-3 new-certification">
-              <i className="bi bi-file-earmark-text-fill fs-4 me-3" style={{ color: "#7A1737" }}></i>
-              <label className="form-label mb-2 me-2 flex-shrink-0" style={{ minWidth: 160 }}>Nuevo certificado</label>
+              <i className="bi bi-file-earmark-text-fill fs-4 me-3 academic-icon"></i>
+              <label className="form-label mb-2 me-2 flex-shrink-0 academic-label">Nuevo certificado</label>
               <input
                 type="file"
                 accept=".pdf"
-                className="form-control mb-2 me-2 flex-grow-1"
-                style={{ flex: 1 }}
+                className="form-control mb-2 me-2 flex-grow-1 academic-input"
                 onChange={e => setCertificados(e.target.files[0])}
               />
               <button
                 type="button"
-                className="btn mb-2"
-                style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
+                className="btn mb-2 academic-upload-btn"
                 onClick={() => subirArchivo(Certificados, "certificados")}
               >
                 <i className="bi bi-cloud-arrow-up-fill me-1"></i>
@@ -561,50 +440,24 @@ function Home() {
             {usuario && documentos.filter(doc => doc.tipo === "certificados").map((doc, index) => (
               <div key={doc.id} className="d-flex align-items-center mb-2 gap-1 certificados-row">
                 <div className="d-flex align-items-center flex-grow-1 document-info">
-                  <i className="bi bi-file-earmark-text fs-5 me-2" style={{ color: "#7A1737" }}></i>
+                  <i className="bi bi-file-earmark-text fs-5 me-2 doc-icon"></i>
                   <span className="me-auto">{doc.nombre_original || doc.archivo}</span>
                 </div>
                 <a
                   href={`http://localhost:5000/uploads/academico/${usuario.id_personal}/${encodeURIComponent(doc.archivo)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-sm"
-                  style={{
-                    backgroundColor: "#7A1737",
-                    color: "#fff",
-                    border: "none",
-                    padding: "6px 16px",
-                    fontSize: "0.875rem",
-                    borderRadius: "4px"
-                  }}
+                  className="btn btn-sm doc-view-btn"
                 >
                   Ver
                 </a>
                 <span
-                  className={`badge ${doc.cotejado ? "bg-success" : "bg-warning text-dark"}`}
-                  style={{
-                    padding: "6px 16px",
-                    fontSize: "0.875rem",
-                    borderRadius: "4px",
-                    minHeight: "32px",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    lineHeight: "1.5"
-                  }}
+                  className={`badge ${doc.cotejado ? "bg-success" : "bg-warning text-dark"} doc-badge`}
                 >
                   {doc.cotejado ? "Cotejado" : "Pendiente"}
                 </span>
                 <button
-                  className="btn btn-sm"
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    padding: "6px 16px",
-                    fontSize: "0.875rem",
-                    borderRadius: "4px"
-                  }}
+                  className="btn btn-sm doc-delete-btn"
                   onClick={() => eliminarDocumento(doc.id)}
                 >
                   Eliminar
@@ -613,8 +466,9 @@ function Home() {
             ))}
           </div>
         </div>
+        )}
       </main >
-    </>
+    </div>
   );
 }
 
