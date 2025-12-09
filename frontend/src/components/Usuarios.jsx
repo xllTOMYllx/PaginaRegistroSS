@@ -151,15 +151,26 @@ function Miembros() {
                       {usuario.rol === 2 ? 'Supervisor' : usuario.rol === 3 ? 'Admin' : 'Usuario'}
                     </span>
                     {/* Filtro para el rol 2 (supervisor) donde se muestran a que grupo pertenece cada usuario */}
-                    <span className="d-block mb-2">
-                      {usuario.rol === 2 && usuario.grupo ? (
-                        <span className="grupo-etiqueta">
-                          Grupo: {usuario.grupo.nombre_grupo} ({usuario.color_grupo || "Sin color"})
-                        </span>
-                      ) : (
-                        <span className="text-muted">Sin asignar</span>
-                      )}
-                    </span>
+                    {usuario.grupos && usuario.grupos.length > 0 && (
+                      <div className="d-block mb-2">
+                        {usuario.grupos.map((grupo, index) => {
+                          // Generar un color basado en el id_grupo para distinguir visualmente
+                          const colors = ['#8B4513', '#CD853F', '#DEB887', '#D2691E', '#A0522D', '#BC8F8F'];
+                          const colorIndex = grupo.id_grupo % colors.length;
+                          const backgroundColor = colors[colorIndex];
+                          
+                          return (
+                            <span 
+                              key={grupo.id_grupo}
+                              className="badge me-1 mb-1"
+                              style={{ backgroundColor, color: '#fff', fontSize: '0.75rem' }}
+                            >
+                              {grupo.nombre_grupo}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
 
                     <p className="mb-1">
                       <strong>CURP:</strong> {usuario.curp || "No disponible"}

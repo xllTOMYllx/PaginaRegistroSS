@@ -443,12 +443,16 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
     // Si es supervisor (rol 2), solo ver miembros de su grupo
     if (req.user.rol === 2) {
       query = `
-        SELECT DISTINCT p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
-               p.usuario, p.correo, p.curp, p.rfc, p.estudios, p.rol, p.foto_perfil, p.status
+        SELECT p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
+               p.usuario, p.correo, p.curp, p.rfc, p.estudios, p.rol, p.foto_perfil, p.status,
+               json_agg(json_build_object('id_grupo', g.id_grupo, 'nombre_grupo', g.nombre) 
+                        ORDER BY g.nombre) as grupos
         FROM personal p
         INNER JOIN grupo_miembros gm ON p.id_personal = gm.id_personal
         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
         WHERE g.id_supervisor = $1 AND p.rol = ANY($2)
+        GROUP BY p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
+                 p.usuario, p.correo, p.curp, p.rfc, p.estudios, p.rol, p.foto_perfil, p.status
         ORDER BY p.apellido_paterno ASC, p.apellido_materno ASC, p.nombre ASC
       `;
       queryParams = [req.user.id_personal, rolesPermitidos];
@@ -583,10 +587,18 @@ router.get("/buscar", authenticateToken, async (req, res) => {
     // Si es supervisor (rol 2), solo buscar en su grupo
     if (req.user.rol === 2) {
       query = `
-        SELECT DISTINCT p.* FROM personal p
+        SELECT p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
+               p.usuario, p.contrasena, p.correo, p.curp, p.rfc, p.estudios, 
+               p.rol, p.foto_perfil, p.status,
+               json_agg(json_build_object('id_grupo', g.id_grupo, 'nombre_grupo', g.nombre) 
+                        ORDER BY g.nombre) as grupos
+        FROM personal p
         INNER JOIN grupo_miembros gm ON p.id_personal = gm.id_personal
         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
         WHERE g.id_supervisor = $${paramIndex} AND ${whereCondition}
+        GROUP BY p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
+                 p.usuario, p.contrasena, p.correo, p.curp, p.rfc, p.estudios, 
+                 p.rol, p.foto_perfil, p.status
         ORDER BY p.apellido_paterno ASC, p.apellido_materno ASC, p.nombre ASC
         LIMIT 50
       `;
