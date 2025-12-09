@@ -122,7 +122,7 @@ function GrupoMiembros() {
   return (
     <div className="d-flex vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column">
+      <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar hideCrear={true} />
         <div className="container py-4">
           <div className="d-flex justify-content-between align-items-center mb-4">
