@@ -116,14 +116,9 @@ function UsuarioDetalle() {
     return <p className="text-center mt-5">Cargando información...</p>;
   }
 
-  // Separar documentos por tipo
-  const documentosAcademicos = usuario.documentos?.filter(doc =>
-    ["secundaria", "bachillerato", "universidad"].includes(doc.tipo.toLowerCase())
-  ) || [];
-
-  const certificados = usuario.documentos?.filter(doc =>
-    doc.tipo.toLowerCase().includes("certificado")
-  ) || [];
+  // Separar documentos por flag desde backend
+  const certificados = usuario.documentos?.filter(doc => doc.es_certificado === true) || [];
+  const documentosAcademicos = usuario.documentos?.filter(doc => doc.es_certificado !== true) || [];
 
   // Orden documentos académicos
   const ordenAcademico = { secundaria: 1, bachillerato: 2, universidad: 3 };
