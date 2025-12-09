@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import GmailCredentialsModal from "./GmailCredentialsModal";
 import { formatEstudios } from '../utils/validations';
+import { GROUP_BADGE_COLORS } from '../utils/config';
 import '../css/UsuarioDetalle.css'
 
 function UsuarioDetalle() {
@@ -184,6 +185,26 @@ function UsuarioDetalle() {
                 <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>Estudios:</strong> {formatEstudios(usuario.estudios)}
                 </p>
+                {/* Mostrar grupos del usuario si existen */}
+                {usuario.grupos && usuario.grupos.length > 0 && (
+                  <div className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
+                    <strong>Grupos:</strong>{' '}
+                    {usuario.grupos.map((grupo) => {
+                      const colorIndex = grupo.id_grupo % GROUP_BADGE_COLORS.length;
+                      const backgroundColor = GROUP_BADGE_COLORS[colorIndex];
+                      
+                      return (
+                        <span 
+                          key={grupo.id_grupo}
+                          className="badge me-1 mb-1"
+                          style={{ backgroundColor, color: '#fff', fontSize: '0.75rem' }}
+                        >
+                          {grupo.nombre_grupo}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
 

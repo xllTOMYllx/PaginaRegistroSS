@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import { formatEstudios } from '../utils/validations';
+import { GROUP_BADGE_COLORS } from '../utils/config';
 import '../css/Usuarios.css'
 import { FaUser, FaUserShield, FaArrowLeft } from 'react-icons/fa';
 
@@ -151,15 +152,25 @@ function Miembros() {
                       {usuario.rol === 2 ? 'Supervisor' : usuario.rol === 3 ? 'Admin' : 'Usuario'}
                     </span>
                     {/* Filtro para el rol 2 (supervisor) donde se muestran a que grupo pertenece cada usuario */}
-                    <span className="d-block mb-2">
-                      {usuario.rol === 2 && usuario.grupo ? (
-                        <span className="grupo-etiqueta">
-                          Grupo: {usuario.grupo.nombre_grupo} ({usuario.color_grupo || "Sin color"})
-                        </span>
-                      ) : (
-                        <span className="text-muted">Sin asignar</span>
-                      )}
-                    </span>
+                    {usuario.grupos && usuario.grupos.length > 0 && (
+                      <div className="d-block mb-2">
+                        {usuario.grupos.map((grupo) => {
+                          // Generar un color basado en el id_grupo para distinguir visualmente
+                          const colorIndex = grupo.id_grupo % GROUP_BADGE_COLORS.length;
+                          const backgroundColor = GROUP_BADGE_COLORS[colorIndex];
+                          
+                          return (
+                            <span 
+                              key={grupo.id_grupo}
+                              className="badge me-1 mb-1"
+                              style={{ backgroundColor, color: '#fff', fontSize: '0.75rem' }}
+                            >
+                              {grupo.nombre_grupo}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
 
                     <p className="mb-1">
                       <strong>CURP:</strong> {usuario.curp || "No disponible"}

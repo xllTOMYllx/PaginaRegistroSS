@@ -8,4 +8,14 @@ export const API_ENDPOINTS = {
   BUSCAR_AVANZADO: `${API_BASE_URL}/api/users/buscar-avanzado`,
 };
 
+// Color palette for group badges
+export const GROUP_BADGE_COLORS = [
+  '#8B4513', // SaddleBrown
+  '#CD853F', // Peru
+  '#DEB887', // BurlyWood
+  '#D2691E', // Chocolate
+  '#A0522D', // Sienna
+  '#BC8F8F'  // RosyBrown
+];
+
 export default API_ENDPOINTS;
