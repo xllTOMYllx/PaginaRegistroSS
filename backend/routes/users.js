@@ -523,6 +523,20 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
     // Obtener el usuario
     const user = userResult.rows[0];
 
+    // Obtener grupos del usuario (si aplica)
+    let grupos = [];
+    if (user.rol === 1) {
+      const gruposResult = await pool.query(
+        `SELECT g.id_grupo, g.nombre as nombre_grupo
+         FROM grupos g
+         INNER JOIN grupo_miembros gm ON g.id_grupo = gm.id_grupo
+         WHERE gm.id_personal = $1
+         ORDER BY g.nombre`,
+        [id]
+      );
+      grupos = gruposResult.rows;
+    }
+
     // Obtener documentos del usuario
     const docsResult = await pool.query(
       `SELECT id, tipo, archivo, cotejado, es_certificado, fecha_subida
@@ -533,6 +547,7 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
     // Responder con datos del usuario y sus documentos
     res.json({
       ...user,
+      grupos: grupos,
       documentos: docsResult.rows
     });
   } catch (error) {// Manejo de errores

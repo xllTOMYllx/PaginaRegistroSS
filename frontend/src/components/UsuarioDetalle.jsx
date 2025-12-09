@@ -184,6 +184,27 @@ function UsuarioDetalle() {
                 <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>Estudios:</strong> {formatEstudios(usuario.estudios)}
                 </p>
+                {/* Mostrar grupos del usuario si existen */}
+                {usuario.grupos && usuario.grupos.length > 0 && (
+                  <div className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
+                    <strong>Grupos:</strong>{' '}
+                    {usuario.grupos.map((grupo, index) => {
+                      const colors = ['#8B4513', '#CD853F', '#DEB887', '#D2691E', '#A0522D', '#BC8F8F'];
+                      const colorIndex = grupo.id_grupo % colors.length;
+                      const backgroundColor = colors[colorIndex];
+                      
+                      return (
+                        <span 
+                          key={grupo.id_grupo}
+                          className="badge me-1 mb-1"
+                          style={{ backgroundColor, color: '#fff', fontSize: '0.75rem' }}
+                        >
+                          {grupo.nombre_grupo}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
 
