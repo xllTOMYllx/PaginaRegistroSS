@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import { formatEstudios } from '../utils/validations';
+import { GROUP_BADGE_COLORS } from '../utils/config';
 import '../css/Usuarios.css'
 import { FaUser, FaUserShield, FaArrowLeft } from 'react-icons/fa';
 
@@ -153,11 +154,10 @@ function Miembros() {
                     {/* Filtro para el rol 2 (supervisor) donde se muestran a que grupo pertenece cada usuario */}
                     {usuario.grupos && usuario.grupos.length > 0 && (
                       <div className="d-block mb-2">
-                        {usuario.grupos.map((grupo, index) => {
+                        {usuario.grupos.map((grupo) => {
                           // Generar un color basado en el id_grupo para distinguir visualmente
-                          const colors = ['#8B4513', '#CD853F', '#DEB887', '#D2691E', '#A0522D', '#BC8F8F'];
-                          const colorIndex = grupo.id_grupo % colors.length;
-                          const backgroundColor = colors[colorIndex];
+                          const colorIndex = grupo.id_grupo % GROUP_BADGE_COLORS.length;
+                          const backgroundColor = GROUP_BADGE_COLORS[colorIndex];
                           
                           return (
                             <span 

@@ -603,7 +603,7 @@ router.get("/buscar", authenticateToken, async (req, res) => {
     if (req.user.rol === 2) {
       query = `
         SELECT p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
-               p.usuario, p.contrasena, p.correo, p.curp, p.rfc, p.estudios, 
+               p.usuario, p.correo, p.curp, p.rfc, p.estudios, 
                p.rol, p.foto_perfil, p.status,
                json_agg(json_build_object('id_grupo', g.id_grupo, 'nombre_grupo', g.nombre) 
                         ORDER BY g.nombre) as grupos
@@ -612,7 +612,7 @@ router.get("/buscar", authenticateToken, async (req, res) => {
         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
         WHERE g.id_supervisor = $${paramIndex} AND ${whereCondition}
         GROUP BY p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
-                 p.usuario, p.contrasena, p.correo, p.curp, p.rfc, p.estudios, 
+                 p.usuario, p.correo, p.curp, p.rfc, p.estudios, 
                  p.rol, p.foto_perfil, p.status
         ORDER BY p.apellido_paterno ASC, p.apellido_materno ASC, p.nombre ASC
         LIMIT 50

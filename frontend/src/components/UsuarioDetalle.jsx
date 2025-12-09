@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import GmailCredentialsModal from "./GmailCredentialsModal";
 import { formatEstudios } from '../utils/validations';
+import { GROUP_BADGE_COLORS } from '../utils/config';
 import '../css/UsuarioDetalle.css'
 
 function UsuarioDetalle() {
@@ -188,10 +189,9 @@ function UsuarioDetalle() {
                 {usuario.grupos && usuario.grupos.length > 0 && (
                   <div className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                     <strong>Grupos:</strong>{' '}
-                    {usuario.grupos.map((grupo, index) => {
-                      const colors = ['#8B4513', '#CD853F', '#DEB887', '#D2691E', '#A0522D', '#BC8F8F'];
-                      const colorIndex = grupo.id_grupo % colors.length;
-                      const backgroundColor = colors[colorIndex];
+                    {usuario.grupos.map((grupo) => {
+                      const colorIndex = grupo.id_grupo % GROUP_BADGE_COLORS.length;
+                      const backgroundColor = GROUP_BADGE_COLORS[colorIndex];
                       
                       return (
                         <span 
