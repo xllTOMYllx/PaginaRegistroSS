@@ -60,9 +60,9 @@ router.post('/register', async (req, res) => {
   //Revisar esto y lo de abajo(tomas)
   ROL = parseInt(ROL);
 
-  //Validacion de que solo se inserten ROL 1, 2 o 3
-  if (![1, 2, 3].includes(ROL)) {
-    return res.status(400).json({ error: 'Rol inválido. Solo se permite 1 o 3.' });
+  //Validacion de que solo se inserten ROL 1, 2, 3 o 4
+  if (![1, 2, 3, 4].includes(ROL)) {
+    return res.status(400).json({ error: 'Rol inválido. Solo se permite 1, 2, 3 o 4.' });
   }
 
   // Validaciones
@@ -76,9 +76,9 @@ router.post('/register', async (req, res) => {
   if (validarCURP(CURP)) errores.push(validarCURP(CURP));
   if (validarRFC(RFC)) errores.push(validarRFC(RFC));
 
-  //Validacion de que solo se inserten ROL 1, 2 o 3
-  if (![1, 2, 3].includes(ROL)) {
-    return res.status(400).json({ error: 'Rol inválido. Solo se permite 1, 2 y 3.' });
+  //Validacion de que solo se inserten ROL 1, 2, 3 o 4
+  if (![1, 2, 3, 4].includes(ROL)) {
+    return res.status(400).json({ error: 'Rol inválido. Solo se permite 1, 2, 3 o 4.' });
   }
   // Si hay errores, responder con todos los errores encontrados
   //if (errores.length > 0) {
@@ -226,13 +226,13 @@ router.put('/:id/password', authenticateToken, async (req, res) => {
     if (userResult.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
     const user = userResult.rows[0];
 
-    // Permisos: el usuario puede cambiar su propia contraseña; rol 3 (Jefe) puede cambiar cualquiera
-    if (req.user.id_personal !== user.id_personal && req.user.rol !== 3) {
+    // Permisos: el usuario puede cambiar su propia contraseña; rol 3/4 puede cambiar cualquiera
+    if (req.user.id_personal !== user.id_personal && ![3, 4].includes(req.user.rol)) {
       return res.status(403).json({ error: 'Acceso denegado' });
     }
 
-    // Si no es admin (rol 3), se requiere currentPassword
-    if (req.user.rol !== 3) {
+    // Si no es admin (rol 3/4), se requiere currentPassword
+    if (![3, 4].includes(req.user.rol)) {
       if (!currentPassword) return res.status(400).json({ error: 'Contraseña actual requerida' });
       const match = await bcrypt.compare(currentPassword, user.contrasena);
       if (!match) return res.status(401).json({ error: 'Contraseña actual incorrecta' });
@@ -353,8 +353,8 @@ function authenticateToken(req, res, next) {
 // Middleware para verificar si el usuario es Jefe o Usuario tipo 2
 function isJefeOUsuario2(req, res, next) {
   if (!req.user) return res.status(401).json({ error: 'No autenticado' });
-  if (![2, 3].includes(req.user.rol)) {
-    return res.status(403).json({ error: 'Acceso denegado: solo Jefe o Usuario tipo 2' });
+  if (![2, 3, 4].includes(req.user.rol)) {
+    return res.status(403).json({ error: 'Acceso denegado: solo Jefe, Administrador (rol 4) o Usuario tipo 2' });
   }
   next();
 }
@@ -431,6 +431,8 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
   // Determinar qué roles puede ver basándose SOLO en el usuario autenticado
   if (req.user.rol == 3) {
     rolesPermitidos = [1, 2]; // admin (rol 3) ve base (rol 1) y supervisores (rol 2)
+  } else if (req.user.rol == 4) {
+    rolesPermitidos = [1, 2, 3]; // admin (rol 4) ve base, supervisores y jefes
   } else if (req.user.rol == 2) {
     rolesPermitidos = [1]; // supervisor (rol 2) ve solo base (rol 1)
   } else {
@@ -453,7 +455,7 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
       `;
       queryParams = [req.user.id_personal, rolesPermitidos];
     } else {
-      // Admin ve todos
+      // Admin/Jefe ve todos
       query = `
         SELECT id_personal, nombre, apellido_paterno, apellido_materno,
                usuario, correo, curp, rfc, estudios, rol, foto_perfil, status
@@ -553,6 +555,8 @@ router.get("/buscar", authenticateToken, async (req, res) => {
     let rolesPermitidos = [];
     if (req.user.rol == 3) {
       rolesPermitidos = [1, 2]; // rol 3 ve roles 1 y 2
+    } else if (req.user.rol == 4) {
+      rolesPermitidos = [1, 2, 3]; // rol 4 ve roles 1, 2 y 3
     } else if (req.user.rol == 2) {
       rolesPermitidos = [1]; // rol 2 ve solo rol 1
     } else {
@@ -618,8 +622,10 @@ router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res)
   try {
     // Determinar qué roles puede ver el usuario autenticado
     let rolesPermitidos = [];
-    if (req.user.rol === 3 || req.user.rol === 4) {
-      rolesPermitidos = [1, 2]; // rol 3 y 4 ven roles 1 y 2
+    if (req.user.rol === 3) {
+      rolesPermitidos = [1, 2]; // rol 3 ve roles 1 y 2
+    } else if (req.user.rol === 4) {
+      rolesPermitidos = [1, 2, 3]; // rol 4 ve roles 1, 2 y 3
     } else {
       return res.status(403).json({ error: 'Acceso denegado' });
     }
@@ -791,14 +797,14 @@ router.put('/desbloquear/:id', authenticateToken, isJefeOUsuario2, async (req, r
     res.status(500).json({ error: "Error al desbloquear el usuario." });
   }
 });
-// Recuperar usuario y contraseña (solo rol 3)
+// Recuperar usuario y contraseña (solo rol 3/4)
 router.get('/recuperar/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Verificar que el usuario autenticado sea rol 3
-    if (req.user.rol !== 3) {
-      return res.status(403).json({ error: 'Acceso denegado: solo rol 3' });
+    // Verificar que el usuario autenticado sea rol 3 o 4
+    if (![3, 4].includes(req.user.rol)) {
+      return res.status(403).json({ error: 'Acceso denegado: solo rol 3 o 4' });
     }
 
     // Buscar usuario por id
@@ -825,14 +831,14 @@ router.get('/recuperar/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Endpoint: generar contraseña temporal para un id (solo rol 3)
+// Endpoint: generar contraseña temporal para un id (solo rol 3/4)
 router.post('/recuperar/generar-temporal/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Solo rol 3 puede usarlo
-    if (!req.user || req.user.rol !== 3) {
-      return res.status(403).json({ error: 'Acceso denegado: solo rol 3' });
+    // Solo rol 3 o 4 puede usarlo
+    if (!req.user || ![3, 4].includes(req.user.rol)) {
+      return res.status(403).json({ error: 'Acceso denegado: solo rol 3 o 4' });
     }
 
     // Verificar existencia del usuario

@@ -65,6 +65,10 @@ function Sesion() {
         navigate('/Usuarios', { state: { user: usuario } });
       }
 
+      if (usuario.rol === 4) {
+        navigate('/homeadmin4', { state: { user: usuario } });
+      }
+
 
     } catch (error) {
       if (error.response) {

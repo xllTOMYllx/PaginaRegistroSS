@@ -156,7 +156,7 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
           {/* Navegación */}
           <div className="nav flex-column">
             <button
-              onClick={() => { navigate('/homeadmin'); if (window.innerWidth < 992) setIsOpen(false); }}
+              onClick={() => { navigate(currentAdmin?.rol === 4 ? '/homeadmin4' : '/homeadmin'); if (window.innerWidth < 992) setIsOpen(false); }}
               className="btn mb-3 w-100 sidebar-btn"
               style={{
                 fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
@@ -181,7 +181,7 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
               {isCollapsed ? "👥" : "👥 Miembros"}
             </button>
             {/* Botón Crear (solo visible para rol 3 - Jefe) */}
-            {currentAdmin && currentAdmin.rol === 3 && (
+            {currentAdmin && [3, 4].includes(currentAdmin.rol) && (
               <button
                 onClick={() => { navigate('/crearUsuario'); if (window.innerWidth < 992) setIsOpen(false); }}
                 className="btn mb-2 w-100 sidebar-btn"
