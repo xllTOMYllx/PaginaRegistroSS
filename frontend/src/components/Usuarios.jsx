@@ -108,7 +108,11 @@ function Miembros() {
           {usuarios.length === 0 && (
             <div className="text-center py-4">Cargando usuarios...</div>
           )}
+          {/* Lista de usuarios, estos se filtran por rol y grupo asignado, Rol 2 (Supervisor) muestra los usuarios
+          por cada grupo al que fue asignado (se pueden asignar colores o etiquetas para identificar a que grupo 
+          pertenece cada usuario), rol 3 (Admin) muestra todos los usuarios tanto rol 1 como rol 2 */}
           <div className="row">
+
             {usuarios.map((usuario) => (
               <div key={usuario.id_personal} className="col-md-4 mb-4">
                 <div
@@ -139,11 +143,22 @@ function Miembros() {
                     <span
                       className="user-status"
                       style={{
-                        backgroundColor: usuario.rol === 2 ? '#4A2C2A' : '#8B6F47',
+                        backgroundColor: usuario.rol === 2 || usuario.rol === 3 ? '#4A2C2A' : '#8B6F47',
                       }}
                     >
-                      {usuario.rol === 2 ? <FaUserShield className="me-1" /> : <FaUser className="me-1" />}
-                      {usuario.rol === 2 ? 'Admin' : 'Usuario'}
+                      {/* Ícono y texto según el rol, para rol 2 = supervisor y para rol 3 = Admin*/}
+                      {usuario.rol === 2 || usuario.rol === 3 ? <FaUserShield className="me-1" /> : <FaUser className="me-1" />}
+                      {usuario.rol === 2 ? 'Supervisor' : usuario.rol === 3 ? 'Admin' : 'Usuario'}
+                    </span>
+                    {/* Filtro para el rol 2 (supervisor) donde se muestran a que grupo pertenece cada usuario */}
+                    <span className="d-block mb-2">
+                      {usuario.rol === 2 && usuario.grupo ? (
+                        <span className="grupo-etiqueta">
+                          Grupo: {usuario.grupo.nombre_grupo} ({usuario.color_grupo || "Sin color"})
+                        </span>
+                      ) : (
+                        <span className="text-muted">Sin asignar</span>
+                      )}
                     </span>
 
                     <p className="mb-1">

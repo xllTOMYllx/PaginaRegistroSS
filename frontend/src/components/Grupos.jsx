@@ -149,14 +149,15 @@ function Grupos() {
   return (
     <div className="d-flex vh-100">
       <Sidebar admin={admin} cerrarSesion={cerrarSesion} />
-      <main className="flex-grow-1 d-flex flex-column">
+      <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar hideCrear={true} />
         <div className="container py-4">
-          <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="mb-4">
             <div>
+              {/* Botón para regresar a Homeadmin, permanece oculto de momento*/}
               <button 
                 className="btn me-2" 
-                style={{ backgroundColor: "#7A1737", color: "#fff" }}
+                style={{ backgroundColor: "#7A1737", color: "#fff", display: 'none' }}
                 onClick={() => navigate('/homeadmin')}
               >
                 <FaArrowLeft className="me-2" />
@@ -167,6 +168,8 @@ function Grupos() {
               <FaUsers className="me-2" />
               Gestión de Grupos
             </h2>
+            {/* Botón para crear nuevo grupo, con la condicion de que solo se muestre para el rol 3 (Admin) y permanece oculto para el rol 2(Supervisor) */}
+            {admin?.rol === 3 && (
             <button
               className="btn btn-primary"
               style={{ backgroundColor: '#7A1737', borderColor: '#7A1737' }}
@@ -175,6 +178,7 @@ function Grupos() {
               <FaPlus className="me-2" />
               Crear Grupo
             </button>
+            )}
           </div>
 
           {mensaje && (
