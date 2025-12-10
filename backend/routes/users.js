@@ -829,9 +829,24 @@ router.get('/recuperar/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Verificar que el usuario autenticado sea rol 3 o 4
-    if (![3, 4].includes(req.user.rol)) {
-      return res.status(403).json({ error: 'Acceso denegado: solo rol 3 o 4' });
+    // Permisos:
+    // - Rol 3/4: puede consultar el usuario
+    // - Rol 2: solo si el usuario objetivo (rol 1) pertenece a sus grupos
+    if (!req.user) return res.status(401).json({ error: 'No autenticado' });
+    if (req.user.rol === 2) {
+      const checkGrupo = await pool.query(
+        `SELECT COUNT(*)::int AS count
+         FROM grupo_miembros gm
+         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+         INNER JOIN personal p ON gm.id_personal = p.id_personal
+         WHERE gm.id_personal = $1 AND g.id_supervisor = $2 AND p.rol = 1`,
+        [id, req.user.id_personal]
+      );
+      if (checkGrupo.rows[0].count === 0) {
+        return res.status(403).json({ error: 'Acceso denegado' });
+      }
+    } else if (![3, 4].includes(req.user.rol)) {
+      return res.status(403).json({ error: 'Acceso denegado' });
     }
 
     // Buscar usuario por id
@@ -846,11 +861,8 @@ router.get('/recuperar/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    // Devolver datos
-    res.json({
-      usuario: result.rows[0].usuario,
-      contrasena: result.rows[0].contrasena // ⚠️ Considera enviar solo la contraseña temporal o hasheada
-    });
+    // No devolver la contraseña almacenada (hash). Solo el usuario.
+    res.json({ usuario: result.rows[0].usuario });
 
   } catch (error) {
     console.error('Error al recuperar usuario/contraseña:', error);
@@ -863,9 +875,27 @@ router.post('/recuperar/generar-temporal/:id', authenticateToken, async (req, re
   const { id } = req.params;
 
   try {
-    // Solo rol 3 o 4 puede usarlo
-    if (!req.user || ![3, 4].includes(req.user.rol)) {
-      return res.status(403).json({ error: 'Acceso denegado: solo rol 3 o 4' });
+    // Permisos:
+    // - Rol 3 o 4: puede generar para cualquier usuario
+    // - Rol 2 (supervisor): solo para usuarios de rol 1 que pertenezcan a sus grupos
+    if (!req.user) {
+      return res.status(401).json({ error: 'No autenticado' });
+    }
+
+    if (req.user.rol === 2) {
+      const checkGrupo = await pool.query(
+        `SELECT COUNT(*)::int AS count
+         FROM grupo_miembros gm
+         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+         INNER JOIN personal p ON gm.id_personal = p.id_personal
+         WHERE gm.id_personal = $1 AND g.id_supervisor = $2 AND p.rol = 1`,
+        [id, req.user.id_personal]
+      );
+      if (checkGrupo.rows[0].count === 0) {
+        return res.status(403).json({ error: 'Acceso denegado: solo puedes recuperar contraseñas de tus usuarios (rol 1)' });
+      }
+    } else if (![3, 4].includes(req.user.rol)) {
+      return res.status(403).json({ error: 'Acceso denegado' });
     }
 
     // Verificar existencia del usuario
@@ -882,7 +912,7 @@ router.post('/recuperar/generar-temporal/:id', authenticateToken, async (req, re
     // Actualizar contraseña en DB
     await pool.query('UPDATE personal SET contrasena = $1 WHERE id_personal = $2', [hashed, id]);
 
-    // Devolver contraseña temporal al admin
+    // Devolver contraseña temporal
     res.json({
       usuario: user.usuario,
       temporal: tempPassword
