@@ -306,6 +306,9 @@ function Home() {
               )}
 
               {/* Input y botón para subir nueva foto */}
+              <div className="alert alert-info py-1 mb-2" role="alert" style={{ fontSize: '0.85rem' }}>
+                Formatos permitidos: JPG o PNG.
+              </div>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/jpg"
@@ -338,6 +341,9 @@ function Home() {
             </h4>
           </div>
           <div className="card-body">
+            <div className="alert alert-info py-1 mb-3" role="alert" style={{ fontSize: '0.85rem' }}>
+              Formato permitido: PDF únicamente.
+            </div>
             {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
               const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
               const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
@@ -413,6 +419,9 @@ function Home() {
             </h4>
           </div>
           <div className="card-body">
+            <div className="alert alert-info py-1 mb-3" role="alert" style={{ fontSize: '0.85rem' }}>
+              Formato permitido: PDF únicamente.
+            </div>
             {/* Nueva certificación */}
             <div className="d-flex flex-wrap align-items-center mb-3 new-certification">
               <i className="bi bi-file-earmark-text-fill fs-4 me-3 academic-icon"></i>
