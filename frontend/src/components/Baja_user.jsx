@@ -127,7 +127,7 @@ function Baja_user() {
                 ) : (
                   <tr>
                     <td colSpan="8" className="text-center">
-                      No hay usuarios con rol 1
+                      No se encontraron usuarios.
                     </td>
                   </tr>
                 )}
