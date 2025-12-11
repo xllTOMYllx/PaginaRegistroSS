@@ -459,13 +459,26 @@ router.get('/rol/:rol', authenticateToken, isJefeOUsuario2, async (req, res) => 
       `;
       queryParams = [req.user.id_personal, rolesPermitidos];
     } else {
-      // Admin/Jefe ve todos
+      // Admin/Jefe ve todos CON grupos
+      // Necesita traer:
+      // - Para supervisores (rol 2): los grupos que supervisa
+      // - Para usuarios (rol 1): los grupos a los que pertenece
       query = `
-        SELECT id_personal, nombre, apellido_paterno, apellido_materno,
-               usuario, correo, curp, rfc, estudios, rol, foto_perfil, status
-        FROM personal
-        WHERE rol = ANY($1)
-        ORDER BY apellido_paterno ASC, apellido_materno ASC, nombre ASC
+        SELECT p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
+               p.usuario, p.correo, p.curp, p.rfc, p.estudios, p.rol, p.foto_perfil, p.status,
+               json_agg(json_build_object('id_grupo', g.id_grupo, 'nombre_grupo', g.nombre)
+                        ORDER BY g.nombre) FILTER (WHERE g.id_grupo IS NOT NULL) AS grupos
+        FROM personal p
+        LEFT JOIN (
+          SELECT id_supervisor AS id_personal, id_grupo, nombre FROM grupos          -- grupos que supervisa
+          UNION ALL
+          SELECT gm.id_personal, g.id_grupo, g.nombre
+          FROM grupo_miembros gm INNER JOIN grupos g ON gm.id_grupo = g.id_grupo      -- grupos donde es miembro
+        ) g ON p.id_personal = g.id_personal
+        WHERE p.rol = ANY($1)
+        GROUP BY p.id_personal, p.nombre, p.apellido_paterno, p.apellido_materno,
+                 p.usuario, p.correo, p.curp, p.rfc, p.estudios, p.rol, p.foto_perfil, p.status
+        ORDER BY p.apellido_paterno, p.apellido_materno, p.nombre;
       `;
       queryParams = [rolesPermitidos];
     }
@@ -501,6 +514,7 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
         `SELECT COUNT(*) as count
          FROM grupo_miembros gm
          INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+         INNER JOIN personal p ON gm.id_personal = p.id_personal
          WHERE gm.id_personal = $1 AND g.id_supervisor = $2`,
         [id, req.user.id_personal]
       );
@@ -529,11 +543,20 @@ router.get('/usuarios/:id', authenticateToken, async (req, res) => {
     let grupos = [];
     if (user.rol === 1) {
       const gruposResult = await pool.query(
-        `SELECT g.id_grupo, g.nombre as nombre_grupo
+        `SELECT g.id_grupo, g.nombre AS nombre_grupo
          FROM grupos g
          INNER JOIN grupo_miembros gm ON g.id_grupo = gm.id_grupo
          WHERE gm.id_personal = $1
          ORDER BY g.nombre`,
+        [id]
+      );
+      grupos = gruposResult.rows;
+    } else if (user.rol === 2) {
+      const gruposResult = await pool.query(
+        `SELECT id_grupo, nombre AS nombre_grupo
+         FROM grupos
+         WHERE id_supervisor = $1
+         ORDER BY nombre`,
         [id]
       );
       grupos = gruposResult.rows;

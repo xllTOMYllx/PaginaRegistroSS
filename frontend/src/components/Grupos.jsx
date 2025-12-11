@@ -279,6 +279,7 @@ function Grupos() {
                 </h5>
                 <button type="button" className="btn-close btn-close-white" onClick={handleCloseModal}></button>
               </div>
+              {/* Opcion para darle un nombre al grupo, se convierte automaticamente a mayusculas */}
               <div className="modal-body">
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
@@ -287,7 +288,7 @@ function Grupos() {
                       type="text"
                       className="form-control"
                       value={formData.nombre}
-                      onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, nombre: e.target.value.toUpperCase() })}
                       required
                     />
                   </div>
