@@ -1,0 +1,62 @@
+/* Estilos específicos para HomeAdmin4 */
+.homeadmin-container .admin-container {
+  max-width: 800px;
+}
+
+.admin-heading {
+  color: #7a1737;
+}
+
+.primary-btn {
+  background-color: #7a1737;
+  color: #fff;
+  border: 1px solid #7a1737;
+}
+
+.primary-btn:hover,
+.view-btn:hover {
+  background-color: #5a0f2a;
+  border-color: #5a0f2a;
+  color: #fff;
+}
+
+.admin-photo {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border: 2px solid #7a1737;
+}
+
+.upload-input,
+.upload-btn-90 {
+  width: 90%;
+}
+
+.document-label {
+  min-width: 160px;
+}
+
+.document-input {
+  flex: 1;
+}
+
+.view-btn {
+  background-color: #7a1737;
+  color: #fff;
+  border: none;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+  color: #fff;
+}
+
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}

@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import { formatEstudios, normalizarTipoDocumento } from "../utils/validations";
 import axios from "axios";
 import "../css/Homeadmin.css";
+import "../css/HomeAdmin4.css";
 
 function HomeAdmin4() {
   const [admin, setAdmin] = useState(null);
@@ -156,15 +157,11 @@ function HomeAdmin4() {
       <main className="flex-grow-1 d-flex flex-column main-content">
         <Navbar hideCrear={![3, 4].includes(admin?.rol)} />
 
-        <div className="container mt-4" style={{ maxWidth: "800px" }}>
+        <div className="container mt-4 admin-container">
           <div className="card shadow mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
-              <h4 style={{ color: "#7A1737" }}>Datos Personales del Administrador</h4>
-              <button
-                className="btn"
-                style={{ backgroundColor: "#7A1737", color: "#fff" }}
-                onClick={handleEditClick}
-              >
+              <h4 className="admin-heading">Datos Personales del Administrador</h4>
+              <button className="btn primary-btn" onClick={handleEditClick}>
                 Editar datos
               </button>
             </div>
@@ -186,10 +183,9 @@ function HomeAdmin4() {
                 {admin.foto_perfil ? (
                   <img
                     src={`http://localhost:5000/uploads/fotos/${admin.id_personal}/${admin.foto_perfil}`}
-                    className="img-fluid mb-3 rounded-3"
+                    className="img-fluid mb-3 rounded-3 admin-photo"
                     alt="Foto administrador"
                     crossOrigin="use-credentials"
-                    style={{ width: "220px", height: "220px", objectFit: "cover", border: "2px solid #7A1737" }}
                   />
                 ) : (
                   <div className="text-muted mb-3">No hay foto</div>
@@ -200,15 +196,10 @@ function HomeAdmin4() {
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/jpg"
-                  className="form-control mb-2"
-                  style={{ width: "90%" }}
+                  className="form-control mb-2 upload-input"
                   onChange={(e) => setFotoAdmin(e.target.files[0])}
                 />
-                <button
-                  className="btn mb-2"
-                  style={{ backgroundColor: "#7A1737", color: "#fff", width: "90%" }}
-                  onClick={subirFotoAdmin}
-                >
+                <button className="btn mb-2 primary-btn upload-btn-90" onClick={subirFotoAdmin}>
                   Subir Foto
                 </button>
               </div>
@@ -217,7 +208,7 @@ function HomeAdmin4() {
 
           <div className="card shadow mb-4">
             <div className="card-header bg-white">
-              <h4 style={{ color: "#7A1737" }}>Documentos Académicos</h4>
+              <h4 className="admin-heading">Documentos Académicos</h4>
             </div>
             <div className="card-body">
               <div className="alert alert-info py-1 mb-3" role="alert" style={{ fontSize: '0.85rem' }}>
@@ -231,22 +222,17 @@ function HomeAdmin4() {
 
                 return (
                   <div key={nivel} className="d-flex flex-wrap align-items-center mb-3">
-                    <label className="form-label mb-2 me-2 flex-shrink-0" style={{ minWidth: 160 }}>{nivel}</label>
+                    <label className="form-label mb-2 me-2 flex-shrink-0 document-label">{nivel}</label>
 
                     {!documentoExistente ? (
                       <>
                         <input
                           type="file"
                           accept=".pdf"
-                          className="form-control mb-2 me-2 flex-grow-1"
-                          style={{ flex: 1 }}
+                          className="form-control mb-2 me-2 flex-grow-1 document-input"
                           onChange={(e) => setMap[idx](e.target.files[0])}
                         />
-                        <button
-                          className="btn mb-2"
-                          style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
-                          onClick={() => subirArchivo(stateMap[idx], tipo)}
-                        >
+                        <button className="btn mb-2 primary-btn" onClick={() => subirArchivo(stateMap[idx], tipo)}>
                           Subir
                         </button>
                         {stateMap[idx] && <span className="ms-2 small text-muted">{stateMap[idx].name}</span>}
@@ -257,19 +243,14 @@ function HomeAdmin4() {
                           href={`http://localhost:5000/uploads/academico/${admin.id_personal}/${documentoExistente.archivo}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn btn-sm me-2"
-                          style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
+                          className="btn btn-sm me-2 view-btn"
                         >
                           Ver
                         </a>
                         <span className={`badge ms-2 ${documentoExistente.cotejado ? "bg-success" : "bg-warning text-dark"}`}>
                           {documentoExistente.cotejado ? "Cotejado" : "Pendiente"}
                         </span>
-                        <button
-                          className="btn btn-sm"
-                          style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
-                          onClick={() => eliminarDocumento(documentoExistente.id)}
-                        >
+                        <button className="btn btn-sm delete-btn" onClick={() => eliminarDocumento(documentoExistente.id)}>
                           Eliminar
                         </button>
                       </div>
@@ -287,11 +268,7 @@ function HomeAdmin4() {
                     className="form-control me-2"
                     onChange={(e) => setCertificados(e.target.files[0])}
                   />
-                  <button
-                    className="btn"
-                    style={{ backgroundColor: "#7A1737", color: "#fff" }}
-                    onClick={() => subirArchivo(certificados, "certificados")}
-                  >
+                  <button className="btn primary-btn" onClick={() => subirArchivo(certificados, "certificados")}>
                     Subir
                   </button>
                   {certificados && <span className="ms-2 small text-muted">{certificados.name}</span>}
@@ -305,19 +282,14 @@ function HomeAdmin4() {
                         href={`http://localhost:5000/uploads/academico/${admin.id_personal}/${doc.archivo}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-sm me-2"
-                        style={{ backgroundColor: "#7A1737", color: "#fff", border: "none" }}
+                        className="btn btn-sm me-2 view-btn"
                       >
                         Ver
                       </a>
                       <span className={`badge ms-2 ${doc.cotejado ? "bg-success" : "bg-warning text-dark"}`}>
                         {doc.cotejado ? "Cotejado" : "Pendiente"}
                       </span>
-                      <button
-                        className="btn btn-sm"
-                        style={{ backgroundColor: "#dc3545", color: "#fff", border: "none" }}
-                        onClick={() => eliminarDocumento(doc.id)}
-                      >
+                      <button className="btn btn-sm delete-btn" onClick={() => eliminarDocumento(doc.id)}>
                         Eliminar
                       </button>
                     </div>
@@ -329,7 +301,7 @@ function HomeAdmin4() {
       </main>
 
       {showEditModal && (
-        <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+        <div className="modal show d-block modal-overlay">
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
@@ -412,7 +384,7 @@ function HomeAdmin4() {
                 <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
                   Cancelar
                 </button>
-                <button type="button" className="btn" style={{ backgroundColor: "#7A1737", color: "#fff" }} onClick={handleSaveChanges}>
+                <button type="button" className="btn primary-btn" onClick={handleSaveChanges}>
                   Guardar cambios
                 </button>
               </div>

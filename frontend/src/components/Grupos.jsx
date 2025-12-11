@@ -27,15 +27,15 @@ function Grupos() {
     const token = localStorage.getItem('token');
     const adminData = user || stored;
 
-    // Permitir acceso a roles 2 (supervisor) y 3 (admin)
-    if (!adminData || !token || ![2,3].includes(Number(adminData.rol))) {
+    // Permitir acceso a roles 2 (supervisor), 3 (admin) y 4 (admin4)
+    if (!adminData || !token || ![2,3,4].includes(Number(adminData.rol))) {
       navigate('/sesion', { replace: true });
       return;
     }
 
     setAdmin(adminData);
     fetchGrupos();
-    // Solo admin necesita lista de supervisores
+    // Solo admin (rol 3) necesita lista de supervisores
     if (Number(adminData.rol) === 3) {
       fetchSupervisores();
     }
