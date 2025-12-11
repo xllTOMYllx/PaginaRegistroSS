@@ -45,8 +45,6 @@ function Navbar({ onBuscar, hideCrear }) {
           position: "sticky",
           top: 0,
           zIndex: 1030,
-          paddingTop: "clamp(0.5rem, 1.5vw, 0.75rem)",
-          paddingBottom: "clamp(0.5rem, 1.5vw, 0.75rem)",
         }}
       > {/* Contenedor principal */}
         <div className="container-fluid d-flex align-items-center flex-wrap flex-md-nowrap">
