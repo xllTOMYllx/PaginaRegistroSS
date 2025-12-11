@@ -12,6 +12,7 @@ import { FaUser, FaUserShield, FaArrowLeft } from 'react-icons/fa';
 function Miembros() {
   const [usuarios, setUsuarios] = useState([]);
   const [admin, setAdmin] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // Verificar autenticación al montar el componente (similar a Homeadmin.jsx)
@@ -28,6 +29,7 @@ function Miembros() {
 
   const fetchUsuarios = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       const adminData = JSON.parse(localStorage.getItem("usuario"));
       const rol = adminData?.rol || 1;
@@ -43,11 +45,14 @@ function Miembros() {
         localStorage.removeItem('usuario');
         navigate('/sesion', { replace: true });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   const buscarUsuario = async (termino) => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       const adminData = JSON.parse(localStorage.getItem("usuario"));
       const rol = adminData?.rol || 1;
@@ -65,6 +70,8 @@ function Miembros() {
         localStorage.removeItem('usuario');
         navigate('/sesion', { replace: true });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,8 +113,15 @@ function Miembros() {
             </button>
             */}
           </div>
-          {usuarios.length === 0 && (
+          {loading && usuarios.length === 0 && (
             <div className="text-center py-4">Cargando usuarios...</div>
+          )}
+          {!loading && usuarios.length === 0 && (
+            <div className="text-center py-4">
+              {admin?.rol === 2
+                ? 'Aún no hay usuarios agregados a tus grupos.'
+                : 'No hay usuarios para mostrar.'}
+            </div>
           )}
           {/* Lista de usuarios, estos se filtran por rol y grupo asignado, Rol 2 (Supervisor) muestra los usuarios
           por cada grupo al que fue asignado (se pueden asignar colores o etiquetas para identificar a que grupo 
