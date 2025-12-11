@@ -27,15 +27,15 @@ function Grupos() {
     const token = localStorage.getItem('token');
     const adminData = user || stored;
 
-    // Permitir acceso a roles 2 (supervisor), 3 (admin) y 4 (admin4)
-    if (!adminData || !token || ![2,3,4].includes(Number(adminData.rol))) {
+    // Permitir acceso a roles 2 (supervisor) y 3 (admin)
+    if (!adminData || !token || ![2,3].includes(Number(adminData.rol))) {
       navigate('/sesion', { replace: true });
       return;
     }
 
     setAdmin(adminData);
     fetchGrupos();
-    // Solo admin (rol 3) necesita lista de supervisores
+    // Solo admin necesita lista de supervisores
     if (Number(adminData.rol) === 3) {
       fetchSupervisores();
     }
@@ -169,7 +169,7 @@ function Grupos() {
               Gestión de Grupos
             </h2>
             {/* Botón para crear nuevo grupo, con la condicion de que solo se muestre para el rol 3 (Admin) y permanece oculto para el rol 2(Supervisor) */}
-            {admin?.rol === 3 && (
+            {[4,3].includes(admin?.rol) && (
             <button
               className="btn btn-primary"
               style={{ backgroundColor: '#7A1737', borderColor: '#7A1737' }}
