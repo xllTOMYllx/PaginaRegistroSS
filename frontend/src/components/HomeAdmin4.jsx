@@ -194,7 +194,9 @@ function HomeAdmin4() {
                 ) : (
                   <div className="text-muted mb-3">No hay foto</div>
                 )}
-
+                <div className="alert alert-info py-1 mb-2" role="alert" style={{ width: "90%", fontSize: '0.85rem' }}>
+                  Formatos permitidos: JPG o PNG.
+                </div>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/jpg"
@@ -218,6 +220,9 @@ function HomeAdmin4() {
               <h4 style={{ color: "#7A1737" }}>Documentos Académicos</h4>
             </div>
             <div className="card-body">
+              <div className="alert alert-info py-1 mb-3" role="alert" style={{ fontSize: '0.85rem' }}>
+                Formato permitido: PDF únicamente.
+              </div>
               {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
                 const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
                 const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
