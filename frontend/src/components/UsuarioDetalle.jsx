@@ -185,7 +185,8 @@ function UsuarioDetalle() {
                 <p className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                   <strong>Estudios:</strong> {formatEstudios(usuario.estudios)}
                 </p>
-                {/* Mostrar grupos del usuario si existen */}
+                {/* Mostrar grupos del usuario si existen tanto para los roles 1 y para el rol 2 (supervisor) se muestran
+                los grupos que tiene a su cargo */}
                 {usuario.grupos && usuario.grupos.length > 0 && (
                   <div className="mb-1" style={{ fontSize: "clamp(0.9rem, 2.5vw, 1rem)", fontFamily: "Roboto, sans-serif" }}>
                     <strong>Grupos:</strong>{' '}

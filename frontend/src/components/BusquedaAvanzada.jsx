@@ -156,7 +156,7 @@ function BusquedaAvanzada() {
                                   type="text"
                                   className="form-control"
                                   id="nombre"
-                                  placeholder="Ej: Juan Pérez, CURP, RFC..."
+                                  placeholder="Ej: Juan Pérez"
                                   value={filtros.nombre}
                                   onChange={(e) => setFiltros({ ...filtros, nombre: e.target.value })}
                                 />
