@@ -701,12 +701,14 @@ router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res)
       });
     }
 
-    // Filtrar por tipo de documento si se proporciona
+    // Filtrar por tipo de documento académico si se proporciona (secundaria, bachillerato, universidad)
+    // Este filtro busca en documentos_academicos y es independiente del nivel de estudios de personal.estudios
     if (tipoDocumento && tipoDocumento.trim() !== "") {
       baseQuery += ` AND EXISTS (
         SELECT 1 FROM documentos_academicos d2 
         WHERE d2.id_personal = p.id_personal 
         AND d2.tipo ILIKE $${paramIndex}
+        AND d2.es_certificado = false
       )`;
       params.push(`%${tipoDocumento}%`);
       paramIndex++;

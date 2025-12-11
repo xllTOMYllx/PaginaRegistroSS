@@ -129,7 +129,7 @@ function BusquedaAvanzada() {
                 Búsqueda Avanzada de Candidatos
               </h2>
               <p className="text-muted">
-                Filtra usuarios por sus habilidades, conocimientos y certificaciones registradas en el sistema.
+                Filtra usuarios por documentos académicos subidos, nivel de estudios y certificaciones registradas en el sistema.
               </p>
             </div>
           </div>
@@ -166,7 +166,7 @@ function BusquedaAvanzada() {
                               <div className="col-md-6">
                                 <label htmlFor="tipoDocumento" className="form-label">
                                   <FaFileAlt className="me-2" />
-                                  Tipo de Documento/Habilidad
+                                  Documentos Académicos Subidos
                                 </label>
                                 <select
                                   className="form-control"
@@ -178,7 +178,6 @@ function BusquedaAvanzada() {
                                   <option value="secundaria">Secundaria</option>
                                   <option value="bachillerato">Bachillerato</option>
                                   <option value="universidad">Universidad</option>
-                                  <option value="certificados">Certificados</option>
                                 </select>
                               </div>
 
