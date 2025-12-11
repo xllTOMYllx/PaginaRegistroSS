@@ -31,11 +31,13 @@ Se refactorizó el filtro "Tipo de Documento/Habilidad" en la búsqueda avanzada
   - El filtro continúa usando `ILIKE` para búsquedas flexibles
 
 ### Documentación
-- **`Documentacion_General/PR_95/BUSQUEDA_AVANZADA.md`**
+- **`Documentacion_General/PR_95/BUSQUEDA_AVANZADA.md`** (documentación original de la feature)
   - Actualización de la descripción de filtros
   - Clarificación de la diferencia entre "Documentos Académicos Subidos" y "Nivel de Estudios"
   - Actualización de casos de uso con ejemplos más específicos
   - Agregado del parámetro `estudios` en la documentación técnica
+- **`Documentacion_General/PR_ADVANCED_SEARCH_REFACTOR/IMPLEMENTATION_SUMMARY.md`** (este documento)
+  - Documentación técnica detallada de los cambios realizados en este PR
 
 ### Configuración
 - **`.gitignore`** (nuevo archivo)
