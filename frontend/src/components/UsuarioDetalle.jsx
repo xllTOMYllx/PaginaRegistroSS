@@ -153,6 +153,10 @@ function UsuarioDetalle() {
                 }
                 alt={usuario.nombre}
                 crossOrigin="use-credentials"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "http://localhost:5000/uploads/default-avatar.jpg";
+                }}
                 className="img-fluid mb-3"
                 style={{
                   width: "clamp(80px, 15vw, 100px)",

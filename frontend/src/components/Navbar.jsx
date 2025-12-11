@@ -55,7 +55,7 @@ function Navbar({ onBuscar, hideCrear }) {
               className="d-flex align-items-center flex-grow-0"
               onSubmit={(e) => e.preventDefault()}
               style={{
-                maxWidth: "clamp(300px, 40vw, 300px)",
+                maxWidth: "clamp(500px, 40vw, 300px)",
                 width: "100%",
               }}
             > {/* Formulario de búsqueda */}
@@ -72,34 +72,15 @@ function Navbar({ onBuscar, hideCrear }) {
                 }}
               /> {/* Botón para limpiar búsqueda */}
               <button
-                className="btn btn-outline-secondary"
+                className="btn btn-secondary"
                 type="button"
                 onClick={() => setTermino("")}
-                style={{
-                  fontSize: "clamp(0.8rem, 2vw, 0.9rem)",
-                  padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
-                  whiteSpace: "nowrap",
-                }}
               >
-                🧹
+                Limpiar
               </button>
             </form>
           )}
-          {/* Contenedor de botones a la derecha */}
-          <div
-            className="d-flex align-items-center ms-auto gap-2"
-            style={{ flexShrink: 0 }}
-          > {/* Botones de notificaciones y crear usuario */}
-            <button
-              className="btn btn-light"
-              style={{
-                fontSize: "clamp(0.85rem, 2.2vw, 0.95rem)",
-                padding: "clamp(0.25rem, 0.8vw, 0.35rem)",
-              }}
-            >
-              🔔
-            </button>
-          </div>
+
         </div>
 
       </nav>
