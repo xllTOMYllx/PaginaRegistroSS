@@ -6,14 +6,14 @@ import { useAuth } from '../context/AuthContext';
 function Sidebar({ admin, Usuario2, cerrarSesion }) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  // Prefer the user from context; fall back to prop or localStorage if needed.
-  let currentAdmin = user || admin;
+  // Prefer the fresh admin prop (after uploads), then context, then localStorage.
+  let currentAdmin = admin || user;
   if (!currentAdmin) {
     try {
       const stored = localStorage.getItem('usuario');
       if (stored) currentAdmin = JSON.parse(stored);
     } catch (e) {
-      currentAdmin = admin;
+      currentAdmin = null;
     }
   }
   const [isOpen, setIsOpen] = useState(true);
@@ -108,6 +108,10 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
                 }
                 alt="Foto de perfil"
                 crossOrigin="use-credentials"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "http://localhost:5000/uploads/default-avatar.jpg";
+                }}
                 className="img-fluid rounded-circle mb-3"
                 style={{
                   objectFit: "cover",
@@ -140,6 +144,10 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
                 }
                 alt="Foto de perfil"
                 crossOrigin="use-credentials"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "http://localhost:5000/uploads/default-avatar.jpg";
+                }}
                 className="img-fluid rounded-circle mb-3"
                 style={{
                   objectFit: "cover",

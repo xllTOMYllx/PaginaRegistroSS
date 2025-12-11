@@ -180,16 +180,20 @@ function HomeAdmin4() {
                 </table>
               </div>
               <div className="col-12 col-md-4 text-center d-flex flex-column align-items-center">
-                {admin.foto_perfil ? (
-                  <img
-                    src={`http://localhost:5000/uploads/fotos/${admin.id_personal}/${admin.foto_perfil}`}
-                    className="img-fluid mb-3 rounded-3 admin-photo"
-                    alt="Foto administrador"
-                    crossOrigin="use-credentials"
-                  />
-                ) : (
-                  <div className="text-muted mb-3">No hay foto</div>
-                )}
+                <img
+                  src={
+                    admin.foto_perfil
+                      ? `http://localhost:5000/uploads/fotos/${admin.id_personal}/${admin.foto_perfil}`
+                      : "http://localhost:5000/uploads/default-avatar.jpg"
+                  }
+                  className="img-fluid mb-3 rounded-3 admin-photo"
+                  alt="Foto administrador"
+                  crossOrigin="use-credentials"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "http://localhost:5000/uploads/default-avatar.jpg";
+                  }}
+                />
                 <div className="alert alert-info py-1 mb-2" role="alert" style={{ width: "90%", fontSize: '0.85rem' }}>
                   Formatos permitidos: JPG o PNG.
                 </div>
