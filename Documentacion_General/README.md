@@ -9,6 +9,8 @@ Documentacion_General/
 ├── README.md (este archivo)
 ├── PR_95/           # Documentación de PR #95 - Búsqueda Avanzada
 └── PR_Current/      # Documentación del PR actual en desarrollo
+└── PR_ESTUDIOS/     # Documentación de PR #XX - Estudios
+└── PR_LOGOUT_FIX/   # Documentación de PR #XX - Logout Fix
 ```
 
 ## Organización de Documentación por PR
@@ -58,7 +60,9 @@ Cada carpeta de PR puede contener (según sea relevante):
 - Control de acceso por rol
 - Archivos movidos: BUSQUEDA_AVANZADA.md, IMPLEMENTATION_SUMMARY.md, README_FEATURE.md, SECURITY_SUMMARY.md, UI_PREVIEW.md
 
-### PR Actual - Corrección del Layout de Búsqueda Avanzada
-- Corrección de problemas de layout en resultados de búsqueda
-- Cambio de cards a tabla responsive
-- Organización inicial de esta estructura de documentación
+### PR Actual - 126... - Cambios en la Documentación General (Base de Datos) Y se volvieron a subir archivos relacionados a los packages.json que habian sido untrackeados por error
+- Actualización de la documentación de la base de datos PostgreSQL
+- Corrección de archivos .gitignore para incluir package.json y package-lock.json
+- Archivos modificados: README.md en Database/ y Database/README_ACTUALIZACION.md
+- Archivos restaurados: package.json y package-lock.json al principio del proyecto
+
