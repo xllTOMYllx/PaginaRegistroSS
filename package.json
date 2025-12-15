@@ -1,0 +1,28 @@
+{
+  "name": "paginaregistroserviciosdesalud",
+  "version": "1.0.0",
+  "description": "Una pagina web desarrollada para el resgitro del personal administrativo, con sus datos personales y academicos, desarrollada con react para el frontend, node.js y Express para el Backend y PostgreSQL para las bases de datos, además de diversas herramientas.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xllTOMYllx/PaginaRegistroServiciosdeSalud.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xllTOMYllx/PaginaRegistroServiciosdeSalud/issues"
+  },
+  "homepage": "https://github.com/xllTOMYllx/PaginaRegistroServiciosdeSalud#readme",
+  "dependencies": {
+    "@chakra-ui/react": "^3.28.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@sendgrid/mail": "^8.1.6",
+    "bootstrap": "^5.3.7",
+    "framer-motion": "^12.23.24"
+  }
+}
