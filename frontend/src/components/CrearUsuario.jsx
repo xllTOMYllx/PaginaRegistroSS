@@ -28,6 +28,13 @@ function CrearUsuario() {
     }
   }, [user, setUser]);
 
+  // Si el usuario autenticado es Supervisor (rol 2), preseleccionar rol 1
+  useEffect(() => {
+    if (user?.rol === 2) {
+      setFormData((prev) => ({ ...prev, ROL: '1' }));
+    }
+  }, [user]);
+
   const [formData, setFormData] = useState({
     NOMBRE: '',
     APELLIDO_PATERNO: '',
@@ -64,6 +71,7 @@ function CrearUsuario() {
     }
 
     try {
+      const token = localStorage.getItem('token');
       await axios.post('http://localhost:5000/api/users/register', {
         ...formData,
         NOMBRE: formData.NOMBRE.toUpperCase(),
@@ -74,6 +82,8 @@ function CrearUsuario() {
         RFC: formData.RFC.toUpperCase(),
         ESTUDIOS: formData.ESTUDIOS.toUpperCase(),
         ROL: formData.ROL
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       setMensaje('Usuario creado correctamente');
       setFormData({
@@ -167,6 +177,7 @@ function CrearUsuario() {
                       onChange={handleChange}
                       placeholder="Ingresa la contraseña"
                       className="form-control rounded-3"
+                      autoComplete="new-password"
                       required
                     />
                     <button
@@ -207,9 +218,16 @@ function CrearUsuario() {
                     required
                   >
                     <option value="">Selecciona un rol</option>
-                    <option value="1">Usuario normal</option>
-                    <option value="2">Supervisor</option>
-                    <option value="3">Administrador</option>
+                    {/* Si el usuario autenticado es Supervisor (rol 2), solo permitir crear rol 1 */}
+                    {user?.rol === 2 ? (
+                      <option value="1">Usuario normal</option>
+                    ) : (
+                      <>
+                        <option value="1">Usuario normal</option>
+                        <option value="2">Supervisor</option>
+                        <option value="3">Administrador</option>
+                      </>
+                    )}
                   </select>
                   {error.ROL && <div className="text-danger small mt-1">{error.ROL}</div>}
                 </div>

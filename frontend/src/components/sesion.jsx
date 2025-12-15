@@ -114,6 +114,7 @@ function Sesion() {
               value={formData.USUARIO}
               onChange={handleChange}
               className="form-control rounded-3"
+              autoComplete="username"
               required
             />
             {error.USUARIO && <div className="text-danger small mt-1">{error.USUARIO}</div>}
@@ -129,6 +130,7 @@ function Sesion() {
                 onChange={handleChange}
                 placeholder="********"
                 className="form-control rounded-3"
+                autoComplete="current-password"
                 required
               />
               {/* Icono para mostrar/ocultar contraseña */}

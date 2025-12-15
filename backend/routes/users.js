@@ -31,7 +31,7 @@ router.use((req, res, next) => {
 });
 
 // Registro de usuario con validaciones y contraseña hasheada
-router.post('/register', async (req, res) => {
+router.post('/register', authenticateToken, async (req, res) => {
 
   let {
     NOMBRE,
@@ -59,6 +59,22 @@ router.post('/register', async (req, res) => {
 
   //Revisar esto y lo de abajo(tomas)
   ROL = parseInt(ROL);
+
+  // Permisos de creación según rol autenticado
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'No autenticado' });
+    }
+    // Rol 2 (Supervisor) solo puede crear usuarios de rol 1
+    if (req.user.rol === 2) {
+      ROL = 1; // forzar creación como rol 1 sin importar lo que envíe el cliente
+    } else if (![3, 4].includes(req.user.rol)) {
+      // Otros roles no pueden crear
+      return res.status(403).json({ error: 'Acceso denegado: no tienes permisos para crear usuarios' });
+    }
+  } catch (permErr) {
+    return res.status(500).json({ error: 'Error al validar permisos' });
+  }
 
   //Validacion de que solo se inserten ROL 1, 2, 3 o 4
   if (![1, 2, 3, 4].includes(ROL)) {

@@ -188,8 +188,8 @@ function Sidebar({ admin, Usuario2, cerrarSesion }) {
             >
               {isCollapsed ? "👥" : "👥 Miembros"}
             </button>
-            {/* Botón Crear (solo visible para rol 3 - Jefe) */}
-            {currentAdmin && [3, 4].includes(currentAdmin.rol) && (
+            {/* Botón Crear (visible para rol 2, 3 y 4) */}
+            {currentAdmin && [2, 3, 4].includes(currentAdmin.rol) && (
               <button
                 onClick={() => { navigate('/crearUsuario'); if (window.innerWidth < 992) setIsOpen(false); }}
                 className="btn mb-2 w-100 sidebar-btn"
