@@ -274,16 +274,20 @@ function Home() {
 
               {/* Columna derecha: foto y botones */}
               <div className="col-12 col-md-4 text-center d-flex flex-column align-items-center justify-content-start user-photo-section">
-                {usuario?.foto_perfil ? (
-                  <img
-                    src={`http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`}
-                    className="img-fluid mb-3 rounded-3 user-photo-img"  // cuadrado con esquinas redondeadas
-                    alt="Foto de usuario"
-                    crossOrigin="use-credentials"
-                  />
-                ) : (
-                  <div className="text-muted mb-3">No hay foto de perfil</div>
-                )}
+                <img
+                  src={
+                    usuario?.foto_perfil
+                      ? `http://localhost:5000/uploads/fotos/${usuario.id_personal}/${usuario.foto_perfil}`
+                      : "http://localhost:5000/uploads/default-avatar.jpg"
+                  }
+                  className="img-fluid mb-3 rounded-3 user-photo-img"
+                  alt="Foto de usuario"
+                  crossOrigin="use-credentials"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "http://localhost:5000/uploads/default-avatar.jpg";
+                  }}
+                />
 
                 {/* Input y botón para subir nueva foto */}
                 <div className="alert alert-info py-1 mb-2" role="alert" style={{ fontSize: '0.85rem' }}>

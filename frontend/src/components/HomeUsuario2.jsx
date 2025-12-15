@@ -150,15 +150,21 @@ function HomeUsuario2() {
                 </table>
               </div>
               <div className="col-12 col-md-4 text-center d-flex flex-column align-items-center">
-                {Usuario2.foto_perfil ? (
-                  <img
-                    src={`http://localhost:5000/uploads/fotos/${Usuario2.id_personal}/${Usuario2.foto_perfil}`}
-                    className="img-fluid mb-3 rounded-3"
-                    alt="Foto administrador"
-                    crossOrigin="use-credentials"
-                    style={{ width: "220px", height: "220px", objectFit: "cover", border: "2px solid #7A1737" }}
-                  />
-                ) : <div className="text-muted mb-3">No hay foto</div>}
+                <img
+                  src={
+                    Usuario2?.foto_perfil
+                      ? `http://localhost:5000/uploads/fotos/${Usuario2.id_personal}/${Usuario2.foto_perfil}`
+                      : "http://localhost:5000/uploads/default-avatar.jpg"
+                  }
+                  className="img-fluid mb-3 rounded-3"
+                  alt="Foto administrador"
+                  crossOrigin="use-credentials"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "http://localhost:5000/uploads/default-avatar.jpg";
+                  }}
+                  style={{ width: "220px", height: "220px", objectFit: "cover", border: "2px solid #7A1737" }}
+                />
 
                 <input
                   type="file"
