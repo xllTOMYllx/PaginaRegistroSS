@@ -249,16 +249,7 @@ router.delete('/eliminar/:id', authenticateToken, async (req, res) => {
     // Si no se encuentra el usuario, usar "Desconocido"
     const nombreUsuario = userResult.rows[0]?.usuario || "Desconocido";
 
-    // 5️⃣ Insertar notificación de eliminación
-    await pool.query(
-      `INSERT INTO notificaciones (id_personal, usuario, mensaje) 
-       VALUES ($1, $2, $3)`,
-      [
-        req.user.id_personal,
-        nombreUsuario,
-        `Eliminaste el documento: ${tipo || archivo}`
-      ]
-    );
+    
     // Mensaje de respuesta al cliente
     res.json({ message: 'Documento eliminado correctamente' });
   } catch (error) {
@@ -333,61 +324,6 @@ router.post('/subir-foto', authenticateToken, uploadFoto.single('foto'), async (
     });
   } catch (error) {
     console.error('Error al subir foto de perfil:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-});
-
-// 📌 Obtener notificaciones del usuario
-router.get('/notificaciones', authenticateToken, async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT id, usuario, mensaje, fecha, leido
-       FROM notificaciones
-       WHERE id_personal = $1
-       ORDER BY fecha DESC
-       LIMIT 10`,
-      [req.user.id_personal]
-    );
-    // Enviar las notificaciones al cliente
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error al obtener notificaciones:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-});
-
-// 📌 Marcar notificación como leída
-router.put('/notificaciones/:id/leido', authenticateToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    await pool.query(
-      `UPDATE notificaciones
-       SET leido = TRUE
-       WHERE id = $1 AND id_personal = $2`,
-      [id, req.user.id_personal]
-    );
-    // Mensaje de respuesta al cliente
-    res.json({ message: 'Notificación marcada como leída' });
-  } catch (error) {
-    console.error('Error al marcar notificación:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-});
-
-// 📌 Eliminar notificación
-router.delete('/notificaciones/:id', authenticateToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    // Eliminar la notificación
-    await pool.query(
-      `DELETE FROM notificaciones 
-       WHERE id = $1 AND id_personal = $2`,
-      [id, req.user.id_personal]
-    );
-    // Mensaje de respuesta al cliente
-    res.json({ message: 'Notificación eliminada correctamente' });
-  } catch (error) {
-    console.error('Error al eliminar notificación:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
