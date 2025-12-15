@@ -1,6 +1,6 @@
 /* Base layout for EditarUsuario */
 .editar-page {
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 
 .editar-page .btn,
@@ -14,7 +14,7 @@
 .editar-page .text-danger,
 .editar-page .text-center,
 .editar-page .form-select {
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 
 .editar-back-btn {
@@ -104,7 +104,7 @@
 }
 
 .editar-pwd-msg {
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 
 .pwd-success {
