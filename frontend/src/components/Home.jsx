@@ -6,7 +6,6 @@ import { FaBell } from "react-icons/fa";
 import { formatEstudios, normalizarTipoDocumento } from '../utils/validations';
 import { useAuth } from '../context/AuthContext';
 import '../css/Home.css'
-
 // función principal del componente Home
 function Home() {
   const navigate = useNavigate();
@@ -229,7 +228,7 @@ function Home() {
       </nav >
 
       {/* Contenedor principal */}
-      < main className="container mt-5 home-main">
+      < main className="container mt-5 home-main auto flex">
         {/* Contenedor unificado de usuario + foto */}
         {activeSection === 'user' && (
           < div className="card shadow mb-4 w-100" >

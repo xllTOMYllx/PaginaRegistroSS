@@ -5,6 +5,7 @@ import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { FaUsers, FaUserTie, FaPlus, FaEdit, FaTrash, FaArrowLeft } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import '../css/Grupos.css'
 
 function Grupos() {
   const [grupos, setGrupos] = useState([]);

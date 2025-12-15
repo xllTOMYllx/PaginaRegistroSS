@@ -1,0 +1,230 @@
+:root {
+  --groups-primary: #7A1737;
+  --groups-bg: #f8f9fb;
+  --groups-text: #24292f;
+  --groups-border: #e5e7eb;
+  /* Sidebar width matches Sidebar.jsx: clamp(180px, 20vw, 250px). */
+  --groups-sidebar-w: clamp(180px, 20vw, 250px);
+}
+
+/* Base page styles */
+.groups-page {
+  color: var(--groups-text);
+  background-color: var(--groups-bg);
+  font-size: clamp(0.95rem, 0.35vw + 0.9rem, 1rem);
+  line-height: 1.5;
+}
+
+.groups-main {
+  /* Prevent content expansion/contraction when sidebar collapses */
+  width: min(1100px, calc(100vw - var(--groups-sidebar-w) - 24px));
+  margin-left: var(--groups-sidebar-w);
+  margin-right: auto;
+  padding: clamp(12px, 3vw, 28px);
+}
+
+/* Navbar */
+.groups-navbar {
+  background-color: var(--groups-primary);
+}
+
+.groups-navbar .navbar-actions {
+  gap: 0.75rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.groups-navbar .btn {
+  background-color: var(--groups-primary);
+  border: 2px solid var(--groups-primary);
+  color: #fff;
+}
+
+.groups-navbar .btn:focus,
+.groups-navbar .btn:active,
+.groups-navbar .btn:focus-visible {
+  background-color: var(--groups-primary) !important;
+  border-color: var(--groups-primary) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+/* Cards */
+.group-card.card {
+  border: 1px solid var(--groups-border);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(20, 23, 28, 0.04);
+}
+
+.group-card .card-header {
+  padding: 16px 18px;
+  background: #fff;
+  border: none;
+}
+
+.group-card .card-title,
+.groups-title {
+  color: var(--groups-primary);
+  margin: 0;
+}
+
+.group-card .card-body {
+  padding: 18px;
+}
+
+/* Controls and buttons */
+.groups-page .btn,
+.groups-page button,
+.groups-page input,
+.groups-page .form-control,
+.groups-page .badge {
+  padding: clamp(6px, 1vw + 4px, 12px);
+  border-radius: 12px;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.groups-page .btn-primary,
+.group-action-btn {
+  background-color: var(--groups-primary);
+  color: #fff;
+  border-color: var(--groups-primary);
+}
+
+.groups-page .btn-outline,
+.group-filter-btn {
+  background-color: #fff;
+  color: var(--groups-primary);
+  border: 1px solid var(--groups-border);
+}
+
+.group-action-btn:hover,
+.group-filter-btn:hover {
+  filter: brightness(1.05);
+}
+
+/* Filters bar */
+.groups-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.groups-filters .form-control {
+  min-width: 160px;
+}
+
+/* Table */
+.group-table {
+  width: 100%;
+}
+
+.group-table thead th {
+  background: #fff;
+  border-bottom: 1px solid var(--groups-border);
+}
+
+.group-table td,
+.group-table th {
+  vertical-align: middle;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Rows & list */
+.group-row,
+.group-list-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.group-list-item .title,
+.group-row .title {
+  min-width: 0;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Breakpoint <= 768px */
+@media (max-width: 768px) {
+  .groups-main {
+    padding: clamp(10px, 4vw, 18px);
+    margin-top: 1rem;
+  }
+
+  .group-card .card-header,
+  .group-card .card-body {
+    padding: 14px;
+  }
+
+  .groups-navbar .navbar-actions { gap: 0.5rem; }
+
+  .table-responsive .table { min-width: 600px; }
+
+  .groups-filters { gap: 6px; }
+}
+
+/* Breakpoint <= 576px */
+@media (max-width: 576px) {
+  /* On small screens the sidebar overlays, not reserving space */
+  :root { --groups-sidebar-w: 0px; }
+
+  .groups-navbar .navbar-actions {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0 !important;
+    min-width: 0;
+  }
+
+  .groups-navbar .navbar-actions .btn {
+    padding: 4px 6px !important;
+    font-size: 0.9rem !important;
+    min-height: 22px !important;
+    white-space: nowrap;
+    margin: 0 !important;
+  }
+
+  .groups-title { font-size: 1rem !important; }
+
+  .groups-filters .form-control { min-width: 120px; }
+
+  .group-row .btn,
+  .group-row .badge { padding: 4px 8px !important; font-size: 0.9rem !important; }
+}
+
+/* Breakpoint <= 430px */
+@media (max-width: 430px) {
+  .groups-navbar .navbar-actions .btn { padding: 2px 4px !important; min-height: 18px !important; }
+
+  .group-row,
+  .group-list-item { flex-direction: column; align-items: stretch; }
+
+  .group-list-item .title,
+  .group-row .title { max-width: 100%; }
+
+  .group-row .btn,
+  .group-row .badge { width: 100% !important; text-align: center; }
+}
+
+/* Dynamically adjust content when sidebar is collapsed (desktop/tablet). */
+/* Uses :has(), supported in modern browsers (Chromium/Safari/Firefox). */
+body:has(.app-sidebar.collapsed) .groups-main {
+  margin-left: 80px;
+  width: min(1100px, calc(100vw - 80px - 24px));
+}
+
+/* When sidebar is hidden off-canvas (<= 991px), don't reserve space. */
+@media (max-width: 991px) {
+  .groups-main {
+    margin-left: 0;
+    width: min(1100px, calc(100vw - 24px));
+  }
+}
