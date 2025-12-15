@@ -1,6 +1,16 @@
+:root {
+  --home-primary: #7A1737;
+  --home-bg: #f8f9fb;
+  --home-text: #24292f;
+  --home-border: #e5e7eb;
+}
+
 /* Base Home styles */
 .home-page {
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 0.35vw + 0.9rem, 1rem);
+  color: var(--home-text);
+  background-color: var(--home-bg);
+  line-height: 1.5;
 }
 
 .home-page .btn,
@@ -14,7 +24,17 @@
 .home-page .card,
 .home-page .card-body,
 .home-page .card-header {
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 0.35vw + 0.9rem, 1rem);
+}
+
+.home-page .btn,
+.home-page button,
+.home-page input,
+.home-page .form-control,
+.home-page .badge {
+  padding: clamp(6px, 1vw + 4px, 12px);
+  border-radius: 12px;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .top-image-container {
@@ -31,6 +51,12 @@
 
 .home-navbar {
   background-color: #7A1737;
+}
+
+.navbar-actions {
+  gap: 0.75rem;
+  align-items: center;
+  min-width: 0;
 }
 
 .home-nav-btn {
@@ -82,11 +108,27 @@
 }
 
 .home-main {
-  max-width: 90%;
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+  padding: clamp(12px, 3vw, 28px);
 }
 
 .home-title {
   color: #7A1737;
+}
+
+.home-page .card {
+  border: 1px solid var(--home-border);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(20, 23, 28, 0.04);
+}
+
+.home-page .card-header {
+  padding: 16px 18px;
+}
+
+.home-page .card-body {
+  padding: 18px;
 }
 
 .edit-user-btn {
@@ -101,10 +143,12 @@
 }
 
 .user-photo-img {
-  width: 250px;
-  height: 250px;
+  width: clamp(140px, 30vw, 220px);
+  height: clamp(140px, 30vw, 220px);
+  max-width: 100%;
   object-fit: cover;
   border: 2px solid #7A1737;
+  border-radius: 16px;
 }
 
 .user-photo-input {
@@ -148,6 +192,84 @@
   border: none;
   padding: 6px 16px;
   border-radius: 4px;
+}
+
+.document-info span {
+  min-width: 0;
+  display: inline-block;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.certificados-row {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-info-table {
+  width: 100%;
+}
+
+.user-photo-section {
+  gap: 6px;
+}
+
+.home-nav-btn,
+.logout-btn-nav,
+.edit-user-btn,
+.academic-upload-btn,
+.doc-view-btn,
+.doc-delete-btn,
+.user-photo-upload {
+  border-radius: 999px;
+  letter-spacing: 0.25px;
+}
+
+.home-nav-btn:hover,
+.edit-user-btn:hover,
+.academic-upload-btn:hover,
+.doc-view-btn:hover,
+.logout-btn-nav:hover,
+.user-photo-upload:hover,
+.doc-delete-btn:hover {
+  filter: brightness(1.05);
+}
+
+/* Breakpoint intermedio tipo GitHub */
+@media (max-width: 768px) {
+  .home-main {
+    padding: clamp(10px, 4vw, 18px);
+    margin-top: 1rem;
+  }
+
+  .home-page .card-header,
+  .home-page .card-body {
+    padding: 14px;
+  }
+
+  .navbar-actions {
+    gap: 0.5rem;
+  }
+
+  .user-info-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .user-info-table tbody {
+    display: table;
+    width: 100%;
+    min-width: 480px;
+  }
+
+  .certificados-row,
+  .academic-level,
+  .new-certification {
+    gap: 6px;
+  }
 }
 
 .doc-badge {
