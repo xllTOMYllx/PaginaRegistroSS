@@ -216,7 +216,7 @@ function HomeAdmin4() {
             </div>
             <div className="card-body">
               <div className="alert alert-info py-1 mb-3" role="alert" style={{ fontSize: '0.85rem' }}>
-                Formato permitido: PDF únicamente.
+                Formato permitido: PDF únicamente. Sugerencia: No subir documentos con el mismo nombre.
               </div>
               {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
                 const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
