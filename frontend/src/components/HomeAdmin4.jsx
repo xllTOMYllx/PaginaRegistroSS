@@ -17,6 +17,7 @@ function HomeAdmin4() {
   const [documentos, setDocumentos] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editData, setEditData] = useState({});
+  const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -99,10 +100,12 @@ function HomeAdmin4() {
       alert("Selecciona una imagen válida (JPG o PNG)");
       return;
     }
+    if (isUploading) return;
     const token = localStorage.getItem("token");
     if (!token) return;
     const formData = new FormData();
     formData.append("foto", fotoAdmin);
+    setIsUploading(true);
     try {
       await axios.post("http://localhost:5000/api/documentos/subir-foto", formData, {
         headers: { Authorization: `Bearer ${token}` },
@@ -112,13 +115,16 @@ function HomeAdmin4() {
       });
       setAdmin(res.data);
       localStorage.setItem("usuario", JSON.stringify(res.data));
+      setIsUploading(false);
     } catch (err) {
       console.error("Error al subir foto:", err);
+      setIsUploading(false);
     }
   };
 
   const subirArchivo = async (archivo, tipo) => {
     if (!archivo || archivo.type !== "application/pdf") return;
+    if (isUploading) return;
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -126,13 +132,16 @@ function HomeAdmin4() {
     formData.append("archivo", archivo);
     formData.append("tipo", tipo);
 
+    setIsUploading(true);
     try {
       await axios.post("http://localhost:5000/api/documentos/subir-academico", formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
       fetchDocumentos(admin.id_personal, token);
+      setIsUploading(false);
     } catch (err) {
       console.error("Error al subir documento:", err);
+      setIsUploading(false);
     }
   };
 
@@ -203,8 +212,8 @@ function HomeAdmin4() {
                   className="form-control mb-2 upload-input"
                   onChange={(e) => setFotoAdmin(e.target.files[0])}
                 />
-                <button className="btn mb-2 primary-btn upload-btn-90" onClick={subirFotoAdmin}>
-                  Subir Foto
+                <button className="btn mb-2 primary-btn upload-btn-90" onClick={subirFotoAdmin} disabled={isUploading}>
+                  {isUploading ? "Subiendo..." : "Subir Foto"}
                 </button>
               </div>
             </div>
@@ -236,8 +245,8 @@ function HomeAdmin4() {
                           className="form-control mb-2 me-2 flex-grow-1 document-input"
                           onChange={(e) => setMap[idx](e.target.files[0])}
                         />
-                        <button className="btn mb-2 primary-btn" onClick={() => subirArchivo(stateMap[idx], tipo)}>
-                          Subir
+                        <button className="btn mb-2 primary-btn" onClick={() => subirArchivo(stateMap[idx], tipo)} disabled={isUploading}>
+                          {isUploading ? "Subiendo..." : "Subir"}
                         </button>
                         {stateMap[idx] && <span className="ms-2 small text-muted">{stateMap[idx].name}</span>}
                       </>
@@ -272,8 +281,8 @@ function HomeAdmin4() {
                     className="form-control me-2"
                     onChange={(e) => setCertificados(e.target.files[0])}
                   />
-                  <button className="btn primary-btn" onClick={() => subirArchivo(certificados, "certificados")}>
-                    Subir
+                  <button className="btn primary-btn" onClick={() => subirArchivo(certificados, "certificados")} disabled={isUploading}>
+                    {isUploading ? "Subiendo..." : "Subir"}
                   </button>
                   {certificados && <span className="ms-2 small text-muted">{certificados.name}</span>}
                 </div>
