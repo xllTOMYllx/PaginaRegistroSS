@@ -213,20 +213,24 @@ function Grupos() {
                           {grupo.nombre}
                         </h5>
                         <div>
-                          <button
-                            className="btn btn-sm btn-outline-primary me-1"
-                            onClick={() => handleEdit(grupo)}
-                            title="Editar"
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDelete(grupo.id_grupo)}
-                            title="Eliminar"
-                          >
-                            <FaTrash />
-                          </button>
+                          {[3,4].includes(Number(admin?.rol)) && (
+                            <>
+                              <button
+                                className="btn btn-sm btn-outline-primary me-1"
+                                onClick={() => handleEdit(grupo)}
+                                title="Editar"
+                              >
+                                <FaEdit />
+                              </button>
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                onClick={() => handleDelete(grupo.id_grupo)}
+                                title="Eliminar"
+                              >
+                                <FaTrash />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
 

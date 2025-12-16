@@ -28,8 +28,8 @@ function authenticateToken(req, res, next) {
 
 // Middleware para verificar si es administrador
 function isAdmin(req, res, next) {
-  if (req.user.rol !== 3) {
-    return res.status(403).json({ error: 'Acceso denegado: solo administradores' });
+  if (![3, 4].includes(req.user.rol)) {
+    return res.status(403).json({ error: 'Acceso denegado: solo administradores (rol 3 o 4)' });
   }
   next();
 }
