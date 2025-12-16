@@ -740,7 +740,7 @@ router.get("/buscar-avanzado", authenticateToken, isJefeOAdmin, async (req, res)
       });
     }
 
-    // Filtrar por tipo de documento académico si se proporciona (secundaria, bachillerato, universidad)
+    // Filtrar por tipo de documento académico si se proporciona (secundaria, preparatoria, licenciatura)
     // Este filtro busca en documentos_academicos y es independiente del nivel de estudios de personal.estudios
     // La columna es_certificado tiene DEFAULT false, por lo que no hay valores NULL
     if (tipoDocumento && tipoDocumento.trim() !== "") {
