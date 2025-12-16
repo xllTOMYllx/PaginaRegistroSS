@@ -30,6 +30,7 @@ function GrupoMiembros() {
   }, [navigate, id]);
 
   const fetchGrupo = async () => {
+    
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:5000/api/grupos/${id}`, {
@@ -53,13 +54,16 @@ function GrupoMiembros() {
       console.error('Error al obtener usuarios disponibles:', error);
     }
   };
-
+  // Agregar miembro al grupo seleccionado tambien se le permite al rol 4 (superAdmin)
   const handleAddMember = async () => {
+   if (![3,4].includes(Number(admin?.rol))) {
+      setError('No tienes permisos para agregar miembros');
+      return;
+    }
     if (!selectedUser) {
       setError('Selecciona un usuario');
       return;
     }
-
     try {
       const token = localStorage.getItem('token');
       await axios.post(
@@ -78,12 +82,15 @@ function GrupoMiembros() {
       setError(error.response?.data?.error || 'Error al agregar miembro');
     }
   };
-
+  // Quitar miembro del grupo seleccionado tambien se le permite al rol 4 (superAdmin)
   const handleRemoveMember = async (id_personal) => {
+    if (![3,4].includes(Number(admin?.rol))) {
+      setError('No tienes permisos para quitar miembros');
+      return;
+    }
     if (!window.confirm('¿Estás seguro de quitar este miembro del grupo?')) {
       return;
     }
-
     try {
       const token = localStorage.getItem('token');
       await axios.delete(`http://localhost:5000/api/grupos/${id}/miembros/${id_personal}`, {
@@ -138,15 +145,17 @@ function GrupoMiembros() {
               <FaUsers className="me-2" />
               {grupo.nombre}
             </h2>
-            <button
-              className="btn btn-primary"
-              style={{ backgroundColor: '#7A1737', borderColor: '#7A1737' }}
-              onClick={() => setShowAddModal(true)}
-              disabled={disponibles.length === 0}
-            >
-              <FaUserPlus className="me-2" />
-              Agregar Miembro
-            </button>
+            {[3, 4].includes(Number(admin?.rol)) && (
+              <button
+                className="btn btn-primary"
+                style={{ backgroundColor: '#7A1737', borderColor: '#7A1737' }}
+                onClick={() => setShowAddModal(true)}
+                disabled={disponibles.length === 0}
+              >
+                <FaUserPlus className="me-2" />
+                Agregar Miembro
+              </button>
+            )}
           </div>
 
           {mensaje && (
@@ -220,13 +229,15 @@ function GrupoMiembros() {
                           <FaUser className="me-2" style={{ color: '#7A1737' }} />
                           {miembro.nombre} {miembro.apellido_paterno}
                         </h6>
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleRemoveMember(miembro.id_personal)}
-                          title="Quitar del grupo"
-                        >
-                          <FaUserMinus />
-                        </button>
+                        {[3, 4].includes(Number(admin?.rol)) && (
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleRemoveMember(miembro.id_personal)}
+                            title="Quitar del grupo"
+                          >
+                            <FaUserMinus />
+                          </button>
+                        )}
                       </div>
                       <p className="card-text small mb-1">
                         <strong>Usuario:</strong> {miembro.usuario}
