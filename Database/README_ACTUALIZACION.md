@@ -92,6 +92,7 @@ Reemplaza `ruta_al_archivo.sql` con la ruta al archivo SQL que contiene la nueva
 ## Notas Adicionales
 - Como opcion viable puedes utilizar herramientas de gestion de bases de datos como pgAdmin para realizar cambios en la estructura de la base de datos a traves de una interfaz grafica si no te sientes comodo utilizando comandos SQL directamente, ya que trabajar directamente desde el terminal puede llegar a ser tedioso en ocasiones.
 - Asegúrate de probar los cambios en un entorno de desarrollo antes de aplicarlos en producción.
+- Se dejo una Tabla referente a notificaciones del sistema cuando se se suben archivos por parte de los usuarios pero por cuestiones tecnicas no se implemento en el codigo actual, sin embargo la tabla esta creada en la base de datos para futuras implementaciones por si se requiere.
 ## Consideraciones Finales
 - Siempre realiza una copia de seguridad antes de hacer cambios significativos en la base de datos.
 - Prueba exhaustivamente la aplicación después de realizar cambios en la base de datos para evitar problemas en producción.
