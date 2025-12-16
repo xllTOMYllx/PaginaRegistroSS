@@ -20,6 +20,7 @@ function Home() {
   const [notificaciones, setNotificaciones] = useState([]);
   const [nuevas, setNuevas] = useState(0);
   const [mostrarPanel, setMostrarPanel] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [activeSection, setActiveSection] = useState('user');
 
@@ -100,6 +101,11 @@ function Home() {
       return;
     }
 
+    // Evitar clics múltiples durante la carga
+    if (isUploading) {
+      return;
+    }
+
     // Verificar si hay sesión activa
     const token = localStorage.getItem("token")?.trim();
     if (!token) {
@@ -112,6 +118,7 @@ function Home() {
     formData.append("archivo", archivo);
     formData.append("tipo", tipo);
 
+    setIsUploading(true);
     try {
       await axios.post("http://localhost:5000/api/documentos/subir-academico", formData, {
         headers: {
@@ -122,7 +129,7 @@ function Home() {
       window.location.reload();
     } catch (error) {
       console.error("Error al subir archivo:", error);
-
+      setIsUploading(false);
     }
   };
 
@@ -149,6 +156,10 @@ function Home() {
       alert("Selecciona una imagen válida (JPG o PNG)");
       return;
     }
+    // Evitar clics múltiples durante la carga
+    if (isUploading) {
+      return;
+    }
     // Verificar si hay sesión activa
     const token = localStorage.getItem("token")?.trim();
     if (!token) {
@@ -159,6 +170,7 @@ function Home() {
     const formData = new FormData();
     formData.append("foto", fotoPerfil);
 
+    setIsUploading(true);
     try {
       await axios.post("http://localhost:5000/api/documentos/subir-foto", formData, {
         headers: {
@@ -173,10 +185,12 @@ function Home() {
         }
       });
       setUsuario(userRes.data);
+      setIsUploading(false);
 
     } catch (error) {
       console.error("Error al subir foto:", error);
       alert(error.response?.data?.error || "Error al subir la foto");
+      setIsUploading(false);
     }
   };
 
@@ -305,9 +319,10 @@ function Home() {
                   type="button"
                   className="btn mb-2 user-photo-upload"
                   onClick={subirFotoPerfil}
+                  disabled={isUploading}
                 >
                   <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-                  Subir Foto
+                  {isUploading ? "Subiendo..." : "Subir Foto"}
                 </button>
               </div>
             </div>
@@ -353,9 +368,10 @@ function Home() {
                             type="button"
                             className="btn mb-2 academic-upload-btn"
                             onClick={() => subirArchivo(stateMap[idx], tipo)}
+                            disabled={isUploading}
                           >
                             <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-                            Subir
+                            {isUploading ? "Subiendo..." : "Subir"}
                           </button>
                           {stateMap[idx] && (
                             <span className="ms-2 small text-muted">{stateMap[idx].name}</span>
@@ -419,9 +435,10 @@ function Home() {
                   type="button"
                   className="btn mb-2 academic-upload-btn"
                   onClick={() => subirArchivo(Certificados, "certificados")}
+                  disabled={isUploading}
                 >
                   <i className="bi bi-cloud-arrow-up-fill me-1"></i>
-                  Subir
+                  {isUploading ? "Subiendo..." : "Subir"}
                 </button>
                 {Certificados && (
                   <span className="ms-2 small text-muted">{Certificados.name}</span>

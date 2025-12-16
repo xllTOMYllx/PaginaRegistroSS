@@ -15,6 +15,7 @@ function HomeUsuario2() {
   const [universidad, setUniversidad] = useState(null);
   const [certificados, setCertificados] = useState(null);
   const [documentos, setDocumentos] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
 
   // Verificar autenticación al montar el componente
@@ -67,10 +68,12 @@ function HomeUsuario2() {
       alert("Selecciona una imagen válida (JPG o PNG)");
       return;
     }
+    if (isUploading) return;
     const token = localStorage.getItem("token");
     if (!token) return;
     const formData = new FormData();
     formData.append("foto", fotoUsuario2);
+    setIsUploading(true);
     try {
       await axios.post("http://localhost:5000/api/documentos/subir-foto", formData, {
         headers: { Authorization: `Bearer ${token}` }
@@ -81,14 +84,17 @@ function HomeUsuario2() {
       });
       setUsuario2(res.data);
       localStorage.setItem("usuario", JSON.stringify(res.data)); // Actualiza localStorage
+      setIsUploading(false);
     } catch (err) {
       console.error("Error al subir foto:", err);
+      setIsUploading(false);
     }
   };
 
   // Subir archivo PDF
   const subirArchivo = async (archivo, tipo) => {
     if (!archivo || archivo.type !== "application/pdf") return;
+    if (isUploading) return;
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -96,13 +102,16 @@ function HomeUsuario2() {
     formData.append("archivo", archivo);
     formData.append("tipo", tipo);
 
+    setIsUploading(true);
     try {
       await axios.post("http://localhost:5000/api/documentos/subir-academico", formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
       });
       fetchDocumentos(Usuario2.id_personal, token);
+      setIsUploading(false);
     } catch (err) {
       console.error("Error al subir documento:", err);
+      setIsUploading(false);
     }
   };
 
@@ -177,8 +186,9 @@ function HomeUsuario2() {
                   className="btn mb-2"
                   style={{ backgroundColor: "#7A1737", color: "#fff", width: "90%" }}
                   onClick={subirFotoUsuario2}
+                  disabled={isUploading}
                 >
-                  Subir Foto
+                  {isUploading ? "Subiendo..." : "Subir Foto"}
                 </button>
               </div>
             </div>
@@ -213,8 +223,9 @@ function HomeUsuario2() {
                           className="btn mb-2"
                           style={{ backgroundColor: "#7A1737", color: "#fff", borderColor: "#7A1737" }}
                           onClick={() => subirArchivo(stateMap[idx], tipo)}
+                          disabled={isUploading}
                         >
-                          Subir
+                          {isUploading ? "Subiendo..." : "Subir"}
                         </button>
                         {stateMap[idx] && <span className="ms-2 small text-muted">{stateMap[idx].name}</span>}
                       </>
@@ -259,8 +270,9 @@ function HomeUsuario2() {
                     className="btn"
                     style={{ backgroundColor: "#7A1737", color: "#fff" }}
                     onClick={() => subirArchivo(certificados, "certificados")}
+                    disabled={isUploading}
                   >
-                    Subir
+                    {isUploading ? "Subiendo..." : "Subir"}
                   </button>
                   {certificados && <span className="ms-2 small text-muted">{certificados.name}</span>}
                 </div>
