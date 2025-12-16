@@ -243,8 +243,8 @@ router.post('/:id/miembros', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Grupo no encontrado' });
     }
 
-    // Solo admin o supervisor del grupo pueden agregar miembros
-    if (req.user.rol !== 3 && grupoCheck.rows[0].id_supervisor !== req.user.id_personal) {
+    // Solo admin (rol 3 o 4) o supervisor del grupo pueden agregar miembros
+    if (![3, 4].includes(req.user.rol) && grupoCheck.rows[0].id_supervisor !== req.user.id_personal) {
       return res.status(403).json({ error: 'No tienes permisos para modificar este grupo' });
     }
 
@@ -295,8 +295,8 @@ router.delete('/:id/miembros/:id_personal', authenticateToken, async (req, res) 
       return res.status(404).json({ error: 'Grupo no encontrado' });
     }
 
-    // Solo admin o supervisor del grupo pueden quitar miembros
-    if (req.user.rol !== 3 && grupoCheck.rows[0].id_supervisor !== req.user.id_personal) {
+    // Solo admin (rol 3 o 4) o supervisor del grupo pueden quitar miembros
+    if (![3, 4].includes(req.user.rol) && grupoCheck.rows[0].id_supervisor !== req.user.id_personal) {
       return res.status(403).json({ error: 'No tienes permisos para modificar este grupo' });
     }
 

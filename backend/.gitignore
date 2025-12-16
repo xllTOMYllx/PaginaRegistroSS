@@ -149,5 +149,5 @@ backend/uploads/
 # Ignore local holding folder used by mistake
 OtherFiles/
 
-# Ignore uploaded files
+# Ignore backend uploads folder
 backend/uploads/
