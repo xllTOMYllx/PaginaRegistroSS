@@ -110,20 +110,29 @@ const storage = multer.diskStorage({
       const userFolder = path.join(__dirname, '../uploads/academico', `${req.user.id_personal}`);
       const original = path.basename(file.originalname);
       const sanitized = sanitizeFileName(original);
-      const finalName = sanitized;
-      const finalPath = path.join(userFolder, finalName);
-      // Si existe un archivo con el mismo nombre, sobrescribir el antiguo
-      // para que el nombre almacenado sea exactamente el que subió el usuario
-      // Eliminamos el archivo existente antes de guardar el nuevo
+
+      const ext = path.extname(sanitized);
+      const base = path.basename(sanitized, ext);
+
+      // Si no existe, usar el nombre tal cual (sanitizado)
+      let finalName = sanitized;
+      let finalPath = path.join(userFolder, finalName);
+
       if (fs.existsSync(finalPath)) {
-        try {
-          fs.unlinkSync(finalPath);
-        } catch (unlinkErr) {
-          // Si no podemos eliminar el archivo existente, usar nombre con timestamp como respaldo
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-          return cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
+        // Buscar el siguiente sufijo disponible: Nombre(1).ext, Nombre(2).ext, ...
+        let i = 1;
+        while (true) {
+          const candidate = `${base}(${i})${ext}`;
+          const candidatePath = path.join(userFolder, candidate);
+          if (!fs.existsSync(candidatePath)) {
+            finalName = candidate;
+            finalPath = candidatePath;
+            break;
+          }
+          i += 1;
         }
       }
+
       cb(null, finalName);
     } catch (err) {
       // Respaldo: usar nombre con timestamp si algo falla
