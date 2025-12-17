@@ -6,6 +6,7 @@ const GmailCredentialsModal = ({ isOpen, onClose, onSubmit, defaultEmail }) => {
   const [smtpHost, setSmtpHost] = useState('smtp.gmail.com');
   const [smtpPort, setSmtpPort] = useState(587);
   const [smtpSecure, setSmtpSecure] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateEmail = (email) => {
     // Validación básica de formato de correo electrónico
@@ -115,14 +116,24 @@ const GmailCredentialsModal = ({ isOpen, onClose, onSubmit, defaultEmail }) => {
 
               <div className="mb-3">
                 <label htmlFor="emailPassword" className="form-label">Contraseña SMTP</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="emailPassword"
-                  placeholder="Ingresa tu contraseña SMTP o contraseña de aplicación"
-                  value={emailPassword}
-                  onChange={(e) => setEmailPassword(e.target.value)}
-                />
+                <div className="d-flex align-items-center">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="form-control"
+                    id="emailPassword"
+                    placeholder="Ingresa tu contraseña SMTP o contraseña de aplicación"
+                    value={emailPassword}
+                    onChange={(e) => setEmailPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary ms-2"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  >
+                    {showPassword ? 'Ocultar' : 'Ver'}
+                  </button>
+                </div>
                 <div className="form-text">
                   <strong>Instrucciones de seguridad:</strong>
                   <ul className="mt-1 mb-0">

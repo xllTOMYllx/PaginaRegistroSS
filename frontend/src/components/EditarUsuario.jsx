@@ -111,14 +111,31 @@ function EditarUsuario() {
     }
     // Enviar datos al backend
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.put(
         `http://localhost:5000/api/users/${formData.id_personal}`,
-        formData
+        formData,
+        token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
       );
+      // Refrescar usuario con rol desde /me para mantener sesión consistente
+      let updatedUser = response.data.user;
+      try {
+        if (token) {
+          const meRes = await axios.get('http://localhost:5000/api/users/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          updatedUser = meRes.data || updatedUser;
+          localStorage.setItem('usuario', JSON.stringify(updatedUser));
+        }
+      } catch {}
+
       setMensaje("Datos actualizados correctamente.");
       setTimeout(() => {
-        navigate("/home", { state: { user: response.data.user } });
-      }, 1500);
+        const stored = (() => { try { return JSON.parse(localStorage.getItem('usuario')); } catch { return null; } })();
+        const rol = Number(stored?.rol);
+        const nextRoute = rol === 2 ? '/usuarios' : rol === 3 ? '/homeadmin' : rol === 4 ? '/homeadmin4' : '/home';
+        navigate(nextRoute, { state: { user: updatedUser } });
+      }, 1000);
     } catch (err) {
       console.error(err);
       if (err.response && err.response.data.error) {
@@ -179,7 +196,12 @@ function EditarUsuario() {
       <div>
         {/* Botón para regresar a la página de inicio */}
         <button
-          onClick={() => navigate("/home", { state: { user: formData } })}
+          onClick={() => {
+            const stored = (() => { try { return JSON.parse(localStorage.getItem('usuario')); } catch { return null; } })();
+            const rol = Number(stored?.rol);
+            const route = rol === 2 ? '/usuarios' : rol === 3 ? '/homeadmin' : rol === 4 ? '/homeadmin4' : '/home';
+            navigate(route, { state: { user: formData } });
+          }}
           className="btn editar-back-btn"
         >
           Regresar
