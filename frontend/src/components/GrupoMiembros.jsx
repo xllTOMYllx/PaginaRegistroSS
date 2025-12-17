@@ -54,9 +54,9 @@ function GrupoMiembros() {
       console.error('Error al obtener usuarios disponibles:', error);
     }
   };
-  // Agregar miembro al grupo seleccionado tambien se le permite al rol 4 (superAdmin)
+  // Agregar miembro al grupo seleccionado tambien se le permite al rol 2 (supervisor) y 4 (superAdmin)
   const handleAddMember = async () => {
-   if (![3,4].includes(Number(admin?.rol))) {
+   if (![2,3,4].includes(Number(admin?.rol))) {
       setError('No tienes permisos para agregar miembros');
       return;
     }
@@ -82,9 +82,9 @@ function GrupoMiembros() {
       setError(error.response?.data?.error || 'Error al agregar miembro');
     }
   };
-  // Quitar miembro del grupo seleccionado tambien se le permite al rol 4 (superAdmin)
+  // Quitar miembro del grupo seleccionado tambien se le permite al rol 2 (supervisor) y 4 (superAdmin)
   const handleRemoveMember = async (id_personal) => {
-    if (![3,4].includes(Number(admin?.rol))) {
+    if (![2,3,4].includes(Number(admin?.rol))) {
       setError('No tienes permisos para quitar miembros');
       return;
     }
@@ -145,7 +145,7 @@ function GrupoMiembros() {
               <FaUsers className="me-2" />
               {grupo.nombre}
             </h2>
-            {[3, 4].includes(Number(admin?.rol)) && (
+            {[2, 3, 4].includes(Number(admin?.rol)) && (
               <button
                 className="btn btn-primary"
                 style={{ backgroundColor: '#7A1737', borderColor: '#7A1737' }}
@@ -229,7 +229,7 @@ function GrupoMiembros() {
                           <FaUser className="me-2" style={{ color: '#7A1737' }} />
                           {miembro.nombre} {miembro.apellido_paterno}
                         </h6>
-                        {[3, 4].includes(Number(admin?.rol)) && (
+                        {[2, 3, 4].includes(Number(admin?.rol)) && (
                           <button
                             className="btn btn-sm btn-outline-danger"
                             onClick={() => handleRemoveMember(miembro.id_personal)}
