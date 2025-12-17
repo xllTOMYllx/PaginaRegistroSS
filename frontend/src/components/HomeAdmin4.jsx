@@ -62,16 +62,8 @@ function HomeAdmin4() {
   };
 
   const handleEditClick = () => {
-    setEditData({
-      nombre: admin.nombre,
-      apellido_paterno: admin.apellido_paterno,
-      apellido_materno: admin.apellido_materno,
-      curp: admin.curp,
-      rfc: admin.rfc,
-      correo: admin.correo,
-      estudios: admin.estudios,
-    });
-    setShowEditModal(true);
+    // Ir a edición completa con soporte de cambio de contraseña
+    navigate('/editarUsuario', { state: { user: admin } });
   };
 
   const handleSaveChanges = async () => {
