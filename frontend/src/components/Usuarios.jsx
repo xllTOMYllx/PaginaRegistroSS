@@ -104,13 +104,7 @@ function Miembros() {
           {/* Botón para editar mis datos (roles 2 y 3) */}
           {admin && [2,3,4].includes(Number(admin.rol)) && (
             <div className="mb-3 d-flex justify-content-end">
-              <button
-                className="btn"
-                style={{ backgroundColor: "#7A1737", color: "#fff" }}
-                onClick={() => navigate('/editarUsuario', { state: { user: admin } })}
-              >
-                Editar mis datos
-              </button>
+              
             </div>
           )}
           <div className="mb-4">

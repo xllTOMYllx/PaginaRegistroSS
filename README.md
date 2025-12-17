@@ -1,12 +1,18 @@
 # PaginaRegistroSS
-Una pagina web desarrollada para el resgitro del personal administrativo, desarrollada con react para el frontend, node.js y Express para el Backend y PostgreSQL para las bases de datos, además de diversas herramientas para el desarrollo y despliegue del proyecto.
+Una pagina web desarrollada para el resgitro del personal administrativo, desarrollada con react para el frontend, node.js y Express para el Backend y PostgreSQL para las bases de datos, además de diversas herramientas para el desarrollo.
 
 ## Tecnologías Utilizadas
-- Frontend: React, Vite, Tailwind CSS
+- Frontend: React, Vite, Bootstrap
 - Backend: Node.js, Express
 - Base de Datos: PostgreSQL
-- Herramientas de Desarrollo: Visual Studio Code, Postman
-
+- Herramientas de Desarrollo: Visual Studio Code para la parte del codigo, Postman para las pruebas de API, pgAdmin para la gestión de la base de datos PostgreSQL.
+- Control de Versiones: Git y GitHub
+- Otras Librerías: Axios para las solicitudes HTTP, dotenv para la gestión de variables de entorno, bcrypt para el hashing de contraseñas, jsonwebtoken para la autenticación basada en tokens.
+- Estructura del Proyecto:
+  - `/frontend`: Contiene el código fuente del frontend desarrollado con React y Vite.
+  - `/backend`: Contiene el código fuente del backend desarrollado con Node.js y Express.
+  - `/Database`: Contiene scripts y archivos relacionados con la configuración de la base de datos PostgreSQL.
+  - `README.md`: Documentación del proyecto.
 
 ## Setup Instrucciones para configurar y ejecutar el proyecto localmente. Requiere tener Node.js y PostgreSQL instalados en tu máquina. Recomendado usar nvm para manejar las versiones de node.js
 
@@ -39,6 +45,15 @@ Una pagina web desarrollada para el resgitro del personal administrativo, desarr
 ## Uso
 - Accede a la aplicación web a través de `http://localhost:5173` para el frontend.
 - El backend estará disponible en `http://localhost:3000`.
+
+## Despliegue a producción 
+- Para desplegar la aplicación en un entorno de producción, asegúrate de configurar las variables de entorno adecuadamente y utilizar un servidor web como Nginx o Apache para servir el frontend. El backend puede ser desplegado en servicios como Heroku, AWS, o cualquier otro proveedor de hosting que soporte Node.js.
+- Considera usar herramientas como PM2 para gestionar el proceso del servidor Node.js en producción.
+- Asegúrate de optimizar el frontend para producción utilizando `npm run build` en la carpeta del frontend, lo que generará una versión optimizada de la aplicación en la carpeta `dist`.
+- Configura correctamente las políticas de seguridad, como CORS, y asegúrate de que la base de datos esté protegida y accesible solo desde el backend.
+- Monitorea el rendimiento y la disponibilidad de la aplicación utilizando herramientas como New Relic, Datadog, o similares.
+- Realiza copias de seguridad regulares de la base de datos para prevenir la pérdida de datos.
+- Considera implementar un sistema de logging para registrar errores y eventos importantes en el backend.
 
 ## Contribuciones
 Las contribuciones son bienvenidas. Por favor, abre un issue o envía un pull request para discutir los cambios que deseas realizar.
