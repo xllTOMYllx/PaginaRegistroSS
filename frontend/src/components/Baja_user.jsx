@@ -17,7 +17,16 @@ function Baja_user() {
     }
     setAdmin(adminData);
 
-    fetch("http://localhost:5000/api/users/rol/1", {
+    // Determine which role to fetch based on user's role
+    // Role 2 sees role 1, Role 3 sees roles 1-2, Role 4 sees roles 1-3
+    let rolToFetch = 1;
+    if (adminData.rol === 3) {
+      rolToFetch = 1; // Will see users via the API logic
+    } else if (adminData.rol === 4) {
+      rolToFetch = 1; // Will see users via the API logic
+    }
+
+    fetch(`http://localhost:5000/api/users/rol/${rolToFetch}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
