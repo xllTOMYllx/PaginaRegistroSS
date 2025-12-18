@@ -816,14 +816,21 @@ router.put('/bloquear/:id', authenticateToken, isJefeOUsuario2, async (req, res)
   const { id } = req.params;
 
   try {
-    // Verificar que sea rol 1
+    // Obtener el usuario a bloquear
     const usuario = await pool.query(
-      "SELECT * FROM personal WHERE id_personal = $1 AND rol = 1",
+      "SELECT * FROM personal WHERE id_personal = $1",
       [id]
     );
 
     if (usuario.rows.length === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado o no es de rol 1" });
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const usuarioABloquear = usuario.rows[0];
+
+    // Validar que el usuario a bloquear tenga un rol inferior al del usuario autenticado
+    if (usuarioABloquear.rol >= req.user.rol) {
+      return res.status(403).json({ error: "No puedes bloquear a usuarios con tu mismo rol o superior" });
     }
 
     // Bloquear al usuario
@@ -844,14 +851,21 @@ router.put('/desbloquear/:id', authenticateToken, isJefeOUsuario2, async (req, r
   const { id } = req.params;
 
   try {
-    // Verificar que sea rol 1
+    // Obtener el usuario a desbloquear
     const usuario = await pool.query(
-      "SELECT * FROM personal WHERE id_personal = $1 AND rol = 1",
+      "SELECT * FROM personal WHERE id_personal = $1",
       [id]
     );
 
     if (usuario.rows.length === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado o no es de rol 1" });
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const usuarioADesbloquear = usuario.rows[0];
+
+    // Validar que el usuario a desbloquear tenga un rol inferior al del usuario autenticado
+    if (usuarioADesbloquear.rol >= req.user.rol) {
+      return res.status(403).json({ error: "No puedes desbloquear a usuarios con tu mismo rol o superior" });
     }
 
     // Desbloquear al usuario
