@@ -56,6 +56,11 @@ function UsuarioDetalle() {
     setIsModalOpen(true);
   };
 
+  const handleCotejarTodosClick = () => {
+    setSelectedDocId('ALL');
+    setIsModalOpen(true);
+  };
+
   // Función para marcar un documento como cotejado
   const toggleCotejado = async (docId, smtpData) => {
     try {
@@ -110,6 +115,43 @@ function UsuarioDetalle() {
       }
       
       alert(errorMessage);
+    }
+  };
+
+  // Cotejar todos los documentos del usuario en lote
+  const cotejarTodos = async (smtpData) => {
+    try {
+      const token = localStorage.getItem("token");
+      // Usar POST directamente para evitar problemas con PATCH
+      const response = await axios.post(
+        `http://localhost:5000/api/documentos/usuario/${usuario.id_personal}/cotejar-todos`,
+        smtpData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Marcar todos los documentos como cotejados en el estado local
+      setUsuario(prev => ({
+        ...prev,
+        documentos: (prev.documentos || []).map(doc => ({ ...doc, cotejado: true }))
+      }));
+
+      const updated = response.data?.updated || 0;
+      const emailSent = response.data?.emailSent;
+      const emailError = response.data?.emailError;
+      if (emailSent === false && emailError) {
+        alert(`Se cotejaron ${updated} documentos. Error enviando el correo resumen: ${emailError}`);
+      } else {
+        alert(`Se cotejaron ${updated} documentos y se envió el correo resumen.`);
+      }
+    } catch (error) {
+      console.error('Error al cotejar todos los documentos:', error);
+      const msg = error.response?.data?.error || 'Error al realizar el cotejo masivo';
+      alert(msg);
     }
   };
 
@@ -217,6 +259,21 @@ function UsuarioDetalle() {
             <h5 className="mb-3" style={{ fontSize: "clamp(1.1rem, 3vw, 1.25rem)", fontFamily: "Roboto, sans-serif" }}>
               📚 Documentos Académicos
             </h5>
+            {(() => {
+              const hayPendientes = (usuario.documentos || []).some(d => !d.cotejado);
+              return (
+                <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
+                  <button
+                    className="btn btn-sm btn-success"
+                    onClick={handleCotejarTodosClick}
+                    disabled={!hayPendientes}
+                    style={{ fontSize: "clamp(0.8rem, 2vw, 0.9rem)", fontFamily: "Roboto, sans-serif" }}
+                  >
+                    Cotejar todos los documentos
+                  </button>
+                </div>
+              );
+            })()}
             {documentosAcademicosOrdenados.length > 0 ? (
               <div className="table-responsive">
                 <table className="table table-striped table-bordered">
@@ -340,7 +397,11 @@ function UsuarioDetalle() {
         onClose={() => setIsModalOpen(false)}
         defaultEmail={admin?.correo}
         onSubmit={(smtpData) => {
-          toggleCotejado(selectedDocId, smtpData);
+          if (selectedDocId === 'ALL') {
+            cotejarTodos(smtpData);
+          } else {
+            toggleCotejado(selectedDocId, smtpData);
+          }
           setIsModalOpen(false);
         }}
       />

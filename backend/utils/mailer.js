@@ -127,32 +127,22 @@ const createTransporter = (options) => {
 };
 
 // Función para notificar cuando un documento es cotejado
-// Firma: (to, nombre, tipoDocumento, verificadoPor, fromEmail, fromPassword, smtpHost, smtpPort, smtpSecure)
-const sendDocumentVerifiedEmail = async (to, nombre, tipoDocumento, verificadoPor, fromEmail, fromPassword) => {
+// Firma: (to, nombre, tipoDocumento, verificadoPor, fromEmail, fromPassword, smtpHost?, smtpPort?, smtpSecure?)
+const sendDocumentVerifiedEmail = async (to, nombre, tipoDocumento, verificadoPor, fromEmail, fromPassword, smtpHost, smtpPort, smtpSecure) => {
     try {
-        console.log('Configurando Gmail SMTP:', {
-            user: fromEmail
+        const host = smtpHost || 'smtp.gmail.com';
+        const port = typeof smtpPort === 'number' ? smtpPort : 587;
+        const secure = typeof smtpSecure === 'boolean' ? smtpSecure : false; // false => STARTTLS (587), true => SSL (465)
+
+        console.log('Configurando SMTP:', { user: fromEmail, host, port, secure });
+
+        const transporter = createTransporter({
+            host,
+            port,
+            secure,
+            user: fromEmail,
+            pass: fromPassword
         });
-
-        // Usar STARTTLS en puerto 587 (secure: false) para compatibilidad con Gmail
-        const transportConfig = {
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false, // STARTTLS
-            requireTLS: true,
-            auth: {
-                user: fromEmail,
-                pass: fromPassword
-            },
-            tls: {
-                // Aceptar certificados autofirmados (si los hay) y forzar TLS >= 1.2
-                rejectUnauthorized: false,
-                minVersion: 'TLSv1.2'
-            },
-            debug: true
-        };
-
-        const transporter = nodemailer.createTransport(transportConfig);
 
         // Verificar la conexión antes de enviar
         await transporter.verify();
@@ -187,3 +177,49 @@ module.exports = {
     sendDocumentUploadedEmail,
     sendDocumentVerifiedEmail
 };
+
+// Envío de correo único para cotejo masivo de documentos
+const sendBulkDocumentsVerifiedEmail = async (to, nombre, verificadoPor, tipos, fromEmail, fromPassword, smtpHost, smtpPort, smtpSecure) => {
+    try {
+        const host = smtpHost || 'smtp.gmail.com';
+        const port = typeof smtpPort === 'number' ? smtpPort : 587;
+        const secure = typeof smtpSecure === 'boolean' ? smtpSecure : false;
+
+        const transporter = createTransporter({
+            host,
+            port,
+            secure,
+            user: fromEmail,
+            pass: fromPassword
+        });
+
+        await transporter.verify();
+
+        const lista = Array.isArray(tipos) && tipos.length
+            ? `<ul>${tipos.map(t => `<li>${t}</li>`).join('')}</ul>`
+            : '<p>(Sin detalle de tipos)</p>';
+
+        await transporter.sendMail({
+            from: fromEmail,
+            to: to,
+            subject: 'Documentos Verificados - Sistema SS',
+            html: `
+                <h1>Documentos Verificados</h1>
+                <p>Hola ${nombre},</p>
+                <p>Se han verificado tus documentos por ${verificadoPor}.</p>
+                <p>Detalle:</p>
+                ${lista}
+                <br>
+                <p>Saludos cordiales,</p>
+                <p>${verificadoPor}</p>
+                <p>Planeación y desarrollo</p>
+            `
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('Error en correo de verificación masiva:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+module.exports.sendBulkDocumentsVerifiedEmail = sendBulkDocumentsVerifiedEmail;

@@ -130,12 +130,8 @@ function EditarUsuario() {
       } catch {}
 
       setMensaje("Datos actualizados correctamente.");
-      setTimeout(() => {
-        const stored = (() => { try { return JSON.parse(localStorage.getItem('usuario')); } catch { return null; } })();
-        const rol = Number(stored?.rol);
-        const nextRoute = rol === 2 ? '/usuarios' : rol === 3 ? '/homeadmin' : rol === 4 ? '/homeadmin4' : '/home';
-        navigate(nextRoute, { state: { user: updatedUser } });
-      }, 1000);
+      // Mantenerse en la misma vista y reflejar datos actualizados
+      setFormData((prev) => ({ ...prev, ...updatedUser }));
     } catch (err) {
       console.error(err);
       if (err.response && err.response.data.error) {
@@ -163,6 +159,11 @@ function EditarUsuario() {
 
     // Validaciones básicas
     if (!pwdForm.newPassword) return setPwdMsg('La nueva contraseña es requerida.');
+    // Reglas de fortaleza: mínimo 8, mayúscula, minúscula, número y símbolo
+    const strongPwd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+    if (!strongPwd.test(pwdForm.newPassword)) {
+      return setPwdMsg('La contraseña debe tener al menos 8 caracteres, incluir mayúscula, minúscula, número y símbolo.');
+    }
     if (pwdForm.newPassword !== pwdForm.confirmPassword) return setPwdMsg('Las contraseñas no coinciden.');
 
     try {
@@ -287,6 +288,9 @@ function EditarUsuario() {
                 <button type="button" aria-label="Ver nueva contraseña" className="btn btn-sm btn-outline-secondary ms-2" onClick={() => toggleShow('newPassword')}>
                   {showPwd.newPassword ? 'Ocultar' : 'Ver'}
                 </button>
+              </div>
+              <div className="form-text text-muted mt-1">
+                Debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.
               </div>
             </div>
             <div className="mb-3">

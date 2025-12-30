@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import zxcvbn from 'zxcvbn';
+import jsPDF from 'jspdf';
 import { validateForm } from '../utils/validations';
 import { getPasswordStrength, getStrengthColor, getStrengthText } from "../utils/validations";
 import Sidebar from './Sidebar';
@@ -60,6 +61,216 @@ function CrearUsuario() {
     setError({ ...error, [name]: '' });
   };
 
+  // Función para descargar el PDF de Carta Responsiva con datos del usuario
+  const descargarPDF = async (datosUsuario) => {
+    const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 15;
+    let yPosition = 10;
+
+    // Cargar imagen desde /public y dibujarla en el PDF (manteniendo proporción)
+    const loadImageAsDataUrl = async (src) => {
+      const response = await fetch(src);
+      if (!response.ok) throw new Error('No se pudo cargar el logo');
+      const blob = await response.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    };
+
+    const addLogo = async (src, format, targetY, fallback) => {
+      try {
+        const dataUrl = await loadImageAsDataUrl(src);
+        const img = new Image();
+        img.src = dataUrl;
+        await img.decode();
+
+        const maxW = 120; // más ancho para mejor nitidez
+        const maxH = 50;
+        let w = img.width;
+        let h = img.height;
+        const ratio = Math.min(maxW / w, maxH / h, 1);
+        w = w * ratio;
+        h = h * ratio;
+
+        const x = pageWidth / 2 - w / 2;
+        doc.addImage(dataUrl, format, x, targetY, w, h);
+        return true;
+      } catch (e) {
+        if (fallback) fallback();
+        return false;
+      }
+    };
+
+    const logoSrc = '/ImagenSesver.png'; // coloca tu logo en frontend/public/ImagenSesver.png
+
+    await addLogo(logoSrc, 'PNG', yPosition, () => {
+      // Respaldo en texto si no se encuentra el logo
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.setTextColor(139, 0, 0);
+      doc.text('SECRETARÍA DE SALUD', pageWidth / 2, yPosition + 10, { align: 'center' });
+    });
+
+    // Línea separadora
+    doc.setDrawColor(139, 0, 0);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPosition + 22, pageWidth - margin, yPosition + 22);
+
+    yPosition = 40;
+
+    // Título del documento
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('CARTA RESPONSIVA', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 8;
+
+    // Fecha
+    const hoy = new Date();
+    const dia = hoy.getDate();
+    const mes = hoy.toLocaleString('es-MX', { month: 'long' });
+    const anio = hoy.getFullYear();
+    
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text(
+      `Veracruz de Ignacio de la Llave, a ${dia} de ${mes} de ${anio}`,
+      pageWidth / 2,
+      yPosition,
+      { align: 'center' }
+    );
+    yPosition += 12;
+
+    // Texto principal con datos rellenados
+    const textoCompleto = `El (la) suscrito(a) ${datosUsuario.NOMBRE} ${datosUsuario.APELLIDO_PATERNO} ${datosUsuario.APELLIDO_MATERNO}, con Clave Única de Registro de Población ${datosUsuario.CURP}, persona física, mayor de edad, adscrito(a) a la Secretaría de Salud del Estado de Veracruz, Subdirección de Planeación, confirmo que, con esta fecha, recibo clave de usuario "${datosUsuario.USUARIO}" y contraseña "${datosUsuario.CONTRASENA}" para acceder al «Sistema de Expediente Académico», de aquí en adelante denominado el sistema; por lo que me hago responsable del buen uso de éstas, en el entendido de que son personales e intransferibles, es decir, bajo ningún concepto podré prestar mi clave y contraseña a otra persona, siendo de mi entera responsabilidad el mal uso de las mismas.
+
+Que es mi obligación solicitar la baja de la clave al momento de ya no requerir el acceso al sistema, en el entendido de que aun posterior a esta baja seré obligado(a) a mantener la confidencialidad de la información a la que haya tenido acceso. Asimismo, estoy enterado(a) que el (la) administrador(a) de cuentas de acceso al sistema, puede dar de baja mi cuenta ante cualquier irregularidad detectada en su uso.
+
+Manifiesto estar consciente que derivado del ingreso al sistema, tengo acceso a información privilegiada y confidencial, de exclusiva incumbencia al Sistema Nacional de Información en Salud, y su difusión puede tener efectos adversos al mismo en el cumplimiento de las actividades para el que fue creado. Desde este momento convengo de manera expresa, a guardar absoluta confidencialidad de los datos registrados en el sistema, obligándome a no hacer mal uso de los mismos o difundir información alguna a la que tenga acceso.
+
+Estoy enterado(a) que fuera de los criterios y procedimientos a seguir para producir, captar, integrar, procesar, sistematizar, evaluar y divulgar la información en salud establecidos en la Norma Oficial Mexicana NOM-035-SSA3-2012, en materia de información en salud, los datos en el sistema no deberán ser reproducidos por ningún medio (físico o electrónico), ni vinculados con otros dispositivos (fijos o móviles); así como, evitar la interoperabilidad o intercambio con otros sistemas informáticos no certificados bajo la Norma Oficial Mexicana NOM-024-SSA3-2012, Sistemas de información de registro electrónico para la salud, intercambio de información en salud.
+
+Reconozco y acepto que el acceso, uso y difusión de la información se sujetará a los principios de confidencialidad y reserva que establecen las disposiciones vigentes en materia de información como son la Ley del Sistema Nacional de Información Estadística y Geográfica, la Ley Federal de Transparencia y Acceso a la Información Pública Gubernamental, la Ley Federal de Protección de Datos Personales en Posesión de los Particulares y demás disposiciones jurídicas aplicables en materia de transparencia y protección de datos personales.
+
+En caso de que el Organismo determine que, como servidor(a) público(a) pude haber incurrido en responsabilidades por el incumplimiento de los presentes lineamientos, lo hará del conocimiento al Órgano Interno de Control, a efecto de que éste determine lo conducente con base en el capítulo de Responsabilidades y Sanciones establecido en la Ley Federal de Responsabilidades Administrativas de los Servidores Públicos.`;
+
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'normal');
+    const lineas = doc.splitTextToSize(textoCompleto, pageWidth - 2 * margin);
+    
+    // Agregar contenido con justificación y manejar saltos de página
+    lineas.forEach((linea) => {
+      if (yPosition > pageHeight - margin - 40) {
+        doc.addPage();
+        yPosition = margin;
+      }
+      doc.text(linea, margin, yPosition, { align: 'justify', maxWidth: pageWidth - 2 * margin });
+      yPosition += 4.5;
+    });
+
+    // Espacio para firma
+    yPosition += 10;
+    if (yPosition > pageHeight - 60) {
+      doc.addPage();
+      yPosition = margin;
+    }
+    
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text('Firmo de conformidad', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 20;
+    
+    // Línea para firma
+    doc.setLineWidth(0.3);
+    doc.setDrawColor(0, 0, 0);
+    doc.line(pageWidth / 2 - 40, yPosition, pageWidth / 2 + 40, yPosition);
+    yPosition += 5;
+    
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'bold');
+    doc.text('ATENTAMENTE', pageWidth / 2, yPosition, { align: 'center' });
+
+    // Nueva página para datos de acceso
+    doc.addPage();
+    yPosition = margin + 10;
+
+    // Sección de Liga de acceso al sistema
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text('Liga de acceso al sistema:', margin, yPosition);
+    yPosition += 6;
+    
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('""', margin, yPosition);
+    yPosition += 10;
+
+    // La clave de acceso es la siguiente
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('La clave de acceso es la siguiente:', margin, yPosition);
+    yPosition += 8;
+
+    // Usuario y Contraseña con bullets
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.text('•', margin + 5, yPosition);
+    doc.text(`Usuario: "${datosUsuario.USUARIO}"`, margin + 12, yPosition);
+    yPosition += 7;
+    
+    doc.text('•', margin + 5, yPosition);
+    doc.text(`Contraseña: "${datosUsuario.CONTRASENA}"`, margin + 12, yPosition);
+    yPosition += 12;
+
+    // Nota sobre contraseña temporal
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    const notaTemporal = doc.splitTextToSize(
+      'Esta clave fue generada automáticamente por el sistema, misma que es temporal. En su primer ingreso a la aplicación cambie la contraseña por una mas segura.',
+      pageWidth - 2 * margin
+    );
+    notaTemporal.forEach((linea) => {
+      doc.text(linea, margin, yPosition, { align: 'justify', maxWidth: pageWidth - 2 * margin });
+      yPosition += 5;
+    });
+
+    yPosition += 5;
+
+    // Nota de incidencias
+    const notaIncidencias = doc.splitTextToSize(
+      'En caso de incidencias, dudas o comentarios favor de reportarlos al teléfono "", extensión "".',
+      pageWidth - 2 * margin
+    );
+    notaIncidencias.forEach((linea) => {
+      doc.text(linea, margin, yPosition, { align: 'justify', maxWidth: pageWidth - 2 * margin });
+      yPosition += 5;
+    });
+
+    // Pie de página con datos de contacto
+    yPosition = pageHeight - 20;
+    doc.setFontSize(8);
+    doc.setFont(undefined, 'normal');
+    doc.text('Soconusco #31 Col. Aguacatal', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 4;
+    doc.text('C.P. 91130, Xalapa, Veracruz', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 4;
+    doc.text('Tel. 01 228 842 3000 ext. 2981', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 4;
+    doc.setTextColor(0, 0, 255);
+    doc.text('www.ssaver.gob.mx', pageWidth / 2, yPosition, { align: 'center' });
+
+    // Descargar
+    const nombreArchivo = `Carta_Responsiva_${datosUsuario.USUARIO}_${new Date().getTime()}.pdf`;
+    doc.save(nombreArchivo);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje('');
@@ -86,6 +297,10 @@ function CrearUsuario() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMensaje('Usuario creado correctamente');
+      // Descargar PDF automáticamente tras crear usuario con sus datos
+      setTimeout(() => {
+        descargarPDF(formData);
+      }, 500);
       setFormData({
         NOMBRE: '',
         APELLIDO_PATERNO: '',
