@@ -4,7 +4,7 @@ const { Pool } = require('pg');
 const multer = require('multer');
 const path = require('path');
 const jwt = require('jsonwebtoken');
-const { sendDocumentUploadedEmail, sendDocumentVerifiedEmail } = require('../utils/mailer');
+const { sendDocumentUploadedEmail, sendDocumentVerifiedEmail, sendBulkDocumentsVerifiedEmail } = require('../utils/mailer');
 require('dotenv').config();
 
 // Config DB
@@ -188,7 +188,11 @@ const { usuario, correo } = userResult.rows[0];
 // Enviar correo de notificación
 if (correo) {
   try {
-    await sendDocumentUploadedEmail(correo, usuario, tipo);
+        await sendDocumentUploadedEmail(
+          correo,
+          usuario,
+          tipo
+        );
   } catch (emailError) {
     console.error('Error al enviar correo de notificación:', emailError);
     // Continuamos con la ejecución aunque falle el envío del correo
@@ -357,6 +361,107 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
       [id]
     );
 
+
+    // 📌 Cotejar TODOS los documentos de un usuario
+    router.patch('/usuario/:id_personal/cotejar-todos', authenticateToken, async (req, res) => {
+      const { id_personal } = req.params;
+      const { emailPassword, fromEmail } = req.body;
+
+      if (!emailPassword || !fromEmail) {
+        return res.status(400).json({ error: 'Se requieren el correo y la contraseña de Gmail para enviar las notificaciones' });
+      }
+
+      try {
+        // Datos del propietario de los documentos
+        const ownerRes = await pool.query(
+          `SELECT usuario, correo FROM personal WHERE id_personal = $1`,
+          [id_personal]
+        );
+        if (ownerRes.rows.length === 0) {
+          return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+        const { usuario, correo } = ownerRes.rows[0];
+
+        // Supervisores (rol 2): validar pertenencia a su grupo
+        if (req.user.rol === 2) {
+          const grupoCheck = await pool.query(
+            `SELECT COUNT(*) as count
+             FROM grupo_miembros gm
+             INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+             WHERE gm.id_personal = $1 AND g.id_supervisor = $2`,
+            [id_personal, req.user.id_personal]
+          );
+          if (grupoCheck.rows[0].count == 0) {
+            return res.status(403).json({ error: 'No tienes permiso para cotejar documentos de este usuario' });
+          }
+        }
+
+        // Documentos pendientes de cotejo
+        const docsRes = await pool.query(
+          `SELECT id, tipo FROM documentos_academicos WHERE id_personal = $1 AND cotejado = FALSE`,
+          [id_personal]
+        );
+        const pendientes = docsRes.rows;
+
+        if (pendientes.length === 0) {
+          return res.json({ message: 'No hay documentos pendientes de cotejo para este usuario', updated: 0 });
+        }
+
+        // Actualizar en lote
+        await pool.query(
+          `UPDATE documentos_academicos
+           SET cotejado = TRUE,
+               verificado_por = $2,
+               fecha_verificacion = CURRENT_TIMESTAMP
+           WHERE id_personal = $1 AND cotejado = FALSE`,
+          [id_personal, req.user.id_personal]
+        );
+
+        // Notificaciones por documento
+        for (const d of pendientes) {
+          await pool.query(
+            `INSERT INTO notificaciones (id_personal, usuario, mensaje)
+             VALUES ($1, $2, $3)`,
+            [id_personal, usuario, `Tu documento "${d.tipo}" ha sido cotejado`] 
+          );
+        }
+
+        // Envío de un único correo resumen
+        let emailSent = false;
+        let emailError = null;
+        if (correo) {
+          try {
+            const tipos = pendientes.map(d => d.tipo);
+            const emailResult = await sendBulkDocumentsVerifiedEmail(
+              correo,
+              usuario,
+              req.user.usuario || 'Verificador',
+              tipos,
+              fromEmail,
+              emailPassword,
+              req.body.smtpHost,
+              req.body.smtpPort,
+              req.body.smtpSecure
+            );
+            emailSent = !!emailResult.success;
+            emailError = emailResult.success ? null : emailResult.error;
+          } catch (err) {
+            emailError = err.message || String(err);
+          }
+        }
+
+        return res.json({ 
+          message: `Documentos cotejados: ${pendientes.length}`,
+          updated: pendientes.length,
+          emailSent,
+          emailError
+        });
+      } catch (error) {
+        console.error('Error al cotejar todos los documentos:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+      }
+    });
+
     if (docResult.rows.length === 0) {
       return res.status(404).json({ error: 'Documento no encontrado' });
     }
@@ -426,7 +531,10 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
           tipo,
           verificadorInfo.nombre,
           fromEmail,
-          emailPassword
+          emailPassword,
+          req.body.smtpHost,
+          req.body.smtpPort,
+          req.body.smtpSecure
         );
 
         if (!emailResult.success) {
@@ -452,6 +560,100 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
     res.json({ message: 'Documento marcado como cotejado correctamente' });
   } catch (error) {
     console.error('Error al actualizar cotejado:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// Alias con POST por compatibilidad si algún entorno bloquea PATCH
+router.post('/usuario/:id_personal/cotejar-todos', authenticateToken, async (req, res) => {
+  const { id_personal } = req.params;
+  const { emailPassword, fromEmail } = req.body;
+
+  if (!emailPassword || !fromEmail) {
+    return res.status(400).json({ error: 'Se requieren el correo y la contraseña de Gmail para enviar las notificaciones' });
+  }
+
+  try {
+    const ownerRes = await pool.query(
+      `SELECT usuario, correo FROM personal WHERE id_personal = $1`,
+      [id_personal]
+    );
+    if (ownerRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    const { usuario, correo } = ownerRes.rows[0];
+
+    if (req.user.rol === 2) {
+      const grupoCheck = await pool.query(
+        `SELECT COUNT(*) as count
+         FROM grupo_miembros gm
+         INNER JOIN grupos g ON gm.id_grupo = g.id_grupo
+         WHERE gm.id_personal = $1 AND g.id_supervisor = $2`,
+        [id_personal, req.user.id_personal]
+      );
+      if (grupoCheck.rows[0].count == 0) {
+        return res.status(403).json({ error: 'No tienes permiso para cotejar documentos de este usuario' });
+      }
+    }
+
+    const docsRes = await pool.query(
+      `SELECT id, tipo FROM documentos_academicos WHERE id_personal = $1 AND cotejado = FALSE`,
+      [id_personal]
+    );
+    const pendientes = docsRes.rows;
+
+    if (pendientes.length === 0) {
+      return res.json({ message: 'No hay documentos pendientes de cotejo para este usuario', updated: 0 });
+    }
+
+    await pool.query(
+      `UPDATE documentos_academicos
+       SET cotejado = TRUE,
+           verificado_por = $2,
+           fecha_verificacion = CURRENT_TIMESTAMP
+       WHERE id_personal = $1 AND cotejado = FALSE`,
+      [id_personal, req.user.id_personal]
+    );
+
+    for (const d of pendientes) {
+      await pool.query(
+        `INSERT INTO notificaciones (id_personal, usuario, mensaje)
+         VALUES ($1, $2, $3)`,
+        [id_personal, usuario, `Tu documento "${d.tipo}" ha sido cotejado`]
+      );
+    }
+
+    let emailSent = false;
+    let emailError = null;
+    if (correo) {
+      try {
+        const tipos = pendientes.map(d => d.tipo);
+        const emailResult = await sendBulkDocumentsVerifiedEmail(
+          correo,
+          usuario,
+          req.user.usuario || 'Verificador',
+          tipos,
+          req.body.fromEmail,
+          req.body.emailPassword,
+          req.body.smtpHost,
+          req.body.smtpPort,
+          req.body.smtpSecure
+        );
+        emailSent = !!emailResult.success;
+        emailError = emailResult.success ? null : emailResult.error;
+      } catch (err) {
+        emailError = err.message || String(err);
+      }
+    }
+
+    return res.json({ 
+      message: `Documentos cotejados: ${pendientes.length}`,
+      updated: pendientes.length,
+      emailSent,
+      emailError
+    });
+  } catch (error) {
+    console.error('Error al cotejar todos los documentos (POST):', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });

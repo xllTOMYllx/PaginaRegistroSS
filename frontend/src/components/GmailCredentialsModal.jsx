@@ -5,7 +5,7 @@ const GmailCredentialsModal = ({ isOpen, onClose, onSubmit, defaultEmail }) => {
   const [fromEmail, setFromEmail] = useState(defaultEmail || '');
   const [smtpHost, setSmtpHost] = useState('smtp.gmail.com');
   const [smtpPort, setSmtpPort] = useState(587);
-  const [smtpSecure, setSmtpSecure] = useState(true);
+  const [smtpSecure, setSmtpSecure] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const validateEmail = (email) => {
@@ -108,8 +108,8 @@ const GmailCredentialsModal = ({ isOpen, onClose, onSubmit, defaultEmail }) => {
                 <div className="col">
                   <label htmlFor="smtpSecure" className="form-label">Usar SSL</label>
                   <select className="form-select" id="smtpSecure" value={smtpSecure ? '1' : '0'} onChange={(e) => setSmtpSecure(e.target.value === '1')}>
-                    <option value="0">No (STARTTLS)</option>
-                    <option value="1">Sí (SSL/TLS)</option>
+                    <option value="0">No (STARTTLS, puerto 587)</option>
+                    <option value="1">Sí (SSL/TLS, puerto 465)</option>
                   </select>
                 </div>
               </div>

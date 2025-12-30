@@ -78,20 +78,21 @@ function Home() {
   }, [location.state]);
 
   // Obtener documentos del usuario autenticado
+  const cargarDocumentos = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const res = await axios.get("http://localhost:5000/api/documentos/mis-documentos", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDocumentos(res.data);
+    } catch (error) {
+      console.error("Error al obtener documentos:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchDocumentos = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      try {
-        const res = await axios.get("http://localhost:5000/api/documentos/mis-documentos", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setDocumentos(res.data);
-      } catch (error) {
-        console.error("Error al obtener documentos:", error);
-      }
-    };
-    fetchDocumentos();
+    cargarDocumentos();
   }, []);
 
   //----DOCUMENTOS ACADEMICOS-----//
@@ -126,7 +127,18 @@ function Home() {
           "Authorization": `Bearer ${token}`
         }
       });
-      window.location.reload();
+      await cargarDocumentos();
+      // limpiar selección del archivo según el tipo
+      if (tipo === "secundaria") {
+        setSecundaria(null);
+      } else if (tipo === "bachillerato") {
+        setBachillerato(null);
+      } else if (tipo === "universidad") {
+        setUniversidad(null);
+      } else if (tipo === "certificados") {
+        setCertificados(null);
+      }
+      setIsUploading(false);
     } catch (error) {
       console.error("Error al subir archivo:", error);
       setIsUploading(false);
