@@ -163,11 +163,21 @@ function UsuarioDetalle() {
   const certificados = usuario.documentos?.filter(doc => doc.es_certificado === true) || [];
   const documentosAcademicos = usuario.documentos?.filter(doc => doc.es_certificado !== true) || [];
 
-  // Orden documentos académicos
-  const ordenAcademico = { secundaria: 1, bachillerato: 2, universidad: 3 };
-  const documentosAcademicosOrdenados = documentosAcademicos.sort((a, b) => {
-    const tipoA = ordenAcademico[a.tipo.toLowerCase()] || 99;
-    const tipoB = ordenAcademico[b.tipo.toLowerCase()] || 99;
+  // Orden documentos académicos por nivel educativo
+  const ordenAcademico = {
+    secundaria: 1,
+    preparatoria: 2,
+    bachillerato: 2,
+    licenciatura: 3,
+    universidad: 3,
+    maestria: 4,
+    'maestría': 4,
+    doctorado: 5,
+  };
+
+  const documentosAcademicosOrdenados = [...documentosAcademicos].sort((a, b) => {
+    const tipoA = ordenAcademico[a.tipo?.toLowerCase()] ?? 99;
+    const tipoB = ordenAcademico[b.tipo?.toLowerCase()] ?? 99;
     return tipoA - tipoB;
   });
 

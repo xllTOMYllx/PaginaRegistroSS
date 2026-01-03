@@ -417,6 +417,7 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
           [id_personal, req.user.id_personal]
         );
 
+        /*
         // Notificaciones por documento
         for (const d of pendientes) {
           await pool.query(
@@ -425,6 +426,7 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
             [id_personal, usuario, `Tu documento "${d.tipo}" ha sido cotejado`] 
           );
         }
+          */
 
         // Envío de un único correo resumen
         let emailSent = false;
@@ -507,6 +509,7 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
     );
 
     // Insertar notificación en la base de datos
+    /*
     await pool.query(
       `INSERT INTO notificaciones (id_personal, usuario, mensaje) 
        VALUES ($1, $2, $3)`,
@@ -516,6 +519,7 @@ router.patch('/:id/cotejado', authenticateToken, async (req, res) => {
         `Tu documento "${tipo}" ha sido cotejado por ${verificadorData.usuario}`
       ]
     );
+    */
 
     // Enviar notificación por correo
     if (correo) {
@@ -615,6 +619,7 @@ router.post('/usuario/:id_personal/cotejar-todos', authenticateToken, async (req
       [id_personal, req.user.id_personal]
     );
 
+    /*
     for (const d of pendientes) {
       await pool.query(
         `INSERT INTO notificaciones (id_personal, usuario, mensaje)
@@ -622,6 +627,7 @@ router.post('/usuario/:id_personal/cotejar-todos', authenticateToken, async (req
         [id_personal, usuario, `Tu documento "${d.tipo}" ha sido cotejado`]
       );
     }
+      */
 
     let emailSent = false;
     let emailError = null;

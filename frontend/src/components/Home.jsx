@@ -15,6 +15,8 @@ function Home() {
   const [secundaria, setSecundaria] = useState(null);
   const [bachillerato, setBachillerato] = useState(null);
   const [universidad, setUniversidad] = useState(null);
+  const [maestria, setMaestria] = useState(null);
+  const [doctorado, setDoctorado] = useState(null);
   const [Certificados, setCertificados] = useState(null);
   const [documentos, setDocumentos] = useState([]);
   const [notificaciones, setNotificaciones] = useState([]);
@@ -135,6 +137,10 @@ function Home() {
         setBachillerato(null);
       } else if (tipo === "universidad") {
         setUniversidad(null);
+      } else if (tipo === "maestria") {
+        setMaestria(null);
+      } else if (tipo === "doctorado") {
+        setDoctorado(null);
       } else if (tipo === "certificados") {
         setCertificados(null);
       }
@@ -354,9 +360,9 @@ function Home() {
               <div className="alert alert-info py-1 mb-3" role="alert" style={{ fontSize: '0.85rem' }}>
                 Formato permitido: PDF únicamente. Sugerencia: No subir documentos con el mismo nombre.
               </div>
-              {["Secundaria", "Bachillerato", "Universidad"].map((nivel, idx) => {
-                const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad };
-                const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad };
+              {["Secundaria", "Bachillerato", "Universidad", "Maestría", "Doctorado"].map((nivel, idx) => {
+                const stateMap = { 0: secundaria, 1: bachillerato, 2: universidad, 3: maestria, 4: doctorado };
+                const setMap = { 0: setSecundaria, 1: setBachillerato, 2: setUniversidad, 3: setMaestria, 4: setDoctorado };
                 const tipo = normalizarTipoDocumento(nivel);
                 const documentoExistente = documentos.find(doc => doc.tipo === tipo);
 
