@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import NotificationBell from './NotificationBell';
 import '../css/Navbar.css'
 
 // Componente Navbar con búsqueda y botones
@@ -79,6 +80,10 @@ function Navbar({ onBuscar, hideCrear }) {
             </form>
           )}
 
+          {/* Campanita de notificaciones para roles 2, 3, 4 */}
+          <div className="ms-auto">
+            <NotificationBell userRole={usuarioStored?.rol} />
+          </div>
         </div>
 
       </nav>

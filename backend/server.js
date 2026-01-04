@@ -11,6 +11,7 @@ const port = process.env.PORT || 5000;
 const documentosRoutes = require('./routes/documentos');
 const usersRoutes = require('./routes/users');
 const gruposRoutes = require('./routes/grupos');
+const notificacionesRoutes = require('./routes/notificaciones');
 
 // Middleware general
 app.use(cors({
@@ -33,6 +34,7 @@ app.use(helmet());
 app.use('/api/users', usersRoutes);
 app.use('/api/documentos', documentosRoutes);
 app.use('/api/grupos', gruposRoutes);
+app.use('/api/notificaciones', notificacionesRoutes);
 
 // Middleware personalizado para servir archivos estáticos con CORS
 // Añadimos setHeaders para PDFs para sugerir apertura inline en el navegador

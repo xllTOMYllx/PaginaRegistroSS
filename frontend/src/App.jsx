@@ -73,6 +73,14 @@ function App() {
           }
         />
         <Route
+          path="/usuario/:id"
+          element={
+            <ProtectedRoute>
+              <UsuarioDetalle />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/crearUsuario"
           element={
             <ProtectedRoute>

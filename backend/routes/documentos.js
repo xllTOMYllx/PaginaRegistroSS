@@ -177,6 +177,30 @@ router.post('/subir-academico', authenticateToken, upload.single('archivo'), asy
        VALUES ($1, $2, $3, $4)`,
       [req.user.id_personal, tipo, req.file.filename, tipo === 'certificados']
     );
+    
+    // Crear notificación para roles administrativos (2, 3, 4)
+    try {
+      const userInfo = await pool.query(
+        `SELECT usuario, nombre, apellido_paterno FROM personal WHERE id_personal = $1`,
+        [req.user.id_personal]
+      );
+      const { usuario, nombre, apellido_paterno } = userInfo.rows[0];
+      const nombreCompleto = `${nombre} ${apellido_paterno}`;
+      
+      await pool.query(
+        `INSERT INTO notificaciones (id_personal, mensaje, usuario)
+         VALUES ($1, $2, $3)`,
+        [
+          req.user.id_personal,
+          `${nombreCompleto} subió un documento: ${tipo}`,
+          usuario
+        ]
+      );
+    } catch (notifError) {
+      console.error('Error al crear notificación:', notifError);
+      // Continuar aunque falle la notificación
+    }
+    
     // Obtener nombre del usuario desde la tabla personal
 // Obtener el email del usuario
 const userResult = await pool.query(
