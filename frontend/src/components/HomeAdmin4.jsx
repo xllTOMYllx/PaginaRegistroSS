@@ -163,7 +163,7 @@ function HomeAdmin4() {
         <div className="container mt-4 admin-container">
           <div className="card shadow mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
-              <h4 className="admin-heading">Datos Personales del Administrador</h4>
+              <h4 className="admin-heading">Datos Personales</h4>
               <button className="btn primary-btn" onClick={handleEditClick}>
                 Editar datos
               </button>

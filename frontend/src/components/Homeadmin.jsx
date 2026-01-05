@@ -171,7 +171,7 @@ function HomeAdmin() {
           {/* Datos personales */}
           <div className="card shadow mb-4">
             <div className="card-header bg-white d-flex justify-content-between align-items-center">
-              <h4 style={{ color: "#7A1737" }}>Datos Personales del Administrador</h4>
+              <h4 style={{ color: "#7A1737" }}>Datos Personales</h4>
               <button
                 className="btn"
                 style={{ backgroundColor: "#7A1737", color: "#fff" }}
