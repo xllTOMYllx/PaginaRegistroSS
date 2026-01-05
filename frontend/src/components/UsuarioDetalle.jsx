@@ -264,12 +264,7 @@ function UsuarioDetalle() {
                 )}
               </div>
             </div>
-
-            {/* Documentos Académicos */}
-            <h5 className="mb-3" style={{ fontSize: "clamp(1.1rem, 3vw, 1.25rem)", fontFamily: "Roboto, sans-serif" }}>
-              📚 Documentos Académicos
-            </h5>
-            {(() => {
+                {(() => {
               const hayPendientes = (usuario.documentos || []).some(d => !d.cotejado);
               return (
                 <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
@@ -284,6 +279,10 @@ function UsuarioDetalle() {
                 </div>
               );
             })()}
+            {/* Documentos Académicos */}
+            <h5 className="mb-3" style={{ fontSize: "clamp(1.1rem, 3vw, 1.25rem)", fontFamily: "Roboto, sans-serif" }}>
+              📚 Documentos Académicos
+            </h5>
             {documentosAcademicosOrdenados.length > 0 ? (
               <div className="table-responsive">
                 <table className="table table-striped table-bordered">
