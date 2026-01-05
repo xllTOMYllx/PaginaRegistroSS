@@ -4,8 +4,8 @@ import zxcvbn from "zxcvbn";
 // --- Contraseña ---
 export function validatePassword(password) {
   if (!password) return "La contraseña es obligatoria.";
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)) {
-    return "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas y números.";
+  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/.test(password)) {
+    return "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un caracter especial (!@#$%^&*).";
   }
   return null; // ✅ válida
 }

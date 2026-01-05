@@ -961,8 +961,21 @@ router.post('/recuperar/generar-temporal/:id', authenticateToken, async (req, re
     }
     const user = uRes.rows[0];
 
-    // Generar contraseña temporal
-    const tempPassword = crypto.randomBytes(6).toString('base64').replace(/\+/g, 'A').replace(/\//g, 'B'); // ~12 chars
+    // Generar contraseña temporal que cumpla con requisitos: mayús, minús, números, caracteres especiales
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    let tempPassword = '';
+    // Garantizar al menos 1 de cada tipo
+    tempPassword += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+    tempPassword += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
+    tempPassword += '0123456789'[Math.floor(Math.random() * 10)];
+    tempPassword += '!@#$%^&*'[Math.floor(Math.random() * 8)];
+    // Completar hasta 12 caracteres
+    for (let i = 4; i < 12; i++) {
+      tempPassword += caracteres[Math.floor(Math.random() * caracteres.length)];
+    }
+    // Mezclar para no ser predecible
+    tempPassword = tempPassword.split('').sort(() => Math.random() - 0.5).join('');
+    
     const hashed = await bcrypt.hash(tempPassword, 10);
 
     // Actualizar contraseña en DB
