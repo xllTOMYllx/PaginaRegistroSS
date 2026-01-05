@@ -178,6 +178,8 @@ function BusquedaAvanzada() {
                                   <option value="secundaria">Secundaria</option>
                                   <option value="preparatoria">Preparatoria</option>
                                   <option value="licenciatura">Licenciatura</option>
+                                  <option value="maestria">Maestría</option>
+                                  <option value="doctorado">Doctorado</option>
                                 </select>
                               </div>
 

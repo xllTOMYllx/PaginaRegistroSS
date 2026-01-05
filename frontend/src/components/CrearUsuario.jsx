@@ -61,6 +61,27 @@ function CrearUsuario() {
     setError({ ...error, [name]: '' });
   };
 
+  // Función para generar contraseña aleatoria que cumpla validaciones
+  const generarContraseñaAleatoria = () => {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    let password = '';
+    // Garantizar al menos 1 de cada tipo requerido
+    password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+    password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
+    password += '0123456789'[Math.floor(Math.random() * 10)];
+    password += '!@#$%^&*'[Math.floor(Math.random() * 8)];
+    // Completar hasta 12 caracteres
+    for (let i = 4; i < 12; i++) {
+      password += caracteres[Math.floor(Math.random() * caracteres.length)];
+    }
+    // Mezclar para no ser predecible
+    password = password.split('').sort(() => Math.random() - 0.5).join('');
+    
+    setFormData(prev => ({ ...prev, CONTRASENA: password }));
+    setPasswordStrength(getPasswordStrength(password));
+    setError({ ...error, CONTRASENA: '' });
+  };
+
   // Función para descargar el PDF de Carta Responsiva con datos del usuario
   const descargarPDF = async (datosUsuario) => {
     const doc = new jsPDF();
@@ -151,7 +172,7 @@ function CrearUsuario() {
 
 Que es mi obligación solicitar la baja de la clave al momento de ya no requerir el acceso al sistema, en el entendido de que aun posterior a esta baja seré obligado(a) a mantener la confidencialidad de la información a la que haya tenido acceso. Asimismo, estoy enterado(a) que el (la) administrador(a) de cuentas de acceso al sistema, puede dar de baja mi cuenta ante cualquier irregularidad detectada en su uso.
 
-Manifiesto estar consciente que derivado del ingreso al sistema, tengo acceso a información privilegiada y confidencial, de exclusiva incumbencia al Sistema Nacional de Información en Salud, y su difusión puede tener efectos adversos al mismo en el cumplimiento de las actividades para el que fue creado. Desde este momento convengo de manera expresa, a guardar absoluta confidencialidad de los datos registrados en el sistema, obligándome a no hacer mal uso de los mismos o difundir información alguna a la que tenga acceso.
+Manifiesto estar consciente que derivado del ingreso al sistema, tengo acceso a información privilegiada y confidencial, de exclusiva incumbencia, y su difusión puede tener efectos adversos al mismo en el cumplimiento de las actividades para el que fue creado. Desde este momento convengo de manera expresa, a guardar absoluta confidencialidad de los datos registrados en el sistema, obligándome a no hacer mal uso de los mismos o difundir información alguna a la que tenga acceso.
 
 Estoy enterado(a) que fuera de los criterios y procedimientos a seguir para producir, captar, integrar, procesar, sistematizar, evaluar y divulgar la información en salud establecidos en la Norma Oficial Mexicana NOM-035-SSA3-2012, en materia de información en salud, los datos en el sistema no deberán ser reproducidos por ningún medio (físico o electrónico), ni vinculados con otros dispositivos (fijos o móviles); así como, evitar la interoperabilidad o intercambio con otros sistemas informáticos no certificados bajo la Norma Oficial Mexicana NOM-024-SSA3-2012, Sistemas de información de registro electrónico para la salud, intercambio de información en salud.
 
@@ -404,6 +425,14 @@ En caso de que el Organismo determine que, como servidor(a) público(a) pude hab
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-secondary mt-2"
+                    onClick={generarContraseñaAleatoria}
+                    style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+                  >
+                    Generar contraseña
+                  </button>
                   {error.CONTRASENA && <div className="text-danger small mt-1">{error.CONTRASENA}</div>}
                   <div className="mt-2">
                     <div className="progress" style={{ height: '8px' }}>
