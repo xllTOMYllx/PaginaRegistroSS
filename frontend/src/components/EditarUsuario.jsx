@@ -160,7 +160,7 @@ function EditarUsuario() {
     // Validaciones básicas
     if (!pwdForm.newPassword) return setPwdMsg('La nueva contraseña es requerida.');
     // Reglas de fortaleza: mínimo 8, mayúscula, minúscula, número y símbolo
-    const strongPwd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+    const strongPwd = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
     if (!strongPwd.test(pwdForm.newPassword)) {
       return setPwdMsg('La contraseña debe tener al menos 8 caracteres, incluir mayúscula, minúscula, número y símbolo.');
     }
